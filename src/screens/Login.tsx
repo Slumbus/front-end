@@ -25,9 +25,9 @@ export default function LoginScreen() {
         <TextInput style={styles.input} placeholder="이메일" />
         <TextInput style={styles.input} placeholder="비밀번호" />
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={styles.loginButtonContainer}>
         <TouchableOpacity
-          style={styles.button}
+          style={styles.loginButton}
           onPress={() => {
             /* 버튼을 눌렀을 때 수행할 동작 */
           }}>
@@ -53,6 +53,25 @@ export default function LoginScreen() {
           <Text>회원가입</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.lineContainer}>
+        <View style={styles.line} />
+        <Text style={styles.orText}>또는</Text>
+        <View style={styles.line} />
+      </View>
+      <View style={styles.socialImageContainer}>
+        <Image
+          source={require('../assets/images/google.png')}
+          style={styles.socialImage}
+        />
+        <Image
+          source={require('../assets/images/kakaotalk.png')}
+          style={styles.socialImage}
+        />
+        <Image
+          source={require('../assets/images/naver.png')}
+          style={styles.socialImage}
+        />
+      </View>
     </View>
   );
 }
@@ -61,7 +80,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 25,
+    paddingHorizontal: 50,
     paddingVertical: 35,
   },
   imageView: {
@@ -72,14 +91,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginBottom: 30,
+    marginTop: 50,
+    marginBottom: 50,
   },
   inputContainer: {
     paddingVertical: 15,
     marginBottom: 30,
   },
   textContainer: {
-    paddingLeft: 15,
+    paddingLeft: 10,
   },
   textView: {
     fontSize: 20,
@@ -93,24 +113,58 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     margin: 5,
   },
-  buttonContainer: {
-    alignItems: 'center',
+  loginButtonContainer: {
+    // alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 10,
   },
-  button: {
+  loginButton: {
     backgroundColor: '#283882',
     borderRadius: 50,
-    paddingVertical: 15,
+    paddingVertical: 8,
     paddingHorizontal: 50,
+    alignItems: 'center',
+    // height: 40,
+    width: '100%',
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
+    justifyContent: 'center',
   },
   buttonWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   click: {
+    // flex: 1,
+    margin: 5,
+  },
+  lineContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 40,
+  },
+  line: {
     flex: 1,
+    height: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7D7D7D',
+  },
+  orText: {
+    marginHorizontal: 10,
+    fontSize: 16,
+  },
+  socialImageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  socialImage: {
+    marginHorizontal: 5,
+    width: 50,
+    height: 50,
   },
 });
