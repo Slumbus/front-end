@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import MainNavigator from './src/navigation/MainNavigator';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
