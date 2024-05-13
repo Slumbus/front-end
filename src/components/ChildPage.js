@@ -1,23 +1,36 @@
 import React from 'react';
-import { StyleSheet, View, Text, FlatList, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, FlatList, Image, SafeAreaView } from 'react-native';
 
 const ChildPage = () => {
   // 아이 목록 데이터 배열 (임시)
   const childrenData = [
-    { id: 1, name: '사랑이', birthdate: '2024.03.12', age: 1 },
-    { id: 2, name: '아이2', birthdate: '2023.05.20', age: 2 },
+    { id: 1, name: '사랑이', birthdate: '2024.03.12', age: 1, image: require('../image/child_sample.png'),
+      photoList: [require('../image/child_sample.png'), require('../image/child_sample.png'), require('../image/child_sample.png'),]
+    },
+    { id: 2, name: '아이2', birthdate: '2023.05.20', age: 2, image: require('../image/child_sample.png'),
+      photoList: [require('../image/child_sample.png'), require('../image/child_sample.png'), require('../image/child_sample.png'),]
+    },
   ];
 
   // FlatList에서 각 아이를 렌더링하는 함수
   const renderItem = ({ item }) => (
     <View style={[styles.itemContainer, { marginBottom: 18 }]}>
       <View style={styles.childInfoContainer}>
+      <Image source={item.image} style={styles.childImage} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.info}>{item.birthdate}</Text>
-          <Text style={styles.info}>만 {item.age}세</Text>
+          <Text style={styles.birth}>{item.birthdate}</Text>
+          <Text style={styles.age}>만 {item.age}세</Text>
         </View>
       </View>
+      <FlatList
+        data={item.photoList}
+        horizontal
+        renderItem={({ item }) => (
+          <Image source={item} style={styles.photo} />
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
   );
 
@@ -51,13 +64,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   childImage: {
-    width: 50,
-    height: 50,
+    width: 86,
+    height: 86,
     borderRadius: 25, // 원형으로 표시하기 위해 반지름 설정
-    marginRight: 10,
+    marginRight: 20,
   },
   textContainer: {
     flex: 1,
+    marginBottom: 16
   },
   name: {
     fontSize: 18,
@@ -65,8 +79,18 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginBottom: 10
   },
-  info: {
+  birth: {
     fontSize: 14,
+  },
+  age: {
+    fontSize: 12,
+    color: '#000000',
+  },
+  photo: {
+    width: 72,
+    height: 72,
+    marginRight: 12,
+    borderRadius: 5,
   },
 });
 
