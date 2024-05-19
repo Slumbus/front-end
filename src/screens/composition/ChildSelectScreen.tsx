@@ -1,10 +1,11 @@
+import React from 'react';
 import { useState } from "react";
 import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
 
 
 
 
-const ChildSelectScreen = () => {
+export default function ChildSelectScreen({navigation}: any) {
 
   //추후 여기는 데이터 파싱해서 해당 데이터 값으로 들어갈 수 있도록 변경해주어야 함.
   const [children, setChildren] = useState([
@@ -49,7 +50,7 @@ const ChildSelectScreen = () => {
 
       </View>
       
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('HummingScreen')}>
         <View style={styles.selectBtn}>
           <Text style={styles.btnText}>선택 완료</Text>
         </View>
@@ -142,5 +143,3 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   }
 });
-
-export default ChildSelectScreen;
