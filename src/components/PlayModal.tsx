@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
     color: '#fff',
+    fontFamily: 'SCDream6',
   },
   elementBtn:{
     borderBottomWidth: 1,
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingLeft: 20,
     marginVertical: 10,
+    fontFamily: 'SCDream4',
   },
 });
 

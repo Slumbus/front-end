@@ -200,10 +200,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
+    fontFamily: 'SCDream5',
   },
   text: {
     fontSize: 14,
     color: '#000',
+    fontFamily: 'SCDream4',
   },
   playButtonBarContainer: {
     flexDirection: 'row',

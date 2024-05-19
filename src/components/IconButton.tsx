@@ -36,10 +36,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    fontWeight: 'bold',
     color: '#fff',
-    paddingBottom: 5,
     paddingLeft: 5,
+    fontFamily: 'SCDream5',
   },
 });
 
