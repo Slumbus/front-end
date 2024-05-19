@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 15,
+    fontFamily: 'SCDream4',
   },
   playIcon: {
     position: 'absolute',

@@ -78,7 +78,15 @@ export default function HomeScreen({navigation}: any) {
           <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
           <View style={styles.jackets}>
             {album.Music.map((song) => (
-              <AlbumJacket key={song.title} imageSource={{ uri: song.picture}} text={song.title} onPress={() => navigation.navigate('PlayScreen')} />
+              <AlbumJacket 
+              key={song.title} 
+              imageSource={{ uri: song.picture}} 
+              text={song.title} 
+              onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+                picture: song.picture,
+                name: album.name,
+                title: song.title
+              })} />
             ))}
           </View>
         </View>
