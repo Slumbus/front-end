@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -8,6 +8,7 @@ import BasicSong from '../components/BasicSong';
 export default function LyricWriting() {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const LyricWritingdata = [
     {
@@ -18,6 +19,10 @@ export default function LyricWriting() {
       song: "https://freemusicarchive.org/music/Dee_Yan-Key/lullaby/lullaby/"
     },
   ];
+
+  const handleSave = () => {
+    setModalVisible(true);
+  };
   
   return (
     <View style={styles.container}>
@@ -56,11 +61,28 @@ export default function LyricWriting() {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={() => console.log("저장 버튼 눌림")}>
+          <TouchableOpacity style={styles.saveButton} onPress={() => setModalVisible(true)}>
             <Text style={styles.saveText}>저장</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        animationType='fade'
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}>
+        <View style={styles.modalView}>
+          <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalButtonText}>가사 녹음하러 가기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalButtonText}>이대로 저장하기</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -146,6 +168,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   saveText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  modalView: {
+    top: '45%',
+    left: '15%',
+    backgroundColor: 'grey', // 수정 필
+    width: 260,
+    height: 120,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalButton: {
+    height: 35,
+    width: 230,
+    borderRadius: 50,
+    backgroundColor: '#283882',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  modalButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     textAlign: 'center',
