@@ -14,7 +14,7 @@ const AlbumJacket: React.FC<AlbumJacketProps> = ({ imageSource, text }) => {
         {imageSource && typeof imageSource === 'string' ? (
           <Image source={{ uri: imageSource }} style={styles.image} />
         ) : (
-          <Image source={imageSource || require('../assets/image/Slumbus_Logo.png')} style={styles.image} />
+          <Image source={imageSource || require('../assets/images/Slumbus_Logo.png')} style={styles.image} />
         )}
         <View style={styles.playIcon}>
           <Icon name="play" size={32} color="#fff" />
