@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-export default function ChildrenListScreen() {
+export default function ChildrenInfoReactionScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to ChildrenListScreen</Text>
+      <Text style={styles.text}>Welcome to ChildrenInfoReactionScreen</Text>
     </View>
   );
 }
