@@ -40,17 +40,17 @@ export default function LoginScreen() {
           onPress={() => {
             /* 버튼을 눌렀을 때 수행할 동작 */
           }}>
-          <Text>비밀번호 찾기</Text>
+          <Text style={styles.text}>비밀번호 찾기</Text>
         </TouchableOpacity>
         <View style={styles.click}>
-          <Text>|</Text>
+          <Text style={styles.text}>|</Text>
         </View>
         <TouchableOpacity
           style={styles.click}
           onPress={() => {
             /* 버튼을 눌렀을 때 수행할 동작 */
           }}>
-          <Text>회원가입</Text>
+          <Text style={styles.text}>회원가입</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.lineContainer}>
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   textView: {
+    fontFamily: 'SCDream5',
     fontSize: 20,
     color: 'black',
   },
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     margin: 5,
+    fontFamily: 'SCDream2',
   },
   loginButtonContainer: {
     // alignItems: 'center',
@@ -131,6 +133,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     justifyContent: 'center',
+    fontFamily: 'SCDream5',
   },
   buttonWrapper: {
     flexDirection: 'row',
@@ -140,6 +143,8 @@ const styles = StyleSheet.create({
   click: {
     // flex: 1,
     margin: 5,
+    fontFamily: 'SCDream2',
+    fontSize: 12,
   },
   lineContainer: {
     width: '100%',
@@ -157,6 +162,7 @@ const styles = StyleSheet.create({
   orText: {
     marginHorizontal: 10,
     fontSize: 16,
+    fontFamily: 'SCDream2',
   },
   socialImageContainer: {
     flexDirection: 'row',
@@ -166,5 +172,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     width: 50,
     height: 50,
+  },
+  text: {
+    fontFamily: 'SCDream2',
   },
 });
