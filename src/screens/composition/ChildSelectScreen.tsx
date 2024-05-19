@@ -1,10 +1,11 @@
+import React from 'react';
 import { useState } from "react";
 import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
 
 
 
 
-const ChildSelectPage = () => {
+export default function ChildSelectScreen({navigation}: any) {
 
   //추후 여기는 데이터 파싱해서 해당 데이터 값으로 들어갈 수 있도록 변경해주어야 함.
   const [children, setChildren] = useState([
@@ -49,7 +50,7 @@ const ChildSelectPage = () => {
 
       </View>
       
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('HummingScreen')}>
         <View style={styles.selectBtn}>
           <Text style={styles.btnText}>선택 완료</Text>
         </View>
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
   container:{
     flexDirection: 'column',
     width: '100%',
+    height: '100%',
     backgroundColor: '#FFFFFF',
   },
   infoContainer: {
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream6',
   },
   infoTextContainer: {
     marginTop: 5,
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
   },
   infoText:{
     fontSize: 14,
-    fontWeight: 'regular'
+    fontFamily: 'SCDream4',
   },
   childListContainer: {
     marginHorizontal:35,
@@ -117,12 +119,12 @@ const styles = StyleSheet.create({
   },
   childName:{
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream5',
     color: '#000000',
   },
   childInfo:{
     fontSize: 12,
-    fontWeight: 'regular',
+    fontFamily: 'SCDream4',
     color: '#000000',
   },
   selectBtn:{
@@ -137,9 +139,7 @@ const styles = StyleSheet.create({
   },
   btnText:{
     fontSize: 14,
-    fontWeight: 'medium',
+    fontFamily: 'SCDream4',
     color: '#FFFFFF',
   }
 });
-
-export default ChildSelectPage;
