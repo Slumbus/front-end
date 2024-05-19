@@ -50,10 +50,8 @@ export default function ChildSelectScreen({navigation}: any) {
 
       </View>
       
-      <TouchableOpacity onPress={() => navigation.navigate('HummingScreen')}>
-        <View style={styles.selectBtn}>
-          <Text style={styles.btnText}>선택 완료</Text>
-        </View>
+      <TouchableOpacity style={styles.selectBtn} onPress={() => navigation.navigate('HummingScreen')}>
+        <Text style={styles.btnText}>선택 완료</Text>
       </TouchableOpacity>
     
     </View>
@@ -76,6 +74,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontFamily: 'SCDream6',
+    color: '#4A4A4A',
   },
   infoTextContainer: {
     marginTop: 5,
@@ -90,6 +89,7 @@ const styles = StyleSheet.create({
   infoText:{
     fontSize: 14,
     fontFamily: 'SCDream4',
+    color: '#4A4A4A',
   },
   childListContainer: {
     marginHorizontal:35,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   btnText:{
     fontSize: 14,
-    fontFamily: 'SCDream4',
+    fontFamily: 'SCDream5',
     color: '#FFFFFF',
   }
 });

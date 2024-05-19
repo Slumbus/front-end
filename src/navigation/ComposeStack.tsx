@@ -13,22 +13,43 @@ export default function HomeStack() {
       <Stack.Screen 
         name="ChildSelectScreen" 
         component={ChildSelectScreen} 
-        options={{title: "자장가 작곡"}}
+        options={{
+          title: "자장가 작곡",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'
+        }}
       />
       <Stack.Screen 
         name="HummingScreen" 
         component={HummingScreen}
-        options={{title: "자장가 작곡"}}
+        options={{
+          title: "자장가 작곡",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
       />
       <Stack.Screen 
         name="MelodySaveScreen" 
         component={MelodySaveScreen}
-        options={{title: "자장가 작곡"}}
+        options={{
+          title: "자장가 작곡",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
       />
       <Stack.Screen 
         name="MoodSelectScreen" 
         component={MoodSelectScreen}
-        options={{title: "자장가 작곡"}}
+        options={{
+          title: "자장가 작곡",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
       />
     </Stack.Navigator>
   );
