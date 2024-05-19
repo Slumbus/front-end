@@ -5,11 +5,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 interface AlbumJacketProps {
   imageSource?: any;
   text: string;
+  onPress: () => void;
 }
 
-const AlbumJacket: React.FC<AlbumJacketProps> = ({ imageSource, text }) => {
+const AlbumJacket: React.FC<AlbumJacketProps> = ({ imageSource, text, onPress }) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageContainer}>
         {imageSource && typeof imageSource === 'string' ? (
           <Image source={{ uri: imageSource }} style={styles.image} />

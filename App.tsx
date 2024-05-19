@@ -10,7 +10,6 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      {/* root header 숨기기 */}
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="MainNavigator" component={MainNavigator} />
       </Stack.Navigator>
