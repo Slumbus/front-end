@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}: any) {
 
   const ChildrenAlbumdata = [
     {
@@ -72,14 +73,12 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-
-      
       {ChildrenAlbumdata.map((album) => (
         <View key={album.albumname}>
           <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
           <View style={styles.jackets}>
             {album.Music.map((song) => (
-              <AlbumJacket key={song.title} imageSource={{ uri: song.picture}} text={song.title} />
+              <AlbumJacket key={song.title} imageSource={{ uri: song.picture}} text={song.title} onPress={() => navigation.navigate('PlayScreen')} />
             ))}
           </View>
         </View>
