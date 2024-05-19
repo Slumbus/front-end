@@ -12,6 +12,7 @@ import IconButton from '../components/IconButton';
 import ShuffleButton from '../components/ShuffleButton';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
+import PlayModal from '../components/PlayModal';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
@@ -20,6 +21,19 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 const PlayScreen: React.FC = () => {
   const route = useRoute<PlayScreenRouteProp>();
   const { picture, name, title } = route.params;
+
+  const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
+  const timer = ['5분', '15분', '30분', '1시간'];
+
+  const [isNoiseModalVisible, setNoiseModalVisible] = useState(false);
+  const [isTimerModalVisible, setTimerModalVisible] = useState(false);
+
+  const toggleNoiseModal = () => {
+    setNoiseModalVisible(!isNoiseModalVisible);
+  };
+  const toggleTimerModal = () => {
+    setTimerModalVisible(!isTimerModalVisible);
+  };
 
   const handlePress = () => {
     console.log('Button clicked');
@@ -146,10 +160,22 @@ const PlayScreen: React.FC = () => {
       <View style={styles.IconButtonContainer}>
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={handlePress} />
         <IconButton IconLibrary="MaterialIcons" IconName="lyrics" text="가사" onPress={handlePress} />
-        <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={handlePress} />
-        <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={handlePress} />
+        <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
+        <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
         <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
       </View>
+      <PlayModal
+        isVisible={isTimerModalVisible}
+        onClose={toggleTimerModal}
+        title="취침 타이머"
+        elements={timer}
+      />
+      <PlayModal
+        isVisible={isNoiseModalVisible}
+        onClose={toggleNoiseModal}
+        title="백색 소음"
+        elements={noise}
+      />
     </View>
   );
 }
