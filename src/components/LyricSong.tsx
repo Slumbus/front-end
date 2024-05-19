@@ -2,13 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-interface SongProps {
+interface LyricSongProps {
   imageSource?: any;
   title: string;
   child: string;
+  onPress?: () => void;
 }
 
-const Song: React.FC<SongProps> = ({ imageSource, title, child }) => {
+const LyricSong: React.FC<LyricSongProps> = ({ imageSource, title, child, onPress }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -18,7 +19,7 @@ const Song: React.FC<SongProps> = ({ imageSource, title, child }) => {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.child}>{child}</Text>
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
         <Icon name="pencil-alt" size={16} color="#fff" />
       </TouchableOpacity>
     </View>
@@ -66,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Song;
+export default LyricSong;

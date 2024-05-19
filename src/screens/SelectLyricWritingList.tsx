@@ -1,26 +1,30 @@
 import React from 'react';
-import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-import Song from '../components/Song';
+import LyricSong from '../components/LyricSong';
 
 export default function SelectLyricWritingList() {
   const SelectLyricWritingdata = [
     {
+      id: 1,
       picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
       title: "완전 취침",
       child: "사랑이",
     },
     {
+      id: 2,
       picture: "https://cdn.pixabay.com/photo/2017/11/10/08/08/baby-2935722_1280.jpg",
       title: "꿀잠",
       child: "사랑이",
     },
     {
+      id: 3,
       picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
       title: "Good night",
       child: "사랑이",
     },
     {
+      id :4,
       picture: "https://cdn.pixabay.com/photo/2017/06/18/18/39/baby-2416718_1280.jpg",
       title: "좋은 꿈",
       child: "사랑이",
@@ -36,8 +40,13 @@ export default function SelectLyricWritingList() {
         </View>
       </View>
       {SelectLyricWritingdata.map((song) => (
-        <View key={song.title}>
-          <Song imageSource={{ uri: song.picture }} title={song.title} child={song.child} />
+        <View key={song.id}>
+          <LyricSong
+            imageSource={{ uri: song.picture }}
+            title={song.title}
+            child={song.child}
+            // onPress={}
+          />
         </View>
       ))}
     </ScrollView>
