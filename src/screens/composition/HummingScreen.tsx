@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginTop: 25,
-    marginBottom: 20,
+    marginBottom: 35,
   },
   title: {
     fontSize: 18,
