@@ -100,11 +100,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 24, 
+    paddingTop: 5,
   },
   jackets: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    // alignItems: 'flex-start',
   },
 });
