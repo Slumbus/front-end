@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     marginHorizontal: 12,
+    marginBottom: 20,
   },
   imageContainer: {
     flexDirection: 'row',
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    marginBottom: 15,
     fontFamily: 'SCDream4',
   },
   playIcon: {

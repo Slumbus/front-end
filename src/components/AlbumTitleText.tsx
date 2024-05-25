@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'none',
     marginBottom: 10,
+    marginTop: 5,
   },
   imageContainer: {
     marginRight: 10,
