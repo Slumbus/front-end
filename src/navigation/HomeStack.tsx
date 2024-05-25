@@ -4,7 +4,7 @@ import { IconButton, Logo } from '../components/HomeScreenHeader';
 
 import HomeScreen from '../screens/HomeScreen';
 import PlayScreen from '../screens/play/PlayScreen';
-import LyricsScreen from '../screens/LyricsScreen';
+import LyricsScreen from '../screens/play/LyricsScreen';
 import PlaylistScreen from '../screens/play/PlaylistScreen';
 import MyScreen from '../screens/MyScreen';
 

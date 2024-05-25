@@ -18,7 +18,7 @@ import PlayModal from '../../components/modal/PlayModal';
 
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더미데이터 값 직접 전달, api 연결 시 수정
 
-const PlayScreen: React.FC = () => {
+const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { picture, name, title } = route.params;
 
@@ -96,8 +96,8 @@ const PlayScreen: React.FC = () => {
         <RepeatButton onPress={handlePress}/>
       </View>
       <View style={styles.IconButtonContainer}>
-        <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={handlePress} />
-        <IconButton IconLibrary="MaterialIcons" IconName="lyrics" text="가사" onPress={handlePress} />
+        <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={() => navigation.navigate('PlaylistScreen')} />
+        <IconButton IconLibrary="MaterialIcons" IconName="lyrics" text="가사" onPress={() => navigation.navigate('LyricsScreen')} />
         <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
         <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
