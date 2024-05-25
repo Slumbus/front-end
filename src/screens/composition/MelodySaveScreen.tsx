@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AlbumPhotoSelectModal from '../../components/modal/AlbumPhotoSelectModal';
+import MusicSaveModal from '../../components/modal/MusicSaveModal';
 
 export default function MelodySaveScreen({navigation}: any) {
 
@@ -39,9 +40,10 @@ export default function MelodySaveScreen({navigation}: any) {
         <TouchableOpacity style={[styles.selectBtn, {marginRight: 20}]}>
           <Text style={styles.btnText}>다시 만들기</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.selectBtn}>
+        {/* <TouchableOpacity style={styles.selectBtn}>
           <Text style={styles.btnText}>자장가 저장</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+          <MusicSaveModal navigation={navigation}/>
       </View>
 
     </View>
