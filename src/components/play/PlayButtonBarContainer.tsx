@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 25,
-    marginVertical: 35,
   },
   playButtonContainer: {
     flexDirection: 'row',

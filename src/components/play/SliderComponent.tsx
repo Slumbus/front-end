@@ -17,17 +17,19 @@ const SliderComponent: React.FC<SliderComponentProps> = ({ playbackPosition, set
 
   return (
     <View>
-      <Slider
-        style={{ width: 320 }}
-        value={playbackPosition}
-        onValueChange={setPlaybackPosition}
-        maximumValue={maximumValue}
-        minimumValue={0}
-        step={1}
-        minimumTrackTintColor="#283882"
-        maximumTrackTintColor="#D9D9D9"
-        thumbTintColor="#283882"
-      />
+      <View style={{alignItems: 'center'}}>
+        <Slider
+          style={{ width: 340 }}
+          value={playbackPosition}
+          onValueChange={setPlaybackPosition}
+          maximumValue={maximumValue}
+          minimumValue={0}
+          step={1}
+          minimumTrackTintColor="#283882"
+          maximumTrackTintColor="#D9D9D9"
+          thumbTintColor="#283882"
+        />
+      </View>
       <View style={styles.timeContainer}>
         <Text style={styles.text}>{formatTime(playbackPosition)}</Text>
         <Text style={styles.text}>{formatTime(maximumValue)}</Text>
@@ -40,11 +42,11 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
   },
   text: {
     fontSize: 14,
     color: '#000',
+    paddingHorizontal: 20,
   },
 });
 

@@ -9,6 +9,7 @@ import IconButton from '../../components/button/IconButton';
 import PlayModal from '../../components/modal/PlayModal';
 import SliderComponent from '../../components/play/SliderComponent';
 import PlayButtonBarContainer from '../../components/play/PlayButtonBarContainer';
+import { usePlayback } from '../../contexts/PlaybackContext';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
@@ -17,14 +18,13 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { picture, name, title } = route.params;
+  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
   const timer = ['5분', '15분', '30분', '1시간'];
 
   const [isNoiseModalVisible, setNoiseModalVisible] = useState(false);
   const [isTimerModalVisible, setTimerModalVisible] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackPosition, setPlaybackPosition] = useState(0);
   // const [duration, setDuration] = useState(0);
   // const [sound, setSound] = useState<Audio.Sound | null>(null);
 
@@ -33,18 +33,6 @@ const PlayScreen: React.FC = ({navigation}: any) => {
   };
   const toggleTimerModal = () => {
     setTimerModalVisible(!isTimerModalVisible);
-  };
-
-  const handlePress = () => {
-    console.log('Button clicked');
-  };
-
-  const playPress = () => {
-    if (isPlaying) {
-      setIsPlaying(false);
-    } else {
-      setIsPlaying(true);
-    }
   };
 
   return (
@@ -59,14 +47,16 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
       />
-      <PlayButtonBarContainer
-        isPlaying={isPlaying}
-        onPlayPress={playPress}
-        onShufflePress={handlePress}
-        onPreviousPress={handlePress}
-        onNextPress={handlePress}
-        onRepeatPress={handlePress}
-      />
+      <View style={{marginVertical: 35}}>
+        <PlayButtonBarContainer
+          isPlaying={isPlaying}
+          onPlayPress={playPress}
+          onShufflePress={handlePress}
+          onPreviousPress={handlePress}
+          onNextPress={handlePress}
+          onRepeatPress={handlePress}
+        />
+      </View>
       <View style={styles.IconButtonContainer}>
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={() => navigation.navigate('PlaylistScreen')} />
         <IconButton IconLibrary="MaterialIcons" IconName="lyrics" text="가사" onPress={() => navigation.navigate('LyricsScreen')} />
