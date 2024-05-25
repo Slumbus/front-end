@@ -27,12 +27,6 @@ export default function MelodySaveScreen({navigation}: any) {
           placeholder='제목을 입력해주세요.'/>
         </View>
           
-          {/* <TouchableOpacity style={styles.albumPhotoBtnContainer}>
-            <Image
-            source={require('../../assets/images/plus.png')}
-            style={styles.albumPhotoSelectImage}
-            />
-          </TouchableOpacity> */}
         <AlbumPhotoSelectModal/> 
       </View>
       
@@ -40,9 +34,6 @@ export default function MelodySaveScreen({navigation}: any) {
         <TouchableOpacity style={[styles.selectBtn, {marginRight: 20}]}>
           <Text style={styles.btnText}>다시 만들기</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.selectBtn}>
-          <Text style={styles.btnText}>자장가 저장</Text>
-        </TouchableOpacity> */}
           <MusicSaveModal navigation={navigation}/>
       </View>
 
