@@ -1,9 +1,9 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
-import PlayScreen from '../screens/PlayScreen';
+import PlayScreen from '../screens/play/PlayScreen';
 import LyricsScreen from '../screens/LyricsScreen';
-import PlaylistScreen from '../screens/PlaylistScreen';
+import PlaylistScreen from '../screens/play/PlaylistScreen';
 
 export type RootStackParamList = {  // 더미데이터 값 직접 전달, api 연결 시 수정
   HomeScreen: undefined;

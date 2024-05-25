@@ -3,16 +3,16 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Audio } from 'expo-av';
+// import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 
-import { RootStackParamList } from '../navigation/HomeStack';
+import { RootStackParamList } from '../../navigation/HomeStack';
 
-import IconButton from '../components/IconButton';
-import ShuffleButton from '../components/ShuffleButton';
-import PlayButton from '../components/PlayButton';
-import RepeatButton from '../components/RepeatButton';
-import PlayModal from '../components/PlayModal';
+import IconButton from '../../components/button/IconButton';
+import ShuffleButton from '../../components/button/ShuffleButton';
+import PlayButton from '../../components/button/PlayButton';
+import RepeatButton from '../../components/button/RepeatButton';
+import PlayModal from '../../components/modal/PlayModal';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
@@ -39,80 +39,18 @@ const PlayScreen: React.FC = () => {
     console.log('Button clicked');
   };
 
-  // const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackPosition, setPlaybackPosition] = useState(0);
   // const [duration, setDuration] = useState(0);
-
-  // useEffect(() => {
-  //   loadAudio();
-
-  //   return () => {
-  //     if (sound) {
-  //       sound.unloadAsync();
-  //     }
-  //   };
-  // }, [audioFile]);
-
-  // const loadAudio = async () => {
-  //   try {
-  //     const { sound } = await Audio.Sound.createAsync(audioFile, {shouldPlay: false,});
-  //     setSound(sound);
-
-  //     const status  = await sound.getStatusAsync();
-  //     if (status.isLoaded && 'durationMillis' in status) {
-  //       // setDuration(status.durationMillis / 1000);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  // const [sound, setSound] = useState<Audio.Sound | null>(null);
 
   const playPress = () => {
     if (isPlaying) {
-      // try {
-      //   if (sound) {
-      //     await sound.pauseAsync();
-          setIsPlaying(false);
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      setIsPlaying(false);
     } else {
-      // try {
-      //   if (sound) {
-      //     await sound.playAsync();
-          setIsPlaying(true);
-    //     }
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
+      setIsPlaying(true);
     }
   };
-
-  // const handleSliderValueChange = async (value: number) => {
-    // try {
-    //   if (sound) {
-    //     await sound.setPositionAsync(value * duration * 1000);
-    //     setPlaybackPosition(value * duration);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  // };
-
-  // useEffect(() => {
-  //   const interval = setInterval(async () => {
-  //     if (sound && isPlaying) {
-  //       const status = await sound.getStatusAsync();
-  //       if (status.isLoaded && 'positionMillis' in status) {
-  //         setPlaybackPosition(status.positionMillis / 1000);
-  //       }
-  //     }
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [sound, isPlaying]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
