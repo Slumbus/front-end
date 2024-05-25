@@ -6,13 +6,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 
-import { RootStackParamList } from '../navigation/HomeStack';
+import { RootStackParamList } from '../../navigation/HomeStack';
 
-import IconButton from '../components/IconButton';
-import ShuffleButton from '../components/ShuffleButton';
-import PlayButton from '../components/PlayButton';
-import RepeatButton from '../components/RepeatButton';
-import PlayModal from '../components/PlayModal';
+import IconButton from '../../components/button/IconButton';
+import ShuffleButton from '../../components/button/ShuffleButton';
+import PlayButton from '../../components/button/PlayButton';
+import RepeatButton from '../../components/button/RepeatButton';
+import PlayModal from '../../components/modal/PlayModal';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
