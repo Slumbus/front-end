@@ -8,6 +8,7 @@ import Icon3 from 'react-native-vector-icons/FontAwesome6';
 import HomeStack from './HomeStack';
 import ComposeStack from './ComposeStack';
 import ChildrenStack from './ChildrenListStack';
+import { PlaybackProvider } from '../contexts/PlaybackContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,53 +22,55 @@ const CustomTabBarButton = ({children, onPress}) => (
 
 export default function MainNavigator({navigation}) {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar
-      }}
-    >
-      <Tab.Screen
-        name="HomeStack"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <View style={styles.iconContainer}>
-              <Icon2 name="home" size={25} color={focused ? '#283882' : '#92949E'} />
-              <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>홈</Text>
-            </View>
-          )
+    <PlaybackProvider>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: styles.tabBar
         }}
-      />
-      <Tab.Screen
-        name="ComposeStack"
-        component={ComposeStack}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <View style={styles.iconContainer}>
-              <Icon3 name="music" size={27} color="#fff" style={{right: 1}} />
-              <Text style={styles.composeButtonText}>작곡</Text>
-            </View>
-            ),
-          tabBarButton: (props) => (
-            <CustomTabBarButton {...props} />
-          )
-        }}
-      />
-      <Tab.Screen
-        name="ChildrenStack"
-        component={ChildrenStack}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <View style={styles.iconContainer}>
-              <Icon name="baby-face-outline" size={30} color={focused ? '#283882' : '#92949E'} />
-              <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>아이 목록</Text>
-            </View>
-          )
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen
+          name="HomeStack"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <View style={styles.iconContainer}>
+                <Icon2 name="home" size={25} color={focused ? '#283882' : '#92949E'} />
+                <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>홈</Text>
+              </View>
+            )
+          }}
+        />
+        <Tab.Screen
+          name="ComposeStack"
+          component={ComposeStack}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <View style={styles.iconContainer}>
+                <Icon3 name="music" size={27} color="#fff" style={{right: 1}} />
+                <Text style={styles.composeButtonText}>작곡</Text>
+              </View>
+              ),
+            tabBarButton: (props) => (
+              <CustomTabBarButton {...props} />
+            )
+          }}
+        />
+        <Tab.Screen
+          name="ChildrenStack"
+          component={ChildrenStack}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <View style={styles.iconContainer}>
+                <Icon name="baby-face-outline" size={30} color={focused ? '#283882' : '#92949E'} />
+                <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>아이 목록</Text>
+              </View>
+            )
+          }}
+        />
+      </Tab.Navigator>
+    </PlaybackProvider>
   );
 }
 

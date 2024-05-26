@@ -1,10 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { IconButton, Logo } from '../components/HomeScreenHeader';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import HomeScreen from '../screens/HomeScreen';
 import PlayScreen from '../screens/play/PlayScreen';
-import LyricsScreen from '../screens/LyricsScreen';
+import LyricsScreen from '../screens/play/LyricsScreen';
 import PlaylistScreen from '../screens/play/PlaylistScreen';
 import MyScreen from '../screens/MyScreen';
 
@@ -14,12 +15,28 @@ export type RootStackParamList = {  // 더미데이터 값 직접 전달, api �
     picture: string;
     name: string;
     title: string;
+    lyrics: string;
   };
+  LyricsScreen: {
+    picture: string;
+    name: string;
+    title: string;
+    lyrics: string;
+  }
 };
 
 const Stack = createNativeStackNavigator();
 
-export default function HomeStack() {
+export default function HomeStack({navigation, route}: any) {
+  React.useLayoutEffect(() => {
+      const routeName = getFocusedRouteNameFromRoute(route);
+      if (routeName === "HomeScreen" ||  routeName === undefined) {
+        navigation.setOptions({ tabBarStyle : {display: 'flex' }});
+      } else {
+        navigation.setOptions({ tabBarStyle : {display: 'none' }});
+      }
+  }, [navigation, route]);
+
   return (
     <Stack.Navigator>
       <Stack.Screen 
