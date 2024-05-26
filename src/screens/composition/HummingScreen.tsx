@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Image, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import { PERMISSIONS, request } from 'react-native-permissions';
+import Sound from 'react-native-sound';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 export default function HummingScreen({navigation}: any) {
   const [selectedOption, setSelectedOption] = useState("file");
   const [modalVisible, setModalVisible] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sound, setSound] = useState<Sound | undefined>();
 
   const selectFile = () => {
     setSelectedOption("file");
@@ -52,6 +56,34 @@ export default function HummingScreen({navigation}: any) {
     }
   };
 
+  //음악 재생 동작
+  const playSound = () => {
+    const newSound = new Sound('lemon.mp3', Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+      setSound(newSound);
+      setIsPlaying(true);
+      newSound.play(() => {
+        newSound.release();
+        setIsPlaying(false);
+      });
+    });
+  };
+
+  const stopSound = () => {
+    console.log('Stop sound function called');
+    console.log(sound);
+    if (sound) {
+      sound.pause();
+      setIsPlaying(false);
+      sound.release();
+      setSound(undefined);
+    }
+  };
+
+
   return(
     <View style={styles.container}>
 
@@ -78,6 +110,13 @@ export default function HummingScreen({navigation}: any) {
               {/* <Image source={require("../../assets/images/plus.png") }/>
               <Text>파일 첨부</Text> */}
             </TouchableOpacity>
+            <Text style={styles.songTitleText}>Humming.mp3</Text>
+            <View style={styles.songPlayContainer}>
+              <TouchableOpacity onPress={isPlaying ? stopSound : playSound}>
+                <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
+              </TouchableOpacity>
+              <View style={styles.playBar} />
+            </View>
           </View>
         )}
         
@@ -184,6 +223,27 @@ const styles = StyleSheet.create({
   contentContainer:{
     marginTop: 15,
     height: 250,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  songTitleText:{
+    marginTop: 30,
+    fontSize: 14,
+    fontFamily: 'SCDream5',
+    color: '#000000',
+  },
+  songPlayContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 5,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  playBar: {
+    flex: 1,
+    height: 3,
+    backgroundColor: '#283882',
+    marginLeft: 10,
   },
 
 
