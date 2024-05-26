@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 24, 
     paddingTop: 5,
-    marginBottom: 50,
   },
   albums: {
     marginBottom: 20,

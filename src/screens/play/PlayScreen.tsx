@@ -47,7 +47,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
       />
-      <View style={{marginVertical: 35}}>
+      <View style={{marginVertical: 45}}>
         <PlayButtonBarContainer
           isPlaying={isPlaying}
           onPlayPress={playPress}
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 290,
-    height: 290,
+    width: 310,
+    height: 310,
     borderRadius: 5,
   },
   titleContainer:{
