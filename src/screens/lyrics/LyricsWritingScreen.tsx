@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     width: '100%',
+    height: '100%',
     backgroundColor: '#FFFFFF',
   },
   infoContainer: {
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream6',
     color: '#283882',
   },
   song: {
@@ -136,6 +137,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     borderRadius: 5,
+    fontFamily: 'SCDream4',
+    fontSize: 12,
   },
   lyricsInput: {
     height: 240,
@@ -144,6 +147,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     borderRadius: 5,
+    fontFamily: 'SCDream4',
+    fontSize: 12,
   },
   AIbutton: {
     position: 'absolute',
@@ -171,6 +176,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     textAlign: 'center',
+    fontFamily: 'SCDream5',
   },
   modalView: {
     top: '45%',

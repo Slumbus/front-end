@@ -50,11 +50,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream5',
     color: '#000',
   },
   child: {
     fontSize: 12,
+    fontFamily: 'SCDream4',
     color: '#000',
   },
   button: {

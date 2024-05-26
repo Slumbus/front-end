@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream6',
+    color: '#4A4A4A',
   },
   infoTextContainer: {
     marginTop: 5,
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    fontWeight: 'regular',
+    fontFamily: 'SCDream4',
+    color: '#4A4A4A',
   },
 });

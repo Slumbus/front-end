@@ -58,11 +58,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
   },
-  infoContainer: {
-    marginHorizontal: 35,
-    marginTop: 25,
-    marginBottom: 20,
-  },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -70,10 +65,6 @@ const styles = StyleSheet.create({
   },
   song: {
     marginTop: 25,
-  },
-  infoText: {
-    fontSize: 14,
-    fontWeight: 'regular',
   },
   songPlayContainer: {
     flexDirection: 'row',
@@ -93,8 +84,9 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 35,
     lineHeight: 25,
-    color: 'black',
+    color: '#000',
     fontSize: 12,
+    fontFamily: 'SCDream4',
   },
   recordingContainer: {
     backgroundColor: 'grey',
@@ -138,8 +130,12 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: '#283882',
+    fontFamily: 'SCDream5',
+    fontSize: 14,
   },
   ButtonText2: {
     color: '#FFFFFF',
+    fontFamily: 'SCDream5',
+    fontSize: 14,
   },
 });
