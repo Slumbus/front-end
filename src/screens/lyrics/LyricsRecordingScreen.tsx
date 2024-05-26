@@ -1,11 +1,91 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, PermissionsAndroid, Platform, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import BasicSong from '../../components/BasicSong';
 
+// 녹음 기능
+const audioRecorderPlayer = new AudioRecorderPlayer();
+
+const requestPermissions = async() => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]);
+
+      if (
+        granted['android.permission.RECORD_AUDIO'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('마이크, 저장 공간 사용 가능');
+      } else {
+        console.log('마이크 권한 거절');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+};
+
 export default function LyricsRecordingScreen({navigation}: any) {
+  // 녹음 기능
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [recordedURI, setRecordedURI] = useState('');
+  const [recordSecs, setRecordSecs] = useState(0);
+  const [recordTime, setRecordTime] = useState('00:00:00');
+  const [playTime, setPlayTime] = useState('00:00:00');
+  const [playDuration, setPlayDuration] = useState('00:00:00');
+  
+  const onStartRecord = async () => {
+    await requestPermissions();
+    setIsRecording(true);
+    const result = await audioRecorderPlayer.startRecorder();
+    audioRecorderPlayer.addRecordBackListener((e) => {
+      console.log('Recording: ', e.currentPosition);
+      setRecordSecs(e.currentPosition);
+      setRecordTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
+      return;
+    });
+    console.log(result);
+  };
+
+  const onStopRecord = async () => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
+    setRecordedURI(result);
+    setIsRecording(false);
+    setRecordSecs(0);
+    console.log(result);
+  };
+
+  const onStartPlay = async () => {
+    setIsPlaying(true);
+    const result = await audioRecorderPlayer.startPlayer(recordedURI);
+    audioRecorderPlayer.addPlayBackListener((e) => {
+      setPlayTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
+      setPlayDuration(audioRecorderPlayer.mmssss(Math.floor(e.duration)));
+      console.log('Playing: ', e.currentPosition);
+      if (e.currentPosition === e.duration) {
+        onStopPlay();
+      }
+      return;
+    });
+    console.log(result);
+  };
+
+  const onStopPlay = async () => {
+    const result = await audioRecorderPlayer.stopPlayer();
+    audioRecorderPlayer.removePlayBackListener();
+    setIsPlaying(false);
+    console.log(result);
+  };
+  
   const LyricWritingdata = [
     {
       id: 1,
@@ -31,12 +111,43 @@ export default function LyricsRecordingScreen({navigation}: any) {
       {LyricWritingdata.map((song) => (
         <Text key={song.id} style={styles.lyricsText}>{song.lyrics}</Text>
       ))}
+      
+      {/* 녹음 기능 */}
       <View style={styles.recordingContainer}>
-        <Text>녹음</Text>
+        <View style={styles.timeContainer}>
+          <Text style={styles.timerText}>녹음 시간: {recordTime}</Text>
+        </View>
+        {recordedURI ? (
+          <View style={styles.playContainer}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={isPlaying ? onStopPlay : onStartPlay}
+            >
+              <Icon
+                name={isPlaying ? "stop" : "play"}
+                size={30}
+                color={isPlaying ? "#000" : "#283882"}
+                style={{top: 3}}
+              />
+              <Text style={styles.timerText}>{playTime} / {playDuration}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </View>
-      <TouchableOpacity style={styles.recordingButton}>
-        <Icon2 name="record-circle-outline" size={50} color="red" onPress={() => console.log("녹음 시작")} />
-      </TouchableOpacity>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.recordingButton}
+          onPress={isRecording ? onStopRecord : onStartRecord}
+        >
+          <Icon2
+            name={isRecording ? "record-circle" : "record-circle-outline"}
+            size={50}
+            color={isRecording ? "darkred" : "red"}
+          />
+        </TouchableOpacity>
+      </View>
+      
       <View style={styles.ButtonsContainer}>
         <TouchableOpacity style={styles.Button1}>
           <Text style={styles.ButtonText}>재생</Text>
@@ -57,11 +168,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '100%',
     backgroundColor: '#FFFFFF',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#283882',
+    marginBottom: 50,
   },
   song: {
     marginTop: 25,
@@ -89,12 +196,17 @@ const styles = StyleSheet.create({
     fontFamily: 'SCDream4',
   },
   recordingContainer: {
-    backgroundColor: 'grey',
+    backgroundColor: '#E4E4E4',
     height: 170,
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    alignItems: 'center',
   },
   recordingButton: {
     marginVertical: 10,
     alignItems: 'center',
+    width: 50,
   },
   ButtonsContainer: {
     flexDirection: 'row',
@@ -137,5 +249,31 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'SCDream5',
     fontSize: 14,
+  },
+  timeContainer: {
+    margin: 10,
+    alignItems: 'center',
+  },
+  playContainer: {
+    margin: 10,
+  },
+  iconButton: {
+    backgroundColor: '#fff',
+    borderRadius: 50,
+    padding: 15,
+    marginHorizontal: 25,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    flexDirection: 'row',
+  },
+  timerText: {
+    fontSize: 14,
+    fontFamily: 'SCDream4',
+    marginVertical: 10,
+    color: '#000',
+    marginHorizontal: 10,
   },
 });
