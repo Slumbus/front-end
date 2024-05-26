@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'rea
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function LyricsRecordingScreen() {
+export default function SongCompletion() {
   const SongCompletionData = [
     {
       id: 1,

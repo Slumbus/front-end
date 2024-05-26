@@ -4,11 +4,12 @@ import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import BasicSong from '../../components/BasicSong';
+import LyricsSaveModal from '../../components/modal/LyricsSaveModal';
 
 export default function LyricWriting({navigation}: any) {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
 
   const LyricWritingdata = [
     {
@@ -20,9 +21,9 @@ export default function LyricWriting({navigation}: any) {
     },
   ];
 
-  const handleSave = () => {
-    setModalVisible(true);
-  };
+  // const handleSave = () => {
+  //   setModalVisible(true);
+  // };
   
   return (
     <View style={styles.container}>
@@ -61,13 +62,14 @@ export default function LyricWriting({navigation}: any) {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={() => setModalVisible(true)}>
-            <Text style={styles.saveText}>저장</Text>
+          <TouchableOpacity style={styles.saveButton}>
+            {/* <Text style={styles.saveText}>저장</Text> */}
+            <LyricsSaveModal navigation={navigation} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <Modal
+      {/* <Modal
         animationType='fade'
         transparent={true}
         visible={modalVisible}
@@ -82,7 +84,7 @@ export default function LyricWriting({navigation}: any) {
             <Text style={styles.modalButtonText}>이대로 저장하기</Text>
           </TouchableOpacity>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }
