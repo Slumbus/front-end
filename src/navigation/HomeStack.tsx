@@ -9,20 +9,35 @@ import LyricsScreen from '../screens/play/LyricsScreen';
 import PlaylistScreen from '../screens/play/PlaylistScreen';
 import MyScreen from '../screens/MyScreen';
 
+interface Music {
+  title: string;
+  picture: string;
+  lyrics: string;
+}
+
+interface Album {
+  picture: string;
+  name: string;
+  albumname: string;
+  Music: Music[];
+}
+
 export type RootStackParamList = {  // 더미데이터 값 직접 전달, api 연결 시 수정
   HomeScreen: undefined;
   PlayScreen: {
-    picture: string;
-    name: string;
-    title: string;
-    lyrics: string;
+    album: Album;
+    song: Music;
   };
   LyricsScreen: {
     picture: string;
     name: string;
     title: string;
     lyrics: string;
-  }
+  };
+  PlaylistScreen: {
+    album: Album;
+    song: Music;
+  };
 };
 
 const Stack = createNativeStackNavigator();

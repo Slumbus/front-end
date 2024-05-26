@@ -93,10 +93,8 @@ export default function HomeScreen({navigation}: any) {
                 imageSource={{ uri: song.picture}} 
                 text={song.title} 
                 onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-                  picture: song.picture,
-                  name: album.name,
-                  title: song.title,
-                  lyrics: song.lyrics,
+                  album: album,
+                  song: song,
                 })} />
               ))}
             </View>
