@@ -15,7 +15,14 @@ export type RootStackParamList = {  // 더미데이터 값 직접 전달, api �
     picture: string;
     name: string;
     title: string;
+    lyrics: string;
   };
+  LyricsScreen: {
+    picture: string;
+    name: string;
+    title: string;
+    lyrics: string;
+  }
 };
 
 const Stack = createNativeStackNavigator();

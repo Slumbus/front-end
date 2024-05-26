@@ -17,7 +17,7 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
-  const { picture, name, title } = route.params;
+  const { picture, name, title, lyrics } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
@@ -59,7 +59,16 @@ const PlayScreen: React.FC = ({navigation}: any) => {
       </View>
       <View style={styles.IconButtonContainer}>
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={() => navigation.navigate('PlaylistScreen')} />
-        <IconButton IconLibrary="MaterialIcons" IconName="lyrics" text="가사" onPress={() => navigation.navigate('LyricsScreen')} />
+        <IconButton 
+          IconLibrary="MaterialIcons"
+          IconName="lyrics"
+          text="가사"
+          onPress={() => navigation.navigate('LyricsScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+            picture: picture,
+            name: name,
+            title: title,
+            lyrics: lyrics,
+          })}/>
         <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
         <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
@@ -99,7 +108,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 20,
     color: '#000',
-    fontWeight: 'bold',
     fontFamily: 'SCDream5',
   },
   text: {
