@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'reac
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import BasicSong from '../components/BasicSong';
+import BasicSong from '../../components/BasicSong';
 
 export default function LyricWriting() {
   const [prompt, setPrompt] = useState('');

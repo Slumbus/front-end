@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-import LyricSong from '../components/LyricSong';
+import LyricSong from '../../components/LyricSong';
 
 export default function SelectLyricWritingList() {
   const SelectLyricWritingdata = [

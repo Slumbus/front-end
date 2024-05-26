@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-nati
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import BasicSong from '../components/BasicSong';
+import BasicSong from '../../components/BasicSong';
 
 export default function LyricsRecordingScreen() {
   const LyricWritingdata = [
@@ -29,7 +29,7 @@ export default function LyricsRecordingScreen() {
         <View style={styles.playBar} />
       </View>
       {LyricWritingdata.map((song) => (
-        <Text style={styles.lyricsText}>{song.lyrics}</Text>
+        <Text key={song.id} style={styles.lyricsText}>{song.lyrics}</Text>
       ))}
       <View style={styles.recordingContainer}>
         <Text>녹음</Text>
