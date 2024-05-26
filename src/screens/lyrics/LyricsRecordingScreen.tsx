@@ -5,7 +5,7 @@ import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BasicSong from '../../components/BasicSong';
 
-export default function LyricsRecordingScreen() {
+export default function LyricsRecordingScreen({navigation}: any) {
   const LyricWritingdata = [
     {
       id: 1,
@@ -44,7 +44,7 @@ export default function LyricsRecordingScreen() {
         <TouchableOpacity style={styles.Button2}>
           <Text style={styles.ButtonText}>다시 녹음하기</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.Button3}>
+        <TouchableOpacity style={styles.Button3} onPress={() => navigation.navigate('CompositionScreen')}>
           <Text style={styles.ButtonText2}>저장</Text>
         </TouchableOpacity>
       </View>

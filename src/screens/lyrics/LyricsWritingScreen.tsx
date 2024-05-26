@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import BasicSong from '../../components/BasicSong';
 
-export default function LyricWriting() {
+export default function LyricWriting({navigation}: any) {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -75,7 +75,7 @@ export default function LyricWriting() {
           setModalVisible(false);
         }}>
         <View style={styles.modalView}>
-          <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+          <TouchableOpacity style={styles.modalButton} onPress={() => navigation.navigate('LyricsRecordingScreen')}>
             <Text style={styles.modalButtonText}>가사 녹음하러 가기</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>

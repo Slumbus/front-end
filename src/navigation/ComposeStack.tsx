@@ -4,10 +4,10 @@ import ChildSelectScreen from "../screens/composition/ChildSelectScreen";
 import HummingScreen from "../screens/composition/HummingScreen";
 import MelodySaveScreen from "../screens/composition/MelodySaveScreen";
 import MoodSelectScreen from "../screens/composition/MoodSelectScreen";
-import LyricWriting from '../screens/LyricWriting';
-import SelectLyricWritingList from '../screens/SelectLyricWritingList';
-import LyricsRecordingScreen from '../screens/LyricsRecordingScreen';
-import LyricsScreen from '../screens/LyricsScreen';
+import LyricWriting from '../screens/lyrics/LyricsWritingScreen';
+import SelectLyricWritingList from '../screens/lyrics/SelectLyricWritingListScreen';
+import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
+import SongCompletion from '../screens/SongCompletionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -86,8 +86,8 @@ export default function HomeStack() {
           headerTitleAlign: 'center'}}
       />
       <Stack.Screen 
-        name="LyricsScreen" 
-        component={LyricsScreen}
+        name="CompositionScreen" 
+        component={SongCompletion}
         options={{
           title: "완성",
           headerTitleStyle: {
