@@ -3,12 +3,13 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'reac
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import BasicSong from '../components/BasicSong';
+import BasicSong from '../../components/BasicSong';
+import LyricsSaveModal from '../../components/modal/LyricsSaveModal';
 
-export default function LyricWriting() {
+export default function LyricWriting({navigation}: any) {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
 
   const LyricWritingdata = [
     {
@@ -20,9 +21,9 @@ export default function LyricWriting() {
     },
   ];
 
-  const handleSave = () => {
-    setModalVisible(true);
-  };
+  // const handleSave = () => {
+  //   setModalVisible(true);
+  // };
   
   return (
     <View style={styles.container}>
@@ -61,13 +62,14 @@ export default function LyricWriting() {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={() => setModalVisible(true)}>
-            <Text style={styles.saveText}>저장</Text>
+          <TouchableOpacity style={styles.saveButton}>
+            {/* <Text style={styles.saveText}>저장</Text> */}
+            <LyricsSaveModal navigation={navigation} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <Modal
+      {/* <Modal
         animationType='fade'
         transparent={true}
         visible={modalVisible}
@@ -75,14 +77,14 @@ export default function LyricWriting() {
           setModalVisible(false);
         }}>
         <View style={styles.modalView}>
-          <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+          <TouchableOpacity style={styles.modalButton} onPress={() => navigation.navigate('LyricsRecordingScreen')}>
             <Text style={styles.modalButtonText}>가사 녹음하러 가기</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
             <Text style={styles.modalButtonText}>이대로 저장하기</Text>
           </TouchableOpacity>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }
@@ -91,6 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     width: '100%',
+    height: '100%',
     backgroundColor: '#FFFFFF',
   },
   infoContainer: {
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream6',
     color: '#283882',
   },
   song: {
@@ -136,6 +139,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     borderRadius: 5,
+    fontFamily: 'SCDream4',
+    fontSize: 12,
   },
   lyricsInput: {
     height: 240,
@@ -144,6 +149,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     borderRadius: 5,
+    fontFamily: 'SCDream4',
+    fontSize: 12,
   },
   AIbutton: {
     position: 'absolute',
@@ -171,6 +178,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     textAlign: 'center',
+    fontFamily: 'SCDream5',
   },
   modalView: {
     top: '45%',

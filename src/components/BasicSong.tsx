@@ -44,12 +44,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream5',
     color: '#000',
   },
   child: {
     fontSize: 12,
     color: '#000',
+    fontFamily: 'SCDream4',
   },
 });
 

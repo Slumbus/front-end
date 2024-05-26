@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'rea
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function LyricsRecordingScreen() {
+export default function SongCompletion() {
   const SongCompletionData = [
     {
       id: 1,
@@ -55,15 +55,16 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   titleText: {
-    color: 'black',
+    color: '#000',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream5',
     marginHorizontal: 35,
     marginTop: 25,
   },
   childText: {
-    color: 'black',
+    color: '#000',
     fontSize: 14,
+    fontFamily: 'SCDream4',
     marginHorizontal: 35,
   },
   lyricsText: {
@@ -71,8 +72,9 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 35,
     lineHeight: 25,
-    color: 'black',
+    color: '#000',
     fontSize: 12,
+    fontFamily: 'SCDream4',
     textAlign: 'center',
   },
   songPlayContainer: {
@@ -105,5 +107,6 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: '#FFFFFF',
+    fontFamily: 'SCDream5',
   },
 });
