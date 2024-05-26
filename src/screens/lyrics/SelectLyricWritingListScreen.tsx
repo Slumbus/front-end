@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-import LyricSong from '../components/LyricSong';
+import LyricSong from '../../components/LyricSong';
 
 export default function SelectLyricWritingList() {
   const SelectLyricWritingdata = [
@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'SCDream6',
+    color: '#4A4A4A',
   },
   infoTextContainer: {
     marginTop: 5,
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    fontWeight: 'regular',
+    fontFamily: 'SCDream4',
+    color: '#4A4A4A',
   },
 });

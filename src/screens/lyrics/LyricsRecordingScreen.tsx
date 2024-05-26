@@ -3,9 +3,9 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-nati
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import BasicSong from '../components/BasicSong';
+import BasicSong from '../../components/BasicSong';
 
-export default function LyricsRecordingScreen() {
+export default function LyricsRecordingScreen({navigation}: any) {
   const LyricWritingdata = [
     {
       id: 1,
@@ -29,7 +29,7 @@ export default function LyricsRecordingScreen() {
         <View style={styles.playBar} />
       </View>
       {LyricWritingdata.map((song) => (
-        <Text style={styles.lyricsText}>{song.lyrics}</Text>
+        <Text key={song.id} style={styles.lyricsText}>{song.lyrics}</Text>
       ))}
       <View style={styles.recordingContainer}>
         <Text>녹음</Text>
@@ -44,7 +44,7 @@ export default function LyricsRecordingScreen() {
         <TouchableOpacity style={styles.Button2}>
           <Text style={styles.ButtonText}>다시 녹음하기</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.Button3}>
+        <TouchableOpacity style={styles.Button3} onPress={() => navigation.navigate('CompositionScreen')}>
           <Text style={styles.ButtonText2}>저장</Text>
         </TouchableOpacity>
       </View>
@@ -58,11 +58,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
   },
-  infoContainer: {
-    marginHorizontal: 35,
-    marginTop: 25,
-    marginBottom: 20,
-  },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -70,10 +65,6 @@ const styles = StyleSheet.create({
   },
   song: {
     marginTop: 25,
-  },
-  infoText: {
-    fontSize: 14,
-    fontWeight: 'regular',
   },
   songPlayContainer: {
     flexDirection: 'row',
@@ -93,8 +84,9 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 35,
     lineHeight: 25,
-    color: 'black',
+    color: '#000',
     fontSize: 12,
+    fontFamily: 'SCDream4',
   },
   recordingContainer: {
     backgroundColor: 'grey',
@@ -138,8 +130,12 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: '#283882',
+    fontFamily: 'SCDream5',
+    fontSize: 14,
   },
   ButtonText2: {
     color: '#FFFFFF',
+    fontFamily: 'SCDream5',
+    fontSize: 14,
   },
 });
