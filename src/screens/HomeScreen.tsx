@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
@@ -73,24 +72,26 @@ export default function HomeScreen({navigation}: any) {
 
   return (
     <ScrollView style={styles.container}>
-      {ChildrenAlbumdata.map((album) => (
-        <View key={album.albumname}>
-          <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
-          <View style={styles.jackets}>
-            {album.Music.map((song) => (
-              <AlbumJacket 
-              key={song.title} 
-              imageSource={{ uri: song.picture}} 
-              text={song.title} 
-              onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-                picture: song.picture,
-                name: album.name,
-                title: song.title
-              })} />
-            ))}
+      <View style={styles.albums}>
+        {ChildrenAlbumdata.map((album) => (
+          <View key={album.albumname}>
+            <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
+            <View style={styles.jackets}>
+              {album.Music.map((song) => (
+                <AlbumJacket 
+                key={song.title} 
+                imageSource={{ uri: song.picture}} 
+                text={song.title} 
+                onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+                  picture: song.picture,
+                  name: album.name,
+                  title: song.title
+                })} />
+              ))}
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </View>
     </ScrollView>
   );
 }
@@ -101,6 +102,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 24, 
     paddingTop: 5,
+    marginBottom: 50,
+  },
+  albums: {
+    marginBottom: 20,
   },
   jackets: {
     flexDirection: 'row',
