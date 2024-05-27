@@ -17,7 +17,7 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
-  const { picture, name, title, lyrics } = route.params;
+  const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
@@ -38,9 +38,9 @@ const PlayScreen: React.FC = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Image source={{uri:picture}} style={styles.image} />
-        <Text style={styles.titleText}>{title}</Text>
-        <Text style={styles.text}>{name}</Text>
+        <Image source={{uri:song.picture}} style={styles.image} />
+        <Text style={styles.titleText}>{song.title}</Text>
+        <Text style={styles.text}>{album.name}</Text>
       </View>
       <SliderComponent //고정 값 추후 수정
         playbackPosition={playbackPosition}
@@ -58,16 +58,23 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         />
       </View>
       <View style={styles.IconButtonContainer}>
-        <IconButton IconLibrary="MaterialCommunityIcons" IconName="playlist-music" text="재생목록" onPress={() => navigation.navigate('PlaylistScreen')} />
+        <IconButton
+          IconLibrary="MaterialCommunityIcons"
+          IconName="playlist-music"
+          text="재생목록"
+          onPress={() => navigation.navigate('PlaylistScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+            album: album,
+            song: song,
+          })} />
         <IconButton 
           IconLibrary="MaterialIcons"
           IconName="lyrics"
           text="가사"
           onPress={() => navigation.navigate('LyricsScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-            picture: picture,
-            name: name,
-            title: title,
-            lyrics: lyrics,
+            picture: song.picture,
+            name: album.name,
+            title: song.title,
+            lyrics: song.lyrics,
           })}/>
         <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
