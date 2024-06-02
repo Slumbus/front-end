@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 30,
+    height: 535,
   },
   playbackBar: {
-    position: 'absolute',
     bottom: 10,
     paddingHorizontal: 20,
   },
