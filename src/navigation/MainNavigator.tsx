@@ -34,6 +34,7 @@ export default function MainNavigator({navigation}) {
           name="HomeStack"
           component={HomeStack}
           options={{
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <View style={styles.iconContainer}>
                 <Icon2 name="home" size={25} color={focused ? '#283882' : '#92949E'} />
@@ -46,6 +47,7 @@ export default function MainNavigator({navigation}) {
           name="ComposeStack"
           component={ComposeStack}
           options={{
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <View style={styles.iconContainer}>
                 <Icon3 name="music" size={27} color="#fff" style={{right: 1}} />
@@ -61,6 +63,7 @@ export default function MainNavigator({navigation}) {
           name="ChildrenStack"
           component={ChildrenStack}
           options={{
+            unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <View style={styles.iconContainer}>
                 <Icon name="baby-face-outline" size={30} color={focused ? '#283882' : '#92949E'} />
