@@ -41,6 +41,7 @@ export default function PlaylistScreen() {
     <View style={styles.container}>
       <Text style={styles.albumTitleText}>{album.albumname}</Text>
       <DraggableFlatList
+        style={styles.listContainer}
         data={musicList}
         onDragEnd={({ data }) => setMusicList(data)}
         keyExtractor={(item) => item.title}
@@ -73,6 +74,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 30,
     marginBottom: 10,
+  },
+  listContainer: {
+    paddingHorizontal: 30,
   },
   playbackBar: {
     position: 'absolute',

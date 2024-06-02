@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Music {
   title: string;
@@ -17,12 +18,18 @@ interface MusicItemProps {
 const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress }) => {
   return (
     <TouchableOpacity onLongPress={onLongPress} style={styles.container}>
-      <Animatable.Image
-        animation={isPlaying ? "pulse" : undefined}
-        iterationCount="infinite"
-        source={{ uri: song.picture }}
-        style={[styles.image, isPlaying && styles.playingImage]}
-      />
+    <View style={styles.imageContainer}>
+      <Image source={{ uri: song.picture }} style={[styles.image, isPlaying && styles.playingImage]} />
+      {isPlaying && (
+          <Animatable.View 
+            animation="tada" 
+            iterationCount="infinite" 
+            style={styles.playingIconContainer}
+          >
+            <Icon name="music-note" size={25} color="#283882" />
+          </Animatable.View>
+        )}
+    </View>
       <Text style={[styles.text, isPlaying && styles.playingText]}>{song.title}</Text>
     </TouchableOpacity>
   );
@@ -30,9 +37,12 @@ const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress }) =
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    marginVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  imageContainer: {
+    position: 'relative',
   },
   image: {
     width: 50,
@@ -43,12 +53,21 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   playingImage: {
-    borderColor: '#283882',
-    borderWidth: 2,
+    opacity: 0.6,
+  },
+  playingIconContainer:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     marginLeft: 10,
     fontSize: 14,
+    color: '#000',
     fontFamily: 'SCDream5',
   },
   playingText: {
