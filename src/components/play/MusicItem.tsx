@@ -17,27 +17,39 @@ interface MusicItemProps {
 
 const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress }) => {
   return (
-    <TouchableOpacity onLongPress={onLongPress} style={styles.container}>
-    <View style={styles.imageContainer}>
-      <Image source={{ uri: song.picture }} style={[styles.image, isPlaying && styles.playingImage]} />
-      {isPlaying && (
-          <Animatable.View 
-            animation="tada" 
-            iterationCount="infinite" 
-            style={styles.playingIconContainer}
-          >
-            <Icon name="music-note" size={25} color="#283882" />
-          </Animatable.View>
-        )}
-    </View>
-      <Text style={[styles.text, isPlaying && styles.playingText]}>{song.title}</Text>
+    <TouchableOpacity onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
+      <View style={styles.albumContainer}>
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: song.picture }} style={[styles.image, isPlaying && styles.playingImage]} />
+          {isPlaying && (
+              <Animatable.View 
+                animation="tada"
+                iterationCount="infinite" 
+                style={styles.playingIconContainer}
+              >
+                <Icon name="music-note" size={25} color="#283882" />
+              </Animatable.View>
+            )}
+        </View>
+        <Text style={[styles.text, isPlaying && styles.playingText]}>{song.title}</Text>
+      </View>
+      <Icon name="menu" size={30} color="#283882"/>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  playingContainer: {
+    backgroundColor: '#C6DDF7',
+    borderRadius: 10,
+  },
+  albumContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
