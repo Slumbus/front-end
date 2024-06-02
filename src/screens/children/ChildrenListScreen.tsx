@@ -42,9 +42,9 @@ const childrenData: Child[] = [
 export default function ChildrenListScreen({navigation}: any) {
   // FlatList에서 각 아이를 렌더링하는 함수
   const renderItem = ({ item }: ListRenderItemInfo<Child>) => (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate('ChildrenInfoPlaylist', { child: item })}>
       <View style={styles.childInfoContainer}>
-      <Image source={{uri: item.image}} style={styles.childImage} />
+        <Image source={{ uri: item.image }} style={styles.childImage} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.birth}>{item.birthdate}</Text>
@@ -55,11 +55,11 @@ export default function ChildrenListScreen({navigation}: any) {
         data={item.photoList}
         horizontal
         renderItem={({ item }) => (
-          <Image source={{uri: item}} style={styles.photo} />
+          <Image source={{ uri: item }} style={styles.photo} />
         )}
         keyExtractor={(item, index) => index.toString()}
       />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
