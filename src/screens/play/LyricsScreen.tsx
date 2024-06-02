@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
   playbackBar: {
-    position: 'absolute',
     bottom: 10,
     paddingHorizontal: 20,
   },
