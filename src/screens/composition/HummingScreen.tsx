@@ -4,18 +4,37 @@ import DocumentPicker from 'react-native-document-picker';
 import { PERMISSIONS, request } from 'react-native-permissions';
 import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import Slider from '@react-native-community/slider';
+import RNFetchBlob from 'rn-fetch-blob';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 
 export default function HummingScreen({navigation}: any) {
   const [selectedOption, setSelectedOption] = useState("file");
   const [modalVisible, setModalVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Sound | undefined>();
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
   const selectFile = () => {
     setSelectedOption("file");
     setModalVisible(true);
   };
+
+  // 파일 경로 변환 (캐쉬에 저장)
+  const getResolvedPath = async (uri: any) => {
+    console.log("인수: "+ uri)
+    const fileBase64 = await ReactNativeBlobUtil.fs.readFile(uri, "base64")
+    const path = `${ReactNativeBlobUtil.fs.dirs.CacheDir}/${Date.now()}.mp3`
+
+    await ReactNativeBlobUtil.fs.writeFile(path, fileBase64, "base64")
+    const tempFileInfo = await ReactNativeBlobUtil.fs.stat(path)
+    console.log("여기")
+    console.log(`file://${tempFileInfo.path}`);
+    return `file://${tempFileInfo.path}`
+  }
 
   //파일 접근 권한 얻기
   useEffect(() => {
@@ -44,9 +63,20 @@ export default function HummingScreen({navigation}: any) {
   const handleFilePicker = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.audio],
       });
       console.log(res);
+      if (res.length > 0) { // 파일 변수에 저장
+        const uri = res[0].uri;
+        console.log("경로"+res[0].uri);
+        const filePath = await getResolvedPath(uri); // 파일 경로 변환 함수 호출
+        console.log(filePath);
+        setSelectedFile(filePath);
+        // setSelectedFile(res[0].uri);
+        setSelectedFileName(res[0].name); //파일명
+        setModalVisible(false);
+
+      }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('Canceled');
@@ -58,29 +88,86 @@ export default function HummingScreen({navigation}: any) {
 
   //음악 재생 동작
   const playSound = () => {
-    const newSound = new Sound('lemon.mp3', Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log('failed to load the sound', error);
-        return;
-      }
-      setSound(newSound);
-      setIsPlaying(true);
-      newSound.play(() => {
-        newSound.release();
+    if (sound) {
+      sound.play(success => {
+        if (success) {
+          console.log('음악 재생 성공');
+        } else {
+          console.log('음악 재생 실패');
+        }
         setIsPlaying(false);
+        setPosition(0);
       });
-    });
+      setIsPlaying(true);
+    } else {
+      const newSound = new Sound(selectedFile, '', error => {
+        if (error) {
+          console.log('음악 불러오기 실패', error);
+          return;
+        }
+        setSound(newSound);
+        setDuration(newSound.getDuration());
+        setIsPlaying(true);
+        newSound.play(success => {
+          if (success) {
+            console.log('음악 재생 성공');
+          } else {
+            console.log('음악 재생 실패');
+          }
+          setIsPlaying(false);
+          setPosition(0);
+        });
+      });
+    }
   };
 
+
+  //음악 정지
   const stopSound = () => {
-    console.log('Stop sound function called');
-    console.log(sound);
     if (sound) {
-      sound.pause();
+      sound.pause(() => {
+        sound.getCurrentTime(seconds => {
+          setPosition(seconds);
+        });
+      });
       setIsPlaying(false);
-      sound.release();
-      setSound(undefined);
     }
+  };
+
+  // Update position regularly
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
+  
+    if (isPlaying) {
+      interval = setInterval(() => {
+        sound?.getCurrentTime(seconds => {
+          setPosition(seconds);
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) {  // interval이 정의된 경우에만 clearInterval 호출
+        clearInterval(interval);
+      }
+    };
+  }, [isPlaying]);
+
+  //해당 스크린 벗어나면 음악 정지
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+      }
+    };
+  }, [sound]);
+
+  // 음악 분, 초로 변경
+  const formatTime = (seconds: number) => {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return `${min}:${sec < 10 ? '0' : ''}${sec}`;
   };
 
 
@@ -105,19 +192,39 @@ export default function HummingScreen({navigation}: any) {
       </View>
 
       {selectedOption === 'file' && (
-          <View style={styles.contentContainer}>
+        <View style={styles.contentContainer}>
+          <View style={styles.playbarContainer}>
             <TouchableOpacity>
               {/* <Image source={require("../../assets/images/plus.png") }/>
               <Text>파일 첨부</Text> */}
             </TouchableOpacity>
-            <Text style={styles.songTitleText}>Humming.mp3</Text>
+            <Text style={styles.songTitleText}>{selectedFile ? selectedFileName: '선택된 파일이 없습니다.'}</Text>
             <View style={styles.songPlayContainer}>
               <TouchableOpacity onPress={isPlaying ? stopSound : playSound}>
                 <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
               </TouchableOpacity>
-              <View style={styles.playBar} />
+              {/* <View style={styles.playBar} /> */}
+              <Slider
+                style={styles.playBar}
+                value={position}
+                minimumValue={0}
+                maximumValue={duration}
+                minimumTrackTintColor="#283882"
+                maximumTrackTintColor="#D9D9D9"
+                onSlidingComplete={(value) => {
+                  if (sound) {
+                    sound.setCurrentTime(value);
+                    setPosition(value);
+                  }
+                }}
+              />
             </View>
           </View>
+          <View style={styles.songTimeContainer}>
+            <Text style={[styles.songTimeText, {marginLeft: 50, marginRight: 200,}]}>{formatTime(position)}</Text>
+            <Text style={styles.songTimeText}>{formatTime(duration)}</Text>
+          </View>
+        </View>
         )}
         
         {selectedOption === 'record' && (
@@ -126,7 +233,7 @@ export default function HummingScreen({navigation}: any) {
           </View>
         )}
 
-      <TouchableOpacity style={styles.selectBtn} onPress={() => navigation.navigate('MoodSelectScreen')}>
+      <TouchableOpacity style={styles.selectBtn} onPress={() => {stopSound(); navigation.navigate('MoodSelectScreen')}}>
         <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
       </TouchableOpacity>
 
@@ -224,6 +331,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
     height: 250,
     flexDirection: 'column',
+  },
+  playbarContainer:{
+    justifyContent: 'center',
     alignItems: 'center',
   },
   songTitleText:{
@@ -241,9 +351,16 @@ const styles = StyleSheet.create({
   },
   playBar: {
     flex: 1,
-    height: 3,
-    backgroundColor: '#283882',
-    marginLeft: 10,
+  },
+  songTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  songTimeText: {
+    fontSize: 12,
+    fontFamily: 'SCDream4',
+    color: '#000000',
   },
 
 
