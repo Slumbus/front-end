@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
+import BottomPlayer from '../components/BottomPlayer';
 
 export default function HomeScreen({navigation}: any) {
 
@@ -81,27 +82,37 @@ export default function HomeScreen({navigation}: any) {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.albums}>
-        {ChildrenAlbumdata.map((album) => (
-          <View key={album.albumname}>
-            <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
-            <View style={styles.jackets}>
-              {album.Music.map((song) => (
-                <AlbumJacket 
-                key={song.title} 
-                imageSource={{ uri: song.picture}} 
-                text={song.title} 
-                onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-                  album: album,
-                  song: song,
-                })} />
-              ))}
+    <View style={styles.container}>
+      <ScrollView>
+        <View style={styles.albums}>
+          {ChildrenAlbumdata.map((album) => (
+            <View key={album.albumname}>
+              <AlbumTitleText imageSource={{ uri: album.picture}} text1= {album.name} text2={album.albumname} />
+              <View style={styles.jackets}>
+                {album.Music.map((song) => (
+                  <AlbumJacket 
+                  key={song.title} 
+                  imageSource={{ uri: song.picture}} 
+                  text={song.title} 
+                  onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+                    album: album,
+                    song: song,
+                  })} />
+                ))}
+              </View>
             </View>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+          ))}
+        </View>
+      </ScrollView>
+      <BottomPlayer 
+        song={ChildrenAlbumdata[0].Music[0]}
+        onPress={()=>navigation.navigate('PlayScreen', { // 고정 값 직접 전달, api 연결 시 수정
+          album: ChildrenAlbumdata[0].albumname,
+          song: ChildrenAlbumdata[0].Music[0]})} 
+        listPress={()=>navigation.navigate('PlaylistScreen', { // 고정 값 직접 전달, api 연결 시 수정
+          album: ChildrenAlbumdata[0],
+          song: ChildrenAlbumdata[0].Music[0]})} />
+    </View>
   );
 }
 
