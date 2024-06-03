@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import {View, Text, StyleSheet, Image, TextInput, TouchableOpacity} from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 export default function ChildrenRegisterScreen() {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
   const [gender, setGender] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleDateChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
     const currentDate = selectedDate || birthdate;
@@ -16,16 +18,27 @@ export default function ChildrenRegisterScreen() {
     }
   };
 
+  const handleImagePicker = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.assets && response.assets.length > 0) {
+        const imageUri = response.assets[0].uri;
+        if (imageUri) {
+          setSelectedImage(imageUri);
+        }
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.centerContainer}>
-        <View style={styles.imageView}>
-          <Image
-            source={require('../../assets/images/ic_add_image_white.png')}
-            style={styles.imageIc}
-            resizeMode="contain"
-          />
-        </View>
+        <TouchableOpacity style={styles.imageView} onPress={handleImagePicker}>
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage }} style={styles.selectedImage} resizeMode="cover" />
+          ) : (
+            <Image source={require('../../assets/images/ic_add_image_white.png')} style={styles.imageIc} resizeMode="contain" />
+          )}
+        </TouchableOpacity>
       </View>
       <View style={styles.nameContainer}>
         <Text style={styles.text}>이름(태명)</Text>
@@ -119,7 +132,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 35
+    marginBottom: 35,
+    overflow: 'hidden',
+  },
+  selectedImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   imageIc: {
     width: 56,

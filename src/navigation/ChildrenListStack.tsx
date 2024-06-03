@@ -2,9 +2,9 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChildrenListScreen from '../screens/children/ChildrenListScreen';
 import ChildrenRegisterScreen from '../screens/children/ChildrenRegisterScreen';
-import ChildrenInfoPlaylistScreen from '../screens/ChildrenInfoPlaylistScreen';
-import ChildrenInfoReactionRegisterScreen from '../screens/ChildrenInfoReactionRegisterScreen';
-import ChildrenInfoReactionScreen from '../screens/ChildrenInfoReactionScreen';
+import ChildrenInfoPlaylistScreen from '../screens/children/ChildrenInfoPlaylistScreen';
+import ChildrenInfoReactionRegisterScreen from '../screens/children/ChildrenInfoReactionRegisterScreen';
+import ChildrenInfoReactionScreen from '../screens/children/ChildrenInfoReactionScreen';
 
 const Stack = createNativeStackNavigator();
 
