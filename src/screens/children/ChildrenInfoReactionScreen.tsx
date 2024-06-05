@@ -21,7 +21,7 @@ const getReactionImage = (reactionLevel: number) => {
 };
 
 export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
-  const { title, data } = route.params;
+  const { title, data, selectedSongData } = route.params;
 
   return (
     <View style={styles.container}>
@@ -45,7 +45,7 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenInfoReactionRegister')}>
+      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenInfoReactionRegister', { songData: selectedSongData })}>
           <Image source={require('../../assets/images/ic_add_white.png')} style={styles.floatingIc} />
       </TouchableOpacity>
     </View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#283882',
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: 90,
+    bottom: 55,
     right: 16,
   },
   floatingIc: {

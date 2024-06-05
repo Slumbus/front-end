@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#283882',
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: 90,
+    bottom: 55,
     right: 16,
   },
   floatingIc: {
