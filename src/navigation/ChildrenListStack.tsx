@@ -5,10 +5,20 @@ import ChildrenRegisterScreen from '../screens/children/ChildrenRegisterScreen';
 import ChildrenInfoPlaylistScreen from '../screens/children/ChildrenInfoPlaylistScreen';
 import ChildrenInfoReactionRegisterScreen from '../screens/children/ChildrenInfoReactionRegisterScreen';
 import ChildrenInfoReactionScreen from '../screens/children/ChildrenInfoReactionScreen';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
-export default function HomeStack() {
+export default function HomeStack({navigation, route}: any) {
+  React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    if (routeName === "ChildrenList" ||  routeName === "ChildrenInfoPlaylist" || routeName === undefined) {
+      navigation.setOptions({ tabBarStyle : {display: 'flex' }});
+    } else {
+      navigation.setOptions({ tabBarStyle : {display: 'none' }});
+    }
+}, [navigation, route]);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -37,11 +47,7 @@ export default function HomeStack() {
         name="ChildrenInfoPlaylist"
         component={ChildrenInfoPlaylistScreen}
         options={{
-          title: '아이 상세',
-          headerTitleStyle: {
-            fontFamily: 'SCDream5',
-          },
-          headerTitleAlign: 'center',
+          title: '',
         }}
       />
       <Stack.Screen

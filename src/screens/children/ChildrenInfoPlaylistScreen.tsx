@@ -1,49 +1,70 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
 import PlayButton from '../../components/button/PlayButton';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const SongData = [
   {
     id: 1,
     picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
     title: "완전 취침",
+    owner: "사랑이"
   },
   {
     id: 2,
     picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
     title: "Goodnight",
-  },
+    owner: "사랑이"
+  }
 ];
 
 const lullabiesData = [
   {
     title: "완전 취침",
-    imageUrl: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
+    reactionLevel: 1,
     reactionText: "자장가를 틀자마자 금새 잠이 들었다",
     date: "2024.03.13 15:00",
   },
   {
     title: "완전 취침",
-    imageUrl: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
+    reactionLevel: 6,
     reactionText: "자장가를 들어도 기분이 풀리지 않았다",
     date: "2024.03.13 15:00",
   },
   {
     title: "Goodnight",
-    imageUrl: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
+    reactionLevel: 2,
     reactionText: "훌륭해요",
     date: "2024.03.13 15:00",
   },
 ];
 
-const groupedLullabies: Record<string, { imageUrl: string; reactionText: string; date: string; }[]> = lullabiesData.reduce((acc, cur) => {
+const groupedLullabies: Record<string, { reactionLevel: number; reactionText: string; date: string; }[]> = lullabiesData.reduce((acc, cur) => {
   if (!acc[cur.title]) {
     acc[cur.title] = [];
   }
   acc[cur.title].push(cur);
   return acc;
-}, {} as Record<string, { imageUrl: string; reactionText: string; date: string; }[]>);
+}, {} as Record<string, { reactionLevel: number; reactionText: string; date: string; }[]>);
+
+// 이모지 선택 함수
+const getReactionImage = (reactionLevel: number) => {
+  switch (reactionLevel) {
+    case 1:
+      return require('../../assets/images/ic_reaction/ic_reaction1.png');
+    case 2:
+      return require('../../assets/images/ic_reaction/ic_reaction2.png');
+    case 3:
+      return require('../../assets/images/ic_reaction/ic_reaction3.png');
+    case 4:
+      return require('../../assets/images/ic_reaction/ic_reaction4.png');
+    case 5:
+      return require('../../assets/images/ic_reaction/ic_reaction5.png');
+    default:
+      return require('../../assets/images/ic_reaction/ic_reaction6.png');
+  }
+};
 
 export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
   const { child } = route.params;
@@ -51,6 +72,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
   const [progress, setProgress] = useState(0.5);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [playingSongId, setPlayingSongId] = useState<number | null>(null); // 재생 상태를 관리할 상태 추가
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
@@ -77,6 +99,15 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
         <View style={[styles.progressBar, { flex: 1 - progress }]} />
       </View>
     );
+  };
+
+  const handleFloatingButtonPress = () => {
+    setModalVisible(true);
+  };
+
+  const handleNavigate = (selectedSongData: any) => {
+    setModalVisible(false);
+    navigation.navigate('ChildrenInfoReactionRegister', { songData: selectedSongData });
   };
 
   return (
@@ -135,7 +166,10 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
           <FlatList
             data={Object.entries(groupedLullabies)}
             renderItem={({ item }) => (
-              <View style={styles.reactionContainer}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ChildrenInfoReaction', { title: item[0], data: item[1], selectedSongData: SongData.find(song => song.title === item[0]) })}
+                style={styles.reactionContainer}
+              >
                 <View style={styles.lullabyTitleContainer}
                 >
                   <Icon name="play" size={18} color={'#000000'} />
@@ -143,14 +177,14 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
                 </View>
                 {item[1].map((lullabyData, index) => (
                   <View key={index} style={styles.reactionItemContainer}>
-                    <Image source={{ uri: lullabyData.imageUrl }} style={styles.reactionImage} />
+                    <Image source={getReactionImage(lullabyData.reactionLevel)} style={styles.reactionImage} />
                     <View style={styles.reactionContentContainer}>
                       <Text style={styles.reactionContent}>{lullabyData.reactionText}</Text>
                       <Text style={styles.reactionDate}>{lullabyData.date}</Text>
                     </View>
                   </View>
                 ))}
-              </View>
+              </TouchableOpacity>
             )}
             keyExtractor={(item) => item[0]}
           />
@@ -158,10 +192,42 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
       )}
       {/* 자장가 반응 추가 버튼 */}
       {showFloatingButton && (
-        <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenInfoReactionRegister')}>
+        <TouchableOpacity style={styles.floatingButton} onPress={handleFloatingButtonPress}>
           <Image source={require('../../assets/images/ic_add_white.png')} style={styles.floatingIc} />
         </TouchableOpacity>
       )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <Pressable style={styles.centeredView} onPress={() => setModalVisible(false)}>
+          <View style={styles.modalBackground} />
+          <Pressable style={styles.modalView} onPress={(e) => e.stopPropagation()}>
+            <View style={styles.modelTextContainer}>
+              <Text style={styles.modalText}>반응을 기록할 자장가 선택</Text>
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { flex: 1 }]} />
+              </View>
+            </View>
+            <FlatList
+                data={SongData}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleNavigate(item)}>
+                    <View style={styles.modalListItemContainer}>
+                      <Image source={{ uri: item.picture }} style={styles.selectPhoto} />
+                      <Text style={styles.selectTitle}>{item.title}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+              />
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -329,11 +395,63 @@ const styles = StyleSheet.create({
     backgroundColor: '#283882',
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: 90,
+    bottom: 70,
     right: 16,
   },
   floatingIc: {
     width: 34,
     height: 34
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBackground: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: '80%',  // 전체 화면의 80% 너비
+    height: '50%', // 전체 화면의 60% 높이
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 34,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalListItemContainer: {
+    flexDirection: 'row',
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  modelTextContainer: {
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#000000',
+    fontFamily: 'SCDream5',
+    marginBottom: 15,
+  },
+  selectPhoto: {
+    width: 38,
+    height: 38,
+    borderRadius: 5,
+  },
+  selectTitle: {
+    fontSize: 14,
+    color: '#000',
+    fontFamily: 'SCDream5',
+    marginLeft: 12,
+  },
 });
