@@ -7,9 +7,10 @@ interface PlayModalProps {
   onClose: () => void;
   title: string;
   elements: string[];
+  onElementPress?: (element: string) => void;
 }
 
-const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elements }) => {
+const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elements, onElementPress }) => {
   return (
     <Modal 
       isVisible={isVisible}
@@ -22,7 +23,7 @@ const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elemen
         </View>
         <ScrollView>
           {elements.map((element, index) => (
-            <TouchableOpacity key={index} style={styles.elementBtn}>
+            <TouchableOpacity key={index} style={styles.elementBtn} onPress={() => onElementPress?.(element)}>
               <Text style={styles.elementText}>{element}</Text>
             </TouchableOpacity>
           ))}

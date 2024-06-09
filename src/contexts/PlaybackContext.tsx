@@ -7,6 +7,7 @@ interface PlaybackContextType {
   setPlaybackPosition: React.Dispatch<React.SetStateAction<number>>;
   playPress: () => void;
   handlePress: () => void;
+  stopPlayback: () => void;
 }
 
 const PlaybackContext = createContext<PlaybackContextType | undefined>(undefined);
@@ -25,6 +26,11 @@ export const PlaybackProvider: React.FC<PlaybackProviderProps> = ({ children }) 
 
   const handlePress = () => {
     console.log('Button clicked');
+  };
+
+  const stopPlayback = () => {
+    setIsPlaying(false);
+    setPlaybackPosition(0);
   };
 
   return (
