@@ -34,7 +34,7 @@ export const PlaybackProvider: React.FC<PlaybackProviderProps> = ({ children }) 
   };
 
   return (
-    <PlaybackContext.Provider value={{ isPlaying, setIsPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress }}>
+    <PlaybackContext.Provider value={{ isPlaying, setIsPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback }}>
       {children}
     </PlaybackContext.Provider>
   );

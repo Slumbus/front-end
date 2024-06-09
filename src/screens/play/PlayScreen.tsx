@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import { Audio } from 'expo-av';
+import Sound from 'react-native-sound';
 
 import { RootStackParamList } from '../../navigation/HomeStack';
 
@@ -20,15 +21,14 @@ const PlayScreen: React.FC = ({navigation}: any) => {
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
 
-  const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
+  const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리'];
   const timer = ['5분', '15분', '30분', '1시간'];
 
   const [isNoiseModalVisible, setNoiseModalVisible] = useState(false);
   const [isTimerModalVisible, setTimerModalVisible] = useState(false);
-  // const [duration, setDuration] = useState(0);
-  // const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [timeDuration, setTimeDuration] = useState<number | null>(null);
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  const [sound, setSound] = useState<Sound | null>(null);
 
 
   const toggleNoiseModal = () => {
@@ -69,6 +69,67 @@ const PlayScreen: React.FC = ({navigation}: any) => {
           return 0;
     }
   };
+
+  const handleNoiseSelect = (noise: string) => {
+    if (sound) {
+      // 이전에 재생 중이던 소리 멈춤
+      sound.stop(() => {
+        sound.release();
+      });
+    }
+
+    let soundFile;
+    switch (noise) {
+      case '빗소리':
+        soundFile = require('../../assets/audio/Rain.mp3');
+        break;
+      case '파도 소리':
+        soundFile = require('../../assets/audio/Waves.mp3');
+        break;
+      case '귀뚜라미 소리':
+        soundFile = require('../../assets/audio/Crickets.mp3');
+        break;
+      case '비행기 소리':
+        soundFile = require('../../assets/audio/Airplane.mp3');
+        break;
+      case '청소기 소리':
+        soundFile = require('../../assets/audio/Vacuum.mp3');
+        break;
+      default:
+        return;
+    }
+
+    // 새로운 소리 파일 재생
+    const newSound = new Sound(soundFile, (error) => {
+      if (error) {
+        console.log('Failed to load the sound', error);
+        return;
+      }
+      console.log('Sound loaded successfully');
+      setSound(newSound);
+      newSound.play((success) => {
+        if (success) {
+          console.log('Sound played successfully');
+        } else {
+          console.log('Sound playback failed');
+        }
+        newSound.release();
+      });
+    });
+    
+    toggleNoiseModal();
+  };
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (sound) {
+  //       console.log('Releasing sound on component unmount');
+  //       sound.stop(() => {
+  //         sound.release();
+  //       });
+  //     }
+  //   };
+  // }, [sound]);
 
   return (
     <View style={styles.container}>
@@ -127,6 +188,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         onClose={toggleNoiseModal}
         title="백색 소음"
         elements={noise}
+        onElementPress={handleNoiseSelect}
       />
     </View>
   );
