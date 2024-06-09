@@ -18,7 +18,7 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
-  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
+  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '공기 청정기 소리', '비행기 소리', '청소기 소리'];
   const timer = ['5분', '15분', '30분', '1시간'];
@@ -27,12 +27,47 @@ const PlayScreen: React.FC = ({navigation}: any) => {
   const [isTimerModalVisible, setTimerModalVisible] = useState(false);
   // const [duration, setDuration] = useState(0);
   // const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [timeDuration, setTimeDuration] = useState<number | null>(null);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+
 
   const toggleNoiseModal = () => {
     setNoiseModalVisible(!isNoiseModalVisible);
   };
   const toggleTimerModal = () => {
     setTimerModalVisible(!isTimerModalVisible);
+  };
+
+  const handleTimerSelect = (duration: string) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    const durationInMs = parseDuration(duration);
+    setTimeDuration(durationInMs);
+
+    const newTimerId = setTimeout(() => {
+      stopPlayback();
+      setTimeDuration(null);
+    }, durationInMs);
+
+    setTimerId(newTimerId);
+    toggleTimerModal();
+  };
+
+  const parseDuration = (duration: string) => {
+    switch (duration) {
+        case '5분':
+          return 5*60*1000;
+        case '15분':
+          return 15*60*1000;
+        case '30분':
+          return 30*60*1000;
+        case '1시간':
+          return 60*60*1000;
+        default:
+          return 0;
+    }
   };
 
   return (
@@ -85,6 +120,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         onClose={toggleTimerModal}
         title="취침 타이머"
         elements={timer}
+        onElementPress={handleTimerSelect}
       />
       <PlayModal
         isVisible={isNoiseModalVisible}
