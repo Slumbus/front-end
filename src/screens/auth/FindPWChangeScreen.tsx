@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   Image,
@@ -8,41 +9,32 @@ import {
   View,
 } from 'react-native';
 
-export default function SignUpScreen() {
+export default function FindPWChangeScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.imageView}>
         <Image
-          source={require('../assets/images/Slumbus_Logo_long_ver.png')}
+          source={require('../../assets/images/Slumbus_Logo_long_ver.png')}
           style={styles.logo}
           resizeMode="contain"
         />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.textView}>회원가입</Text>
+        <Text style={styles.textView}>비밀번호 찾기</Text>
       </View>
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="이메일" />
-        <View style={styles.mailButtonConatiner}>
-          <TouchableOpacity
-            style={styles.mailButton}
-            onPress={() => {
-              /* 버튼을 눌렀을 때 수행할 동작 */
-            }}>
-            <Text style={styles.buttonText}>인증 메일 전송</Text>
-          </TouchableOpacity>
-        </View>
-        <TextInput style={styles.input} placeholder="인증번호" />
-        <TextInput style={styles.input} placeholder="비밀번호" />
-        <TextInput style={styles.input} placeholder="비밀번호 확인" />
+        <TextInput style={styles.input} placeholder="새 비밀번호" />
+        <TextInput style={styles.input} placeholder="새 비밀번호 확인" />
       </View>
       <View style={styles.signUpButtonContainer}>
         <TouchableOpacity
           style={styles.signUpButton}
           onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
+            navigation.navigate('Login' as never);
           }}>
-          <Text style={styles.buttonText}>회원가입</Text>
+          <Text style={styles.buttonText}>비밀번호 재설정</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,6 +53,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '80%',
+    height: 50,
     alignItems: 'center',
     marginLeft: 'auto',
     marginRight: 'auto',

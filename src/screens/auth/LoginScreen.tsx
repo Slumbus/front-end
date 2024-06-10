@@ -1,4 +1,5 @@
-import React from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -8,12 +9,39 @@ import {
   View,
 } from 'react-native';
 
+interface User {
+  id: number;
+  email: string;
+  password: string;
+}
+
+const UserData: User = {
+  id: 1,
+  email: 'test@test.com',
+  password: 'test',
+};
+
 export default function LoginScreen() {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
+  const handleLogin = () => {
+    if (email === UserData.email && password === UserData.password) {
+      navigation.navigate('MainNavigator' as never);
+    } else {
+      setEmailError(email !== UserData.email || email === '');
+      setPasswordError(password !== UserData.password || password === '');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageView}>
         <Image
-          source={require('../assets/images/Slumbus_Logo_long_ver.png')}
+          source={require('../../assets/images/Slumbus_Logo_long_ver.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -22,14 +50,37 @@ export default function LoginScreen() {
         <Text style={styles.textView}>로그인</Text>
       </View>
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="이메일" />
-        <TextInput style={styles.input} placeholder="비밀번호" />
+        <TextInput
+          style={[styles.input, emailError && styles.errorInput]}
+          placeholder="이메일"
+          value={email}
+          onChangeText={text => {
+            setEmail(text);
+            setEmailError(false);
+          }}
+        />
+        {emailError && (
+          <Text style={styles.errorText}>올바른 이메일을 입력하세요</Text>
+        )}
+        <TextInput
+          style={[styles.input, passwordError && styles.errorInput]}
+          placeholder="비밀번호"
+          value={password}
+          secureTextEntry
+          onChangeText={text => {
+            setPassword(text);
+            setPasswordError(false);
+          }}
+        />
+        {passwordError && (
+          <Text style={styles.errorText}>올바른 비밀번호를 입력하세요</Text>
+        )}
       </View>
       <View style={styles.loginButtonContainer}>
         <TouchableOpacity
           style={styles.loginButton}
           onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
+            handleLogin();
           }}>
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
@@ -38,7 +89,7 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.click}
           onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
+            navigation.navigate('FindPWEmail' as never);
           }}>
           <Text style={styles.text}>비밀번호 찾기</Text>
         </TouchableOpacity>
@@ -48,7 +99,7 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.click}
           onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
+            navigation.navigate('SignUp' as never);
           }}>
           <Text style={styles.text}>회원가입</Text>
         </TouchableOpacity>
@@ -60,15 +111,15 @@ export default function LoginScreen() {
       </View>
       <View style={styles.socialImageContainer}>
         <Image
-          source={require('../assets/images/google.png')}
+          source={require('../../assets/images/google.png')}
           style={styles.socialImage}
         />
         <Image
-          source={require('../assets/images/kakaotalk.png')}
+          source={require('../../assets/images/kakaotalk.png')}
           style={styles.socialImage}
         />
         <Image
-          source={require('../assets/images/naver.png')}
+          source={require('../../assets/images/naver.png')}
           style={styles.socialImage}
         />
       </View>
@@ -88,6 +139,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '80%',
+    height: 100,
     alignItems: 'center',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -113,6 +165,16 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     margin: 5,
+    fontFamily: 'SCDream2',
+  },
+  errorInput: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 10,
+    marginLeft: 5,
+    marginBottom: 10,
     fontFamily: 'SCDream2',
   },
   loginButtonContainer: {
