@@ -1,4 +1,5 @@
-import React from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -9,11 +10,35 @@ import {
 } from 'react-native';
 
 export default function FindPWEmailScreen() {
+  const navigation = useNavigation();
+  const [timer, setTimer] = useState(0);
+  const [isMailSent, setIsMailSent] = useState(false);
+
+  const startTimer = () => {
+    setTimer(300); // 5분 (300초) 타이머 시작
+    setIsMailSent(true);
+  };
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageView}>
         <Image
-          source={require('../assets/images/Slumbus_Logo_long_ver.png')}
+          source={require('../../assets/images/Slumbus_Logo_long_ver.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -24,12 +49,16 @@ export default function FindPWEmailScreen() {
       <View style={styles.inputContainer}>
         <TextInput style={styles.input} placeholder="이메일" />
         <View style={styles.mailButtonConatiner}>
+          {timer > 0 && (
+            <Text style={styles.timerText}>{formatTime(timer)}</Text>
+          )}
           <TouchableOpacity
-            style={styles.mailButton}
-            onPress={() => {
-              /* 버튼을 눌렀을 때 수행할 동작 */
-            }}>
-            <Text style={styles.buttonText}>인증 메일 전송</Text>
+            style={[styles.mailButton, isMailSent && styles.mailButtonSent]}
+            onPress={startTimer}>
+            <Text
+              style={[styles.buttonText, isMailSent && styles.buttonTextSent]}>
+              인증 메일 전송
+            </Text>
           </TouchableOpacity>
         </View>
         <TextInput style={styles.input} placeholder="인증번호" />
@@ -38,7 +67,7 @@ export default function FindPWEmailScreen() {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
+            navigation.navigate('FindPWChange' as never);
           }}>
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>
@@ -59,6 +88,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '80%',
+    height: 50,
     alignItems: 'center',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -114,7 +144,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
-
   mailButton: {
     backgroundColor: '#CDCDCD',
     borderRadius: 50,
@@ -122,6 +151,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     alignItems: 'center',
     // height: 40,
+    fontFamily: 'SCDream5',
+  },
+  mailButtonSent: {
+    backgroundColor: '#C6DDF7',
+  },
+  buttonTextSent: {
+    color: '#283882',
+    fontFamily: 'SCDream5',
+  },
+  timerText: {
+    marginRight: 10,
+    color: '#283882',
     fontFamily: 'SCDream5',
   },
 });
