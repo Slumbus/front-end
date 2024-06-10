@@ -1,9 +1,14 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ShuffleButton from '../../components/button/ShuffleButton';
 import PlayButton from '../../components/button/PlayButton';
 import RepeatButton from '../../components/button/RepeatButton';
+import TrackPlayer, {
+  usePlaybackState,
+  useTrackPlayerEvents,
+  Event,
+} from 'react-native-track-player';
 
 interface PlayButtonBarContainerProps {
   isPlaying: boolean;
@@ -15,13 +20,48 @@ interface PlayButtonBarContainerProps {
 }
 
 const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
-  isPlaying,
+  isPlaying,  //Boolean 으로 넘어옴 false: 재생x, ture: 재생
   onPlayPress,
   onShufflePress,
   onPreviousPress,
   onNextPress,
   onRepeatPress,
 }) => {
+  const playbackState: any = usePlaybackState();
+  // const isTrackPlaying = useRef('paused'); //paused play loading
+
+  useEffect(() => {
+    console.log('Player State', playbackState);
+
+    //set the player state
+    if (playbackState === true || playbackState === 3) {
+      isPlaying = true;
+    } else if (playbackState === false || playbackState === 2) {
+      isPlaying = false;
+    } else {
+      // isPlaying.current = 'loading';
+    }
+  }, [playbackState]);
+
+  const returnPlayBtn = () => {
+    switch (isPlaying) {
+      case true:
+        return <Icon color="#fff" name="pause" size={45} />;
+      case false:
+        return <Icon color="#fff" name="play-arrow" size={45} />;
+      default:
+        return <ActivityIndicator size={45} color="#fff" />;
+    }
+  };
+
+  const onPlayPause = () => {
+    if (isPlaying === false) {
+      TrackPlayer.pause();
+    } else if (isPlaying === true) {
+      TrackPlayer.play();
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ShuffleButton onPress={onShufflePress} />
@@ -29,8 +69,8 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
         <TouchableOpacity onPress={onPreviousPress}>
           <Icon name="play-skip-back" size={30} color={'#283882'} />
         </TouchableOpacity>
-        <PlayButton isPlaying={isPlaying} onPress={onPlayPress} size={70} />
-        <TouchableOpacity onPress={onNextPress}>
+        <PlayButton isPlaying={isPlaying} onPress={() => {onPlayPress(); onPlayPause();}} size={70} />
+        <TouchableOpacity onPress={() => {onNextPress; }}>
           <Icon name="play-skip-forward" size={30} color={'#283882'} />
         </TouchableOpacity>
       </View>
