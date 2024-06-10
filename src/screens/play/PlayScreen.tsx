@@ -11,12 +11,41 @@ import PlayModal from '../../components/modal/PlayModal';
 import SliderComponent from '../../components/play/SliderComponent';
 import PlayButtonBarContainer from '../../components/play/PlayButtonBarContainer';
 import { usePlayback } from '../../contexts/PlaybackContext';
+import TrackPlayer, {Capability, RepeatMode} from 'react-native-track-player';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더미데이터 값 직접 전달, api 연결 시 수정
 
-const PlayScreen: React.FC = ({navigation}: any) => {
+
+interface TrackPlayerControlsOptions {
+  waitforBuffer: boolean;
+  stopWithApp: boolean;
+  alwaysPauseOnInterruption: boolean;
+  capabilities: Capability[];
+  compactCapabilities: Capability[];
+}
+
+const TRACK_PLAYER_CONTROLS_OPTS: TrackPlayerControlsOptions = {
+  waitforBuffer: true,
+  stopWithApp: false,
+  alwaysPauseOnInterruption: true,
+  capabilities: [
+    Capability.Play,
+    Capability.Pause,
+    Capability.SkipToNext,
+    Capability.SkipToPrevious,
+    Capability.SeekTo,
+  ],
+  compactCapabilities: [
+    Capability.Play,
+    Capability.Pause,
+    Capability.SkipToNext,
+    Capability.SkipToPrevious,
+  ],
+};
+
+const PlayScreen: React.FC = ({navigation, trackData}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
@@ -131,6 +160,31 @@ const PlayScreen: React.FC = ({navigation}: any) => {
   //   };
   // }, [sound]);
 
+
+
+  //트랙 플레이어 설정
+  useEffect(() => {
+
+  const addTrack = async () => {
+    await TrackPlayer.add([
+      {
+        id: '1',
+        url: 'https://sample-music.netlify.app/death%20bed.mp3',
+        artwork: require('../../assets/images/google.png'),
+        title: 'Make a cup of coffe',
+        artist: 'Powfu',
+        duration: 40,
+      },
+    ]);
+    await TrackPlayer.setRepeatMode(RepeatMode.Queue)
+  };
+
+  addTrack();
+  TrackPlayer.play();
+    
+  },[]);
+    
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -144,7 +198,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         maximumValue={200}
       />
       <View style={{marginVertical: 45}}>
-        <PlayButtonBarContainer
+        <PlayButtonBarContainer // 정지, 다음, 이전 버튼
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}

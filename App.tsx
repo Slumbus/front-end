@@ -4,12 +4,15 @@ import {NavigationContainer} from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import MainNavigator from './src/navigation/MainNavigator';
+import { setupPlayer } from './src/screens/play/PlayController';
 
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  setupPlayer(); //트랙 플레이어 생성
+
   return (
     <GestureHandlerRootView style={{flex:1}}>
       <NavigationContainer>
