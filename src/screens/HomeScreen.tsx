@@ -4,8 +4,10 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
 import BottomPlayer from '../components/BottomPlayer';
+import { usePlayback } from '../contexts/PlaybackContext';
 
 export default function HomeScreen({navigation}: any) {
+  const { setTrackList } = usePlayback();
 
   const ChildrenAlbumdata = [
     {
@@ -15,26 +17,31 @@ export default function HomeScreen({navigation}: any) {
       Music: [
         {
         title: "Good night",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
         lyrics: "열 길 물속은 알아도 한 길 사람 속은 모른다.\n사공이 많으면 배가 산으로 올라간다사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.",
         },
         {
         title: "꿀잠2",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2022/11/16/13/39/cuddly-toys-7596017_1280.jpg",
         lyrics: "빛 좋은 개살구.\n호랑이 그리려다 고양이 그린다.",
         },
         {
         title: "좋은 꿈",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2021/07/15/07/50/newborn-6467761_1280.jpg",
         lyrics: "병 주고 약 준다.\n보기 좋은 떡이 먹기도 좋다.",
         },
         {
         title: "꿀잠",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2017/11/10/08/08/baby-2935722_1280.jpg",
         lyrics: "열 길 물속은 알아도 한 길 사람 속은 모른다.\n백지장도 맞들면 낫다.",
         },
         {
         title: "완전 취침",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2017/06/18/18/39/baby-2416718_1280.jpg",
         lyrics: "배보다 배꼽이 더 크다.\n호랑이 그리려다 고양이 그린다.",
         },
@@ -47,16 +54,19 @@ export default function HomeScreen({navigation}: any) {
       Music: [
         {
         title: "꿀잠",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2017/11/10/08/08/baby-2935722_1280.jpg",
         lyrics: "바늘 도둑이 소 도둑 된다.\n믿는 도끼에 발등 찍힌다.",
         },
         {
         title: "Good night",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
         lyrics: "열 길 물속은 알아도 한 길 사람 속은 모른다.\n호랑이 그리려다 고양이 그린다.",
         },
         {
         title: "완전 취침",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2017/06/18/18/39/baby-2416718_1280.jpg",
         lyrics: "목구멍이 포도청\n밑 빠진 독에 물 붓기",
         },
@@ -69,17 +79,27 @@ export default function HomeScreen({navigation}: any) {
       Music: [
         {
         title: "좋은 꿈",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2021/07/15/07/50/newborn-6467761_1280.jpg",
         lyrics: "마른 하늘에 날벼락\n등잔 밑이 어둡다",
         },
         {
         title: "꿀잠2",
+        music: "https://drive.google.com/uc?export=download&id=1pYfYYo7eYSTm6Zg80Kf5uof6z_9J6Coe",
         picture: "https://cdn.pixabay.com/photo/2022/11/16/13/39/cuddly-toys-7596017_1280.jpg",
         lyrics: "되로 주고 말로 받는다\n땅 짚고 헤엄치기",
         },
       ]
     },
   ];
+
+  const handleSongPress = (album: any, song: any) => {
+    setTrackList(album.Music, song);
+    navigation.navigate('PlayScreen', {
+      album: album,
+      song: song,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -94,10 +114,7 @@ export default function HomeScreen({navigation}: any) {
                   key={song.title} 
                   imageSource={{ uri: song.picture}} 
                   text={song.title} 
-                  onPress={() => navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-                    album: album,
-                    song: song,
-                  })} />
+                  onPress={() => handleSongPress(album, song)} />
                 ))}
               </View>
             </View>

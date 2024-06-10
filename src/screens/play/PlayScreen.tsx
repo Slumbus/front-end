@@ -1,7 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-// import { Audio } from 'expo-av';
 import Sound from 'react-native-sound';
 
 import { RootStackParamList } from '../../navigation/HomeStack';
@@ -19,7 +18,7 @@ type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더�
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
-  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
+  const { playbackPosition, setPlaybackPosition, playPress, currentTrackIndex } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리'];
   const timer = ['5분', '15분', '30분', '1시간'];
@@ -47,7 +46,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
     setTimeDuration(durationInMs);
 
     const newTimerId = setTimeout(() => {
-      stopPlayback();
+      playPress();
       setTimeDuration(null);
     }, durationInMs);
 
@@ -120,16 +119,9 @@ const PlayScreen: React.FC = ({navigation}: any) => {
     toggleNoiseModal();
   };
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (sound) {
-  //       console.log('Releasing sound on component unmount');
-  //       sound.stop(() => {
-  //         sound.release();
-  //       });
-  //     }
-  //   };
-  // }, [sound]);
+  useEffect(() => {
+    
+  }, [currentTrackIndex]);
 
   return (
     <View style={styles.container}>
@@ -144,14 +136,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         maximumValue={200}
       />
       <View style={{marginVertical: 45}}>
-        <PlayButtonBarContainer
-          isPlaying={isPlaying}
-          onPlayPress={playPress}
-          onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
-          onRepeatPress={handlePress}
-        />
+        <PlayButtonBarContainer />
       </View>
       <View style={styles.IconButtonContainer}>
         <IconButton
@@ -174,7 +159,13 @@ const PlayScreen: React.FC = ({navigation}: any) => {
           })}/>
         <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
-        <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
+        <IconButton
+          IconLibrary="MaterialIcons"
+          IconName="add-reaction"
+          text="자장가 반응 기록하기"
+          onPress={() => navigation.navigate('ChildrenListStack', { // api 연결 시 param 전달
+            screen: 'ChildrenInfoReactionRegister'
+        })}/>
       </View>
       <PlayModal
         isVisible={isTimerModalVisible}

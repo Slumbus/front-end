@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
+import { usePlayback } from '../../contexts/PlaybackContext';
 
-interface ShuffleButtonProps {
-  onPress: () => void;
-}
-
-const ShuffleButton: React.FC<ShuffleButtonProps> = ({onPress}) => {
-  const [isActive, setIsActive] = useState(false);
+const ShuffleButton: React.FC = () => {
+  const { isShuffle, toggleShuffle } = usePlayback();
 
   const handlePress = () => {
-    setIsActive((prev) => !prev);
-    onPress();
+    toggleShuffle();
   };
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      {isActive ? (
+      {isShuffle ? (
         <Icon name="shuffle" size={24} color={'#283882'} />
       ) : (
         <Icon name="shuffle" size={24} color={'#D9D9D9'} />

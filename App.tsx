@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import MainNavigator from './src/navigation/MainNavigator';
+import { PlaybackProvider } from './src/contexts/PlaybackContext';
 
 
 
