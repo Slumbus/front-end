@@ -35,18 +35,18 @@ finally {
 }
 }
 
-export async function addTrack() {
-await TrackPlayer.add([
-  {
-    id: '1',
-    url: 'https://sample-music.netlify.app/death%20bed.mp3',
-    artwork: require('../../assets/images/google.png'),
-    title: 'Make a cup of coffe',
-    artist: 'Powfu',
-    duration: 40,
-  },
-]);
-}
+// export async function addTrack() {
+// await TrackPlayer.add([
+//   {
+//     id: '1',
+//     url: 'https://sample-music.netlify.app/death%20bed.mp3',
+//     artwork: require('../../assets/images/google.png'),
+//     title: 'Make a cup of coffe',
+//     artist: 'Powfu',
+//     duration: 40,
+//   },
+// ]);
+// }
 
 
 // export async function setupPlayer() {

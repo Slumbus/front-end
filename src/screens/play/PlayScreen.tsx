@@ -183,6 +183,24 @@ const PlayScreen: React.FC = ({navigation, trackData}: any) => {
   TrackPlayer.play();
     
   },[]);
+
+    // 슬라이더 음악 업데이트
+    // useEffect(() => {
+    //   let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
+    
+    //   if (isPlaying) {
+    //     interval = setInterval(() => {
+    //       TrackPlayer.getTrack.?.getCurrentTime(seconds => {
+    //         setPlaybackPosition(seconds);
+    //       });
+    //     }, 1000);
+    //   }
+    //   return () => {
+    //     if (interval) {  // interval이 정의된 경우에만 clearInterval 호출
+    //       clearInterval(interval);
+    //     }
+    //   };
+    // }, [isPlaying]);
     
 
   return (
