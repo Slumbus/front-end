@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, StyleSheet, FlatList, Image, ListRenderItemInfo, TouchableOpacity} from 'react-native';
+import React, { useState }  from 'react';
+import {View, Text, StyleSheet, FlatList, Image, ListRenderItemInfo, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 
 interface Child {
   id: number;
@@ -39,35 +39,45 @@ const childrenData: Child[] = [
   },
 ];
 
-export default function ChildrenListScreen({navigation}: any) {
-  // FlatList에서 각 아이를 렌더링하는 함수
+export default function ChildrenListScreen({ navigation }: any) {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const renderItem = ({ item }: ListRenderItemInfo<Child>) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate('ChildrenInfoPlaylist', { child: item })}>
-      <View style={styles.childInfoContainer}>
+    <View style={styles.itemContainer}>
+      <TouchableOpacity style={styles.childInfoContainer} onPress={() => navigation.navigate('ChildrenInfoPlaylist', { child: item })}>
         <Image source={{ uri: item.image }} style={styles.childImage} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.birth}>{item.birthdate}</Text>
           <Text style={styles.age}>만 {item.age}세</Text>
         </View>
-      </View>
+      </TouchableOpacity>
       <FlatList
         data={item.photoList}
         horizontal
-        renderItem={({ item }) => (
-          <Image source={{ uri: item }} style={styles.photo} />
+        renderItem={({ item: photo }) => (
+          <TouchableWithoutFeedback onPress={() => navigation.navigate('ChildrenInfoPlaylist', { child: item })}>
+            <Image source={{ uri: photo }} style={styles.photo} />
+          </TouchableWithoutFeedback>
         )}
         keyExtractor={(item, index) => index.toString()}
+        showsHorizontalScrollIndicator={false} // 가로 스크롤바 숨김
+        scrollEnabled={scrollEnabled}
+        onTouchStart={() => setScrollEnabled(true)}
+        onTouchEnd={() => setScrollEnabled(true)}
       />
-    </TouchableOpacity>
+    </View>
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={childrenData} // 데이터 배열 전달
-        renderItem={renderItem} // 각 항목을 렌더링하는 함수 전달
-        keyExtractor={item => item.id.toString()} // 각 아이템의 고유 키 설정
+        data={childrenData}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        scrollEnabled={scrollEnabled}
+        onTouchStart={() => setScrollEnabled(true)}
+        onTouchEnd={() => setScrollEnabled(true)}
       />
       <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenRegister')}>
         <Image source={require('../../assets/images/ic_add_white.png')} style={styles.floatingIc} />
