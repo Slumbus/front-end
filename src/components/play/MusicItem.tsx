@@ -4,8 +4,10 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Music {
+  id: number;
   title: string;
-  picture: string;
+  artwork: string;
+  url: string;
   lyrics: string;
 }
 
@@ -20,7 +22,7 @@ const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress }) =
     <TouchableOpacity onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
       <View style={styles.albumContainer}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: song.picture }} style={[styles.image, isPlaying && styles.playingImage]} />
+          <Image source={{ uri: song.artwork }} style={[styles.image, isPlaying && styles.playingImage]} />
           {isPlaying && (
               <Animatable.View 
                 animation="tada"

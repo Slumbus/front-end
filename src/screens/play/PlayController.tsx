@@ -4,35 +4,62 @@ import TrackPlayer, {
   RepeatMode,
 } from 'react-native-track-player';
 
-export async function setupPlayer() {
-let isSetup = false;
-try {
-  await TrackPlayer.getCurrentTrack();
-  isSetup = true;
+interface TrackPlayerControlsOptions {
+  waitforBuffer: boolean;
+  stopWithApp: boolean;
+  alwaysPauseOnInterruption: boolean;
+  capabilities: Capability[];
+  compactCapabilities: Capability[];
 }
-catch {
-  await TrackPlayer.setupPlayer();
-  await TrackPlayer.updateOptions({
-    android: {
-      appKilledPlaybackBehavior:
-        AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-    },
-    capabilities: [
-      Capability.Play,
-      Capability.Pause,
-    ],
-    compactCapabilities: [
-      Capability.Play,
-      Capability.Pause,
-    ],
-    progressUpdateEventInterval: 2,
-  });
 
-  isSetup = true;
-}
-finally {
-  return isSetup;
-}
+const TRACK_PLAYER_CONTROLS_OPTS: TrackPlayerControlsOptions = {
+  waitforBuffer: true,
+  stopWithApp: false,
+  alwaysPauseOnInterruption: true,
+  capabilities: [
+    Capability.Play,
+    Capability.Pause,
+    Capability.SkipToNext,
+    Capability.SkipToPrevious,
+    Capability.SeekTo,
+  ],
+  compactCapabilities: [
+    Capability.Play,
+    Capability.Pause,
+    Capability.SkipToNext,
+    Capability.SkipToPrevious,
+  ],
+};
+
+export async function setupPlayer() {
+  let isSetup = false;
+  try {
+    await TrackPlayer.getCurrentTrack();
+    isSetup = true;
+  }
+  catch {
+    await TrackPlayer.setupPlayer();
+    await TrackPlayer.updateOptions({
+      android: {
+        appKilledPlaybackBehavior:
+          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+      },
+      capabilities: [
+        Capability.Play,
+        Capability.Pause,
+      ],
+      compactCapabilities: [
+        Capability.Play,
+        Capability.Pause,
+      ],
+      progressUpdateEventInterval: 2,
+    });
+
+    isSetup = true;
+  }
+  finally {
+    return isSetup;
+  }
 }
 
 // export async function addTrack() {
