@@ -9,8 +9,10 @@ import PlayButton from './button/PlayButton';
 
 
 interface Music {
+  id: number;
   title: string;
-  picture: string;
+  artwork: string;
+  url: string;
   lyrics: string;
 }
 
@@ -39,7 +41,7 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
       <View style={styles.container}>
         <View style={styles.albumContainer}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: song.picture }} style={styles.image} />
+            <Image source={{ uri: song.artwork }} style={styles.image} />
           </View>
           <Text style={styles.text}>{song.title}</Text>
         </View>

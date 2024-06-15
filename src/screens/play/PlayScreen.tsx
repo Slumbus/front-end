@@ -45,7 +45,7 @@ const TRACK_PLAYER_CONTROLS_OPTS: TrackPlayerControlsOptions = {
   ],
 };
 
-const PlayScreen: React.FC = ({navigation, trackData}: any) => {
+const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
@@ -160,29 +160,15 @@ const PlayScreen: React.FC = ({navigation, trackData}: any) => {
   //   };
   // }, [sound]);
 
-
-
-  //트랙 플레이어 설정
+  //원하는 순서의 음악으로 가기
   useEffect(() => {
-
-  const addTrack = async () => {
-    await TrackPlayer.add([
-      {
-        id: '1',
-        url: 'https://sample-music.netlify.app/death%20bed.mp3',
-        artwork: require('../../assets/images/google.png'),
-        title: 'Make a cup of coffe',
-        artist: 'Powfu',
-        duration: 40,
-      },
-    ]);
-    await TrackPlayer.setRepeatMode(RepeatMode.Queue)
-  };
-
-  addTrack();
-  TrackPlayer.play();
+    const setTrackNum = async () => {
+      await TrackPlayer.skip(song.id-1);
+    };
     
-  },[]);
+    setTrackNum();
+
+  }, []);
 
     // 슬라이더 음악 업데이트
     // useEffect(() => {
@@ -206,7 +192,7 @@ const PlayScreen: React.FC = ({navigation, trackData}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Image source={{uri:song.picture}} style={styles.image} />
+        <Image source={{uri:song.artwork}} style={styles.image} />
         <Text style={styles.titleText}>{song.title}</Text>
         <Text style={styles.text}>{album.name}</Text>
       </View>
@@ -223,6 +209,9 @@ const PlayScreen: React.FC = ({navigation, trackData}: any) => {
           onPreviousPress={handlePress}
           onNextPress={handlePress}
           onRepeatPress={handlePress}
+          album={album}
+          song={song}
+          navigation={navigation}
         />
       </View>
       <View style={styles.IconButtonContainer}>
@@ -239,7 +228,7 @@ const PlayScreen: React.FC = ({navigation, trackData}: any) => {
           IconName="lyrics"
           text="가사"
           onPress={() => navigation.navigate('LyricsScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-            picture: song.picture,
+            picture: song.artwork,
             name: album.name,
             title: song.title,
             lyrics: song.lyrics,

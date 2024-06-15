@@ -9,6 +9,7 @@ import TrackPlayer, {
   useTrackPlayerEvents,
   Event,
 } from 'react-native-track-player';
+import { useNavigation } from '@react-navigation/native';
 
 interface PlayButtonBarContainerProps {
   isPlaying: boolean;
@@ -17,6 +18,9 @@ interface PlayButtonBarContainerProps {
   onPreviousPress: () => void;
   onNextPress: () => void;
   onRepeatPress: () => void;
+  album: any;
+  song: any;
+  navigation: any;
 }
 
 const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
@@ -26,22 +30,25 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   onPreviousPress,
   onNextPress,
   onRepeatPress,
-}) => {
-  const playbackState: any = usePlaybackState();
-  // const isTrackPlaying = useRef('paused'); //paused play loading
+  album,
+  song,
+  navigation,
+}, trackData ) => {
+  // const playbackState: any = usePlaybackState();
+  // // const isTrackPlaying = useRef('paused'); //paused play loading
 
-  useEffect(() => {
-    console.log('Player State', playbackState);
+  // useEffect(() => {
+  //   console.log('Player State', playbackState);
 
-    //set the player state
-    if (playbackState === true || playbackState === 3) {
-      isPlaying = true;
-    } else if (playbackState === false || playbackState === 2) {
-      isPlaying = false;
-    } else {
-      // isPlaying.current = 'loading';
-    }
-  }, [playbackState]);
+  //   //set the player state
+  //   if (playbackState === true || playbackState === 3) {
+  //     isPlaying = true;
+  //   } else if (playbackState === false || playbackState === 2) {
+  //     isPlaying = false;
+  //   } else {
+  //     // isPlaying.current = 'loading';
+  //   }
+  // }, [playbackState]);
 
   const returnPlayBtn = () => {
     switch (isPlaying) {
@@ -62,15 +69,33 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
     }
   };
 
+  const goFoward = async () => {
+    const fowardTrack = await TrackPlayer.getTrack(song.id); // 마지막 곡일 때 예외처리 필요
+    TrackPlayer.skipToNext();
+    navigation.navigate('PlayScreen', {
+      album: album,
+      song: fowardTrack,
+    });
+  }
+
+  const goBack = async () => {
+    const backTrack = await TrackPlayer.getTrack(song.id-2); // 첫번째 곡일 때 예외처리 필요
+    TrackPlayer.skipToPrevious()
+    navigation.navigate('PlayScreen', {
+      album: album,
+      song: backTrack,
+    });
+  }
+
   return (
     <View style={styles.container}>
       <ShuffleButton onPress={onShufflePress} />
       <View style={styles.playButtonContainer}>
-        <TouchableOpacity onPress={onPreviousPress}>
+        <TouchableOpacity onPress={() => {goBack(); }}>
           <Icon name="play-skip-back" size={30} color={'#283882'} />
         </TouchableOpacity>
         <PlayButton isPlaying={isPlaying} onPress={() => {onPlayPress(); onPlayPause();}} size={70} />
-        <TouchableOpacity onPress={() => {onNextPress; }}>
+        <TouchableOpacity onPress={() => {goFoward(); }}>
           <Icon name="play-skip-forward" size={30} color={'#283882'} />
         </TouchableOpacity>
       </View>

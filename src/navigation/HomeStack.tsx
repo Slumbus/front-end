@@ -10,12 +10,15 @@ import PlaylistScreen from '../screens/play/PlaylistScreen';
 import MyScreen from '../screens/MyScreen';
 
 interface Music {
+  id: number;
   title: string;
-  picture: string;
+  artwork: string;
+  url: string;
   lyrics: string;
 }
 
 interface Album {
+  id: number;
   picture: string;
   name: string;
   albumname: string;
