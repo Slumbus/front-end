@@ -29,12 +29,12 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState(false);
 
   const handleLogin = () => {
-    if (email === UserData.email && password === UserData.password) {
+    // if (email === UserData.email && password === UserData.password) {
       navigation.navigate('MainNavigator' as never);
-    } else {
-      setEmailError(email !== UserData.email || email === '');
-      setPasswordError(password !== UserData.password || password === '');
-    }
+    // } else {
+    //   setEmailError(email !== UserData.email || email === '');
+    //   setPasswordError(password !== UserData.password || password === '');
+    // }
   };
 
   return (
