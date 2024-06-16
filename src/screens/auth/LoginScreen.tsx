@@ -99,7 +99,7 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.click}
           onPress={() => {
-            navigation.navigate('SignUp' as never);
+            navigation.navigate('Agree' as never);
           }}>
           <Text style={styles.text}>회원가입</Text>
         </TouchableOpacity>

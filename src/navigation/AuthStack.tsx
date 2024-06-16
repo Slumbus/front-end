@@ -4,6 +4,7 @@ import LoginScreen from '../screens/auth/LoginScreen';
 import SignUpScreen from '../screens/auth/SignUpScreen';
 import FindPWChangeScreen from '../screens/auth/FindPWChangeScreen';
 import FindPWEmailScreen from '../screens/auth/FindPWEmailScreen';
+import AgreeScreen from '../screens/auth/AgreeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,11 @@ export default function AuthStack() {
       <Stack.Screen
         name="FindPWChange"
         component={FindPWChangeScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Agree"
+        component={AgreeScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
