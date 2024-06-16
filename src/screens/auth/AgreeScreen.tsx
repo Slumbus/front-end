@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, TouchableOpacity, View, ScrollView, Pressable } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 
 export default function AgreeScreen() {
@@ -8,6 +8,7 @@ export default function AgreeScreen() {
   const [allChecked, setAllChecked] = useState(false);
   const [checkStates, setCheckStates] = useState([false, false, false]);
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const toggleAllCheckboxes = (newValue: any) => {
     setAllChecked(newValue);
@@ -66,7 +67,9 @@ export default function AgreeScreen() {
             value={checkStates[0]}
             onValueChange={() => toggleCheckbox(0)}
           />
-          <Text style={styles.checkboxText}>서비스 이용약관</Text>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.checkboxText}>서비스 이용약관</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.checkboxRow}>
           <CheckBox
@@ -93,6 +96,30 @@ export default function AgreeScreen() {
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable style={styles.modalContainer} onPress={() => setModalVisible(false)}>
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.modalText}>
+                {/* 약관 내용 추후 추가 */}
+                서비스 이용약관 내용...
+              </Text>
+            </ScrollView>
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>닫기</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -177,6 +204,36 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     justifyContent: 'center',
+    fontFamily: 'SCDream5',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    maxHeight: '80%',
+  },
+  modalText: {
+    fontSize: 16,
+    fontFamily: 'SCDream4',
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: '#283882',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
     fontFamily: 'SCDream5',
   },
 });
