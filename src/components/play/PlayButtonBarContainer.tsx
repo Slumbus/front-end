@@ -70,21 +70,48 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   };
 
   const goFoward = async () => {
-    const fowardTrack = await TrackPlayer.getTrack(song.id); // 마지막 곡일 때 예외처리 필요
-    TrackPlayer.skipToNext();
-    navigation.navigate('PlayScreen', {
-      album: album,
-      song: fowardTrack,
-    });
+    const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentTrackIndex !== null && currentTrackIndex !== undefined) {
+      const fowardTrack = await TrackPlayer.getTrack(currentTrackIndex + 1); 
+      if (fowardTrack !== null && fowardTrack !== undefined) {
+        await TrackPlayer.skipToNext();
+        navigation.navigate('PlayScreen', {
+          album: album,
+          song: fowardTrack,
+        });
+      } else { // Queue의 마지막 곡일 때 예외처리
+        await TrackPlayer.skip(0);
+        const firstTrack = await TrackPlayer.getTrack(0);
+        navigation.navigate('PlayScreen', {
+          album: album,
+          song: firstTrack,
+        });
+      }
+      
+    }
   }
 
   const goBack = async () => {
-    const backTrack = await TrackPlayer.getTrack(song.id-2); // 첫번째 곡일 때 예외처리 필요
-    TrackPlayer.skipToPrevious()
-    navigation.navigate('PlayScreen', {
-      album: album,
-      song: backTrack,
-    });
+    const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentTrackIndex !== null && currentTrackIndex !== undefined) {
+      const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1); // 첫번째 곡일 때 예외처리 필요
+      if (backTrack !== null && backTrack !== undefined) {
+        await TrackPlayer.skipToPrevious();
+        navigation.navigate('PlayScreen', {
+          album: album,
+          song: backTrack,
+        });
+      } else { // Queue의 첫번째 곡일 때 예외처리
+        const queue = await TrackPlayer.getQueue();
+        const queueLength = queue.length
+        await TrackPlayer.skip(queueLength - 1);
+        const lastTrack = await TrackPlayer.getTrack(queueLength - 1);
+        navigation.navigate('PlayScreen', {
+          album: album,
+          song: lastTrack,
+        });
+      }
+    }
   }
 
   return (

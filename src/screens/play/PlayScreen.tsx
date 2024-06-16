@@ -160,16 +160,6 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   //   };
   // }, [sound]);
 
-  //원하는 순서의 음악으로 가기
-  useEffect(() => {
-    const setTrackNum = async () => {
-      await TrackPlayer.skip(song.id-1);
-    };
-    
-    setTrackNum();
-
-  }, []);
-
     // 슬라이더 음악 업데이트
     // useEffect(() => {
     //   let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
