@@ -8,12 +8,14 @@ export default function MyScreen() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: 'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg',
-        }}
-        style={styles.image}
-      />
+      <View>
+        <Image
+          source={{
+            uri: 'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg',
+          }}
+          style={styles.image}
+        />
+      </View>
       <Text style={styles.email}>test@test.com</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.separator} />
@@ -46,6 +48,7 @@ export default function MyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     // justifyContent: 'center',
     alignItems: 'center',
   },
@@ -71,12 +74,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    width: '90%',
+    width: '100%',
   },
   buttonContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
   },

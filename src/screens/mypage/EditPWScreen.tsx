@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 50,
     paddingVertical: 35,
+    paddingTop: 100,
   },
   imageView: {
     flexDirection: 'row',
@@ -65,6 +66,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     margin: 5,
     fontFamily: 'SCDream2',
+    marginTop: 15,
+    marginBottom: 15,
   },
   buttonContainer: {
     // alignItems: 'center',
