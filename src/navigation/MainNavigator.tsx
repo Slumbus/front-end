@@ -8,15 +8,14 @@ import Icon3 from 'react-native-vector-icons/FontAwesome6';
 import HomeStack from './HomeStack';
 import ComposeStack from './ComposeStack';
 import ChildrenStack from './ChildrenListStack';
-import { PlaybackProvider } from '../contexts/PlaybackContext';
+import {PlaybackProvider} from '../contexts/PlaybackContext';
+import MyPageStack from './MyPageStack';
 
 const Tab = createBottomTabNavigator();
 
 const CustomTabBarButton = ({children, onPress}) => (
   <TouchableOpacity style={styles.customButton} onPress={onPress}>
-    <View style={styles.customButtonView}>
-      {children}
-    </View>
+    <View style={styles.customButtonView}>{children}</View>
   </TouchableOpacity>
 );
 
@@ -27,9 +26,8 @@ export default function MainNavigator({navigation}) {
         screenOptions={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarStyle: styles.tabBar
-        }}
-      >
+          tabBarStyle: styles.tabBar,
+        }}>
         <Tab.Screen
           name="HomeStack"
           component={HomeStack}
@@ -37,10 +35,21 @@ export default function MainNavigator({navigation}) {
             unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <View style={styles.iconContainer}>
-                <Icon2 name="home" size={25} color={focused ? '#283882' : '#92949E'} />
-                <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>홈</Text>
+                <Icon2
+                  name="home"
+                  size={25}
+                  color={focused ? '#283882' : '#92949E'}
+                />
+                <Text
+                  style={{
+                    color: focused ? '#283882' : '#92949E',
+                    fontSize: 12,
+                    fontFamily: 'SCDream4',
+                  }}>
+                  홈
+                </Text>
               </View>
-            )
+            ),
           }}
         />
         <Tab.Screen
@@ -53,10 +62,8 @@ export default function MainNavigator({navigation}) {
                 <Icon3 name="music" size={27} color="#fff" style={{right: 1}} />
                 <Text style={styles.composeButtonText}>작곡</Text>
               </View>
-              ),
-            tabBarButton: (props) => (
-              <CustomTabBarButton {...props} />
-            )
+            ),
+            tabBarButton: props => <CustomTabBarButton {...props} />,
           }}
         />
         <Tab.Screen
@@ -66,10 +73,21 @@ export default function MainNavigator({navigation}) {
             unmountOnBlur: true,
             tabBarIcon: ({focused}) => (
               <View style={styles.iconContainer}>
-                <Icon name="baby-face-outline" size={30} color={focused ? '#283882' : '#92949E'} />
-                <Text style={{color: focused ? '#283882' : '#92949E', fontSize: 12, fontFamily: 'SCDream4'}}>아이 목록</Text>
+                <Icon
+                  name="baby-face-outline"
+                  size={30}
+                  color={focused ? '#283882' : '#92949E'}
+                />
+                <Text
+                  style={{
+                    color: focused ? '#283882' : '#92949E',
+                    fontSize: 12,
+                    fontFamily: 'SCDream4',
+                  }}>
+                  아이 목록
+                </Text>
               </View>
-            )
+            ),
           }}
         />
       </Tab.Navigator>
@@ -94,7 +112,7 @@ const styles = StyleSheet.create({
   customButton: {
     top: -20,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   customButtonView: {
     width: 70,
