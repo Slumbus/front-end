@@ -7,9 +7,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
 import RNFetchBlob from 'rn-fetch-blob';
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export default function HummingScreen({navigation}: any) {
   const [selectedOption, setSelectedOption] = useState("file");
+  const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Sound | undefined>();
@@ -17,6 +21,8 @@ export default function HummingScreen({navigation}: any) {
   const [duration, setDuration] = useState(0);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [recordedFile, setRecordedFile] = useState<string | null>(null);
+  const [recordText, setRecordText] = useState("하단 버튼을 통해 녹음해 주세요.");
 
   const selectFile = () => {
     setSelectedOption("file");
@@ -42,11 +48,15 @@ export default function HummingScreen({navigation}: any) {
         if (Platform.OS === 'android') {
             try {
                 const granted = await PermissionsAndroid.requestMultiple([
+                    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE , 
                     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
                 ]);
 
                 if (
+                    granted['android.permission.RECORD_AUDIO'] !== PermissionsAndroid.RESULTS.GRANTED ||
+                    granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
                     granted['android.permission.READ_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
                     granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED
                 ) {
@@ -87,7 +97,8 @@ export default function HummingScreen({navigation}: any) {
   };
 
   //음악 재생 동작
-  const playSound = () => {
+  const playSound = (filePath: string | null) => {
+    if (!filePath) return;
     if (sound) {
       sound.play(success => {
         if (success) {
@@ -100,24 +111,45 @@ export default function HummingScreen({navigation}: any) {
       });
       setIsPlaying(true);
     } else {
-      const newSound = new Sound(selectedFile, '', error => {
-        if (error) {
-          console.log('음악 불러오기 실패', error);
-          return;
-        }
-        setSound(newSound);
-        setDuration(newSound.getDuration());
-        setIsPlaying(true);
-        newSound.play(success => {
-          if (success) {
-            console.log('음악 재생 성공');
-          } else {
-            console.log('음악 재생 실패');
+      if (selectedOption === 'file') {
+        const newSound = new Sound(selectedFile, '', error => {
+          if (error) {
+            console.log('음악 불러오기 실패', error);
+            return;
           }
-          setIsPlaying(false);
-          setPosition(0);
+          setSound(newSound);
+          setDuration(newSound.getDuration());
+          setIsPlaying(true);
+          newSound.play(success => {
+            if (success) {
+              console.log('음악 재생 성공');
+            } else {
+              console.log('음악 재생 실패');
+            }
+            setIsPlaying(false);
+            setPosition(0);
+          });
         });
-      });
+      } else {
+        const newSound = new Sound(recordedFile, '', error => {
+          if (error) {
+            console.log('음악 불러오기 실패', error);
+            return;
+          }
+          setSound(newSound);
+          setDuration(newSound.getDuration());
+          setIsPlaying(true);
+          newSound.play(success => {
+            if (success) {
+              console.log('음악 재생 성공');
+            } else {
+              console.log('음악 재생 실패');
+            }
+            setIsPlaying(false);
+            setPosition(0);
+          });
+        });
+      }
     }
   };
 
@@ -170,10 +202,29 @@ export default function HummingScreen({navigation}: any) {
     return `${min}:${sec < 10 ? '0' : ''}${sec}`;
   };
 
+  const onStartRecord = async () => {
+    const result = await audioRecorderPlayer.startRecorder();
+    audioRecorderPlayer.addRecordBackListener(e => {
+      setPosition(e.currentPosition / 1000);
+      setDuration(e.currentPosition / 1000);
+    });
+    setIsRecording(true);
+    setRecordText("녹음이 진행 중입니다.");
+    console.log(`Recording started: ${result}`);
+  };
+
+  const onStopRecord = async () => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
+    setRecordedFile(result);
+    setIsRecording(false);
+    setPosition(0);
+    setRecordText("녹음이 완료되었습니다.");
+    console.log(`Recording stopped: ${result}`);
+  };
 
   return(
     <View style={styles.container}>
-
       <View style={styles.infoContainer}>
         <Text style={styles.title}>허밍 선택</Text>
         <View style={styles.infoTextContainer}>
@@ -200,7 +251,7 @@ export default function HummingScreen({navigation}: any) {
             </TouchableOpacity>
             <Text style={styles.songTitleText}>{selectedFile ? selectedFileName: '선택된 파일이 없습니다.'}</Text>
             <View style={styles.songPlayContainer}>
-              <TouchableOpacity onPress={isPlaying ? stopSound : playSound}>
+              <TouchableOpacity onPress={() => (isPlaying ? stopSound() : playSound(selectedFile))}>
                 <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
               </TouchableOpacity>
               {/* <View style={styles.playBar} /> */}
@@ -229,7 +280,42 @@ export default function HummingScreen({navigation}: any) {
         
         {selectedOption === 'record' && (
           <View style={styles.contentContainer}>
-            <Text>녹음하기 뷰</Text>
+            <View style={styles.playbarContainer}>
+              <Text style={styles.songTitleText}>{recordText}</Text>
+              <View style={styles.songPlayContainer}>
+                <TouchableOpacity onPress={isRecording ? onStopRecord : onStartRecord}>
+                  <Icon name={isRecording ? 'pause-circle' : 'mic-circle'} size={35} color="#F24E1E" />
+                </TouchableOpacity>
+                <Text style={[styles.songTimeText, {marginLeft: 10}]}>{formatTime(duration)}</Text>
+              </View>
+            </View>
+            {recordedFile && (
+              <View>
+                <View style={styles.songPlayContainer}>
+                  <TouchableOpacity onPress={() => (isPlaying ? stopSound() : playSound(recordedFile))}>
+                    <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
+                  </TouchableOpacity>
+                  <Slider
+                    style={styles.playBar}
+                    value={position}
+                    minimumValue={0}
+                    maximumValue={duration}
+                    minimumTrackTintColor="#283882"
+                    maximumTrackTintColor="#D9D9D9"
+                    onSlidingComplete={(value) => {
+                      if (sound) {
+                        sound.setCurrentTime(value);
+                        setPosition(value);
+                      }
+                    }}
+                  />
+                </View>
+                <View style={styles.songTimeContainer}>
+                  <Text style={[styles.songTimeText, {marginLeft: 50, marginRight: 200,}]}>{formatTime(position)}</Text>
+                  <Text style={styles.songTimeText}>{formatTime(duration)}</Text>
+                </View>
+              </View>
+            )}
           </View>
         )}
 
@@ -255,7 +341,6 @@ export default function HummingScreen({navigation}: any) {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 };
@@ -362,7 +447,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SCDream4',
     color: '#000000',
   },
-
 
   selectBtn:{
     marginHorizontal: 45,
