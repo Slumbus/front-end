@@ -12,12 +12,14 @@ import MusicItem from '../../components/play/MusicItem';
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlaylistScreen'>;
 
 interface Music {
+  id: number;
   title: string;
-  picture: string;
+  artwork: string;
+  url: string;
   lyrics: string;
 }
 
-export default function PlaylistScreen() {
+export default function PlaylistScreen({navigation}: any) {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
@@ -56,6 +58,9 @@ export default function PlaylistScreen() {
           onPreviousPress={handlePress}
           onNextPress={handlePress}
           onRepeatPress={handlePress}
+          album={album}
+          song={song}
+          navigation={navigation}
         />
       </View>
     </View>

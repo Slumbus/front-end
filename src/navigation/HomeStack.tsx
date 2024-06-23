@@ -32,10 +32,8 @@ export type RootStackParamList = {  // 더미데이터 값 직접 전달, api �
     song: Music;
   };
   LyricsScreen: {
-    picture: string;
-    name: string;
-    title: string;
-    lyrics: string;
+    album: Album;
+    song: Music;
   };
   PlaylistScreen: {
     album: Album;
