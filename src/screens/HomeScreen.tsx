@@ -12,7 +12,8 @@ const events = [
 ];
 
 export default function HomeScreen({navigation}: any) {
-  // const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
+  const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
+  const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
 
   const ChildrenAlbumdata = [
     {
@@ -113,7 +114,7 @@ export default function HomeScreen({navigation}: any) {
   ];
 
   const setSongList = async (index: number, songId: number) => {
-    // setCurrentAlbum(ChildrenAlbumdata[index]);
+    setCurrentAlbum(ChildrenAlbumdata[index]);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
@@ -136,6 +137,7 @@ export default function HomeScreen({navigation}: any) {
       const index = await TrackPlayer.getActiveTrackIndex();
       await TrackPlayer.play();
       console.log('TrackPlayer 시작 성공');
+      setCurrentTrack(index);
       
     } catch (error) {
       console.error('TrackPlayer 시작 오류:', error);
@@ -169,11 +171,11 @@ export default function HomeScreen({navigation}: any) {
       <BottomPlayer 
         song={ChildrenAlbumdata[0].Music[0]}
         onPress={()=>navigation.navigate('PlayScreen', { // 고정 값 직접 전달, api 연결 시 수정
-          album: ChildrenAlbumdata[0].albumname,
-          song: ChildrenAlbumdata[0].Music[0]})} 
+          album: currentAlbum.albumname,
+          song: currentAlbum.Music[curremtTrack]})} 
         listPress={()=>navigation.navigate('PlaylistScreen', { // 고정 값 직접 전달, api 연결 시 수정
-          album: ChildrenAlbumdata[0],
-          song: ChildrenAlbumdata[0].Music[0]})} />
+          album: currentAlbum,
+          song: currentAlbum.Music[curremtTrack]})} />
     </View>
   );
 }
