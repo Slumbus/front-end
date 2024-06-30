@@ -71,17 +71,17 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
       const fowardTrack = await TrackPlayer.getTrack(currentTrackIndex + 1); 
       if (fowardTrack !== null && fowardTrack !== undefined) {
         await TrackPlayer.skipToNext();
-        navigation.navigate('PlayScreen', {
-          album: album,
-          song: fowardTrack,
-        });
+        // navigation.navigate('PlayScreen', {
+        //   album: album,
+        //   song: fowardTrack,
+        // });
       } else { // Queue의 마지막 곡일 때 예외처리
         await TrackPlayer.skip(0);
         const firstTrack = await TrackPlayer.getTrack(0);
-        navigation.navigate('PlayScreen', {
-          album: album,
-          song: firstTrack,
-        });
+        // navigation.navigate('PlayScreen', {
+        //   album: album,
+        //   song: firstTrack,
+        // });
       }
     }
   }
@@ -92,19 +92,19 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
       const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1); // 첫번째 곡일 때 예외처리 필요
       if (backTrack !== null && backTrack !== undefined) {
         await TrackPlayer.skipToPrevious();
-        navigation.navigate('PlayScreen', {
-          album: album,
-          song: backTrack,
-        });
+        // navigation.navigate('PlayScreen', {
+        //   album: album,
+        //   song: backTrack,
+        // });
       } else { // Queue의 첫번째 곡일 때 예외처리
         const queue = await TrackPlayer.getQueue();
         const queueLength = queue.length
         await TrackPlayer.skip(queueLength - 1);
         const lastTrack = await TrackPlayer.getTrack(queueLength - 1);
-        navigation.navigate('PlayScreen', {
-          album: album,
-          song: lastTrack,
-        });
+        // navigation.navigate('PlayScreen', {
+        //   album: album,
+        //   song: lastTrack,
+        // });
       }
     }
   }

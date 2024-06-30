@@ -11,7 +11,7 @@ import PlayModal from '../../components/modal/PlayModal';
 import SliderComponent from '../../components/play/SliderComponent';
 import PlayButtonBarContainer from '../../components/play/PlayButtonBarContainer';
 import { usePlayback } from '../../contexts/PlaybackContext';
-import TrackPlayer, {Capability, RepeatMode} from 'react-native-track-player';
+import TrackPlayer, {Capability, Event, RepeatMode, useTrackPlayerEvents} from 'react-native-track-player';
 
 // const audioFile = require('../assets/audio/Lemon.mp3');
 
@@ -44,6 +44,10 @@ const TRACK_PLAYER_CONTROLS_OPTS: TrackPlayerControlsOptions = {
     Capability.SkipToPrevious,
   ],
 };
+
+const events = [
+  Event.PlaybackActiveTrackChanged,
+];
 
 const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
@@ -148,6 +152,18 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
     
     toggleNoiseModal();
   };
+
+  // 음악이 바뀌게 될 시 화면 제어
+  useTrackPlayerEvents(events, (event) => {
+    if (event.type === Event.PlaybackActiveTrackChanged) {
+      // 트랙 변경 시 실행될 코드
+      navigation.navigate('PlayScreen', {
+        album: album,
+        song: event.track,
+      });
+      console.log('Active track changed to:', event.track);
+    }
+  });
 
   // useEffect(() => {
   //   return () => {

@@ -1,12 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
 import BottomPlayer from '../components/BottomPlayer';
-import TrackPlayer, { RepeatMode } from 'react-native-track-player';
+import TrackPlayer, { RepeatMode, useTrackPlayerEvents, Event} from 'react-native-track-player';
+
+
+const events = [
+  Event.PlaybackActiveTrackChanged,
+];
 
 export default function HomeScreen({navigation}: any) {
+  const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
+  const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
 
   const ChildrenAlbumdata = [
     {
@@ -21,7 +28,7 @@ export default function HomeScreen({navigation}: any) {
         title: "트랙1",
         artwork: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
         url: 'https://sample-music.netlify.app/death%20bed.mp3',
-        lyrics: "열 길 물속은 알아도 한 길 사람 속은 모른다.\n사공이 많으면 배가 산으로 올라간다사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.\n사공이 많으면 배가 산으로 올라간다.",
+        lyrics: "트랙1 가사",
         },
         {
         id: 1,
@@ -107,30 +114,34 @@ export default function HomeScreen({navigation}: any) {
   ];
 
   const setSongList = async (index: number, songId: number) => {
+    setCurrentAlbum(ChildrenAlbumdata[index]);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
         console.log('TrackPlayer 초기화 성공');
-        console.log(TrackPlayer.getQueue());
         
-  
         await TrackPlayer.add(ChildrenAlbumdata[index].Music);
-        // await TrackPlayer.setRepeatMode(RepeatMode.Queue); // Off: 반복 재생x, track: 한곡만 재생, Queue 전체 목록 재생
+        await TrackPlayer.setRepeatMode(RepeatMode.Off); // Off: 큐 반복 재생x, track: 한곡만 재생, Queue 전체 목록 재생
+        const mode = await TrackPlayer.getRepeatMode();
+        console.log(mode);
+        
       } catch (error) {
         console.error('TrackPlayer 초기화 오류:', error);
       }
     };
   
     await addTrack();
+    
     try {
-      await TrackPlayer.play();
       await TrackPlayer.skip(songId);
+      const index = await TrackPlayer.getActiveTrackIndex();
+      await TrackPlayer.play();
       console.log('TrackPlayer 시작 성공');
+      setCurrentTrack(index);
       
     } catch (error) {
       console.error('TrackPlayer 시작 오류:', error);
     }
-    
   }
 
   return (
@@ -160,11 +171,11 @@ export default function HomeScreen({navigation}: any) {
       <BottomPlayer 
         song={ChildrenAlbumdata[0].Music[0]}
         onPress={()=>navigation.navigate('PlayScreen', { // 고정 값 직접 전달, api 연결 시 수정
-          album: ChildrenAlbumdata[0].albumname,
-          song: ChildrenAlbumdata[0].Music[0]})} 
+          album: currentAlbum.albumname,
+          song: currentAlbum.Music[curremtTrack]})} 
         listPress={()=>navigation.navigate('PlaylistScreen', { // 고정 값 직접 전달, api 연결 시 수정
-          album: ChildrenAlbumdata[0],
-          song: ChildrenAlbumdata[0].Music[0]})} />
+          album: currentAlbum,
+          song: currentAlbum.Music[curremtTrack]})} />
     </View>
   );
 }
