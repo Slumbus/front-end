@@ -8,9 +8,10 @@ interface SliderComponentProps {
   playbackPosition: number;
   setPlaybackPosition: (value: number) => void;
   maximumValue: number;
+  bottomPlayer: boolean;
 }
 
-const SliderComponent: React.FC<SliderComponentProps> = () => {
+const SliderComponent: React.FC<SliderComponentProps> = ({bottomPlayer}) => {
   const {position, duration} = useProgress(1000);
   const [isSeeking, setIsSeeking] = useState(false);
   const [seek, setSeek] = useState(0);
@@ -39,23 +40,41 @@ const SliderComponent: React.FC<SliderComponentProps> = () => {
 
   return (
     <View>
-      <View style={{alignItems: 'center'}}>
-        <Slider
-          style={{ width: 340 }}
-          value={isSeeking ? seek : position}
-          // onValueChange={setPlaybackPosition}
-          maximumValue={duration}
-          step={1}
-          onSlidingComplete={handleChange}
-          minimumTrackTintColor="#283882"
-          maximumTrackTintColor="#D9D9D9"
-          thumbTintColor="#283882"
-        />
-      </View>
-      <View style={styles.timeContainer}>
-        <Text style={styles.text}>{formatTime(isSeeking ? seek : position)}</Text>
-        <Text style={styles.text}>{formatTime(duration)}</Text>
-      </View>
+      {bottomPlayer == true ?
+        <View style={{alignItems: 'center'}}>
+          <Slider
+            style={{ width: '123%', marginHorizontal: -40 }}
+            value={isSeeking ? seek : position}
+            // onValueChange={setPlaybackPosition}
+            maximumValue={duration}
+            step={1}
+            onSlidingComplete={handleChange}
+            minimumTrackTintColor="#283882"
+            maximumTrackTintColor="#D9D9D9"
+            thumbTintColor="#283882"
+          />
+        </View>
+      :
+        <View>
+          <View style={{alignItems: 'center'}}>
+            <Slider
+              style={{ width: 340 }}
+              value={isSeeking ? seek : position}
+              // onValueChange={setPlaybackPosition}
+              maximumValue={duration}
+              step={1}
+              onSlidingComplete={handleChange}
+              minimumTrackTintColor="#283882"
+              maximumTrackTintColor="#D9D9D9"
+              thumbTintColor="#283882"
+            />
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.text}>{formatTime(isSeeking ? seek : position)}</Text>
+            <Text style={styles.text}>{formatTime(duration)}</Text>
+          </View>
+        </View>
+      }
     </View>
   );
 };

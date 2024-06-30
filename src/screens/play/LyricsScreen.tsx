@@ -28,7 +28,7 @@ const LyricsScreen: React.FC = ({navigation}: any) => {
         </ScrollView>
       </View>
       <View style={styles.playbackBar}>
-        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} />
+        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} bottomPlayer={false} />
         <PlayButtonBarContainer
           isPlaying={isPlaying}
           onPlayPress={playPress}

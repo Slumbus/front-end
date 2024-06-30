@@ -69,7 +69,7 @@ export default function PlaylistScreen({navigation}: any) {
         renderItem={renderItem}
       />
       <View style={styles.playbackBar}>
-        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} />
+        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} bottomPlayer={false} />
         <PlayButtonBarContainer
           isPlaying={isPlaying}
           onPlayPress={playPress}
