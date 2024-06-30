@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import TrackPlayer from 'react-native-track-player';
 
 import { RootStackParamList } from '../../navigation/HomeStack';
 import { usePlayback } from '../../contexts/PlaybackContext';
@@ -12,29 +13,49 @@ import MusicItem from '../../components/play/MusicItem';
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlaylistScreen'>;
 
 interface Music {
+  id: number;
   title: string;
-  picture: string;
+  artwork: string;
+  url: string;
   lyrics: string;
 }
 
-export default function PlaylistScreen() {
+export default function PlaylistScreen({navigation}: any) {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
+  const [curremtTrack, setCurrentTrack] = useState<any>(song);
+  const [musicList, setMusicList] = useState<Music[]>(album.Music);
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
-  const [musicList, setMusicList] = useState(album.Music);
+  const onTrackSelect = async (song:Music) => {
+    await TrackPlayer.skip(song.id);
+    const SelectTrack = await TrackPlayer.getTrack(song.id); 
+    setCurrentTrack(SelectTrack);
+    navigation.navigate('PlayScreen', { // 리스트로 이동 시 재생 화면 새로고침 필요
+      album: album,
+      song: SelectTrack,
+    });
+  };
+
+  const onDragEnd = async (data:Music[]) => {
+    console.log(data);
+    await TrackPlayer.setQueue(data);
+    setMusicList(data);
+  };
+
   const renderItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<Music>) => {
-      const isPlaying = item.title === song.title;
+      const isPlaying = item.id === curremtTrack?.id;
       return (
         <MusicItem 
           song={item} 
           isPlaying={isPlaying} 
           onLongPress={drag} // 드래그 시작을 위한 onLongPress 추가
+          onPress={() => onTrackSelect(item)} 
         />
       );
     },
-    [song]
+    [curremtTrack]
   );
 
   return (
@@ -43,7 +64,7 @@ export default function PlaylistScreen() {
       <DraggableFlatList
         style={styles.listContainer}
         data={musicList}
-        onDragEnd={({ data }) => setMusicList(data)}
+        onDragEnd={({ data }) => onDragEnd(data)}
         keyExtractor={(item) => item.title}
         renderItem={renderItem}
       />
@@ -53,9 +74,10 @@ export default function PlaylistScreen() {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
+          album={album}
+          song={curremtTrack}
+          navigation={navigation}
         />
       </View>
     </View>

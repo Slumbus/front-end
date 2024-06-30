@@ -8,23 +8,23 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'LyricsScreen'>;
 
-const LyricsScreen: React.FC = () => {
+const LyricsScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
-  const { picture, name, title, lyrics } = route.params;
+  const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
   return (
     <View style={styles.container}>
       <View style={styles.album}>
-        <Image source={{uri:picture}} style={styles.image} />
+        <Image source={{uri:song.artwork}} style={styles.image} />
         <View style={styles.textContainer}>
-          <Text style={styles.titleText}>{title}</Text>
-          <Text style={styles.nameText}>{name}</Text>
+          <Text style={styles.titleText}>{song.title}</Text>
+          <Text style={styles.nameText}>{album.name}</Text>
         </View>
       </View>
       <View style={styles.lyricsContainer}>
         <ScrollView>
-          <Text style={styles.lyrics}>{lyrics}</Text>
+          <Text style={styles.lyrics}>{song.lyrics}</Text>
         </ScrollView>
       </View>
       <View style={styles.playbackBar}>
@@ -33,9 +33,10 @@ const LyricsScreen: React.FC = () => {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
+          album={album}
+          song={song}
+          navigation={navigation}
         />
       </View>
     </View>

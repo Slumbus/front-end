@@ -202,7 +202,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         <Text style={styles.titleText}>{song.title}</Text>
         <Text style={styles.text}>{album.name}</Text>
       </View>
-      <SliderComponent //고정 값 추후 수정
+      <SliderComponent
         playbackPosition={playbackPosition}
         setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
@@ -212,8 +212,6 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
           album={album}
           song={song}
@@ -234,10 +232,8 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
           IconName="lyrics"
           text="가사"
           onPress={() => navigation.navigate('LyricsScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-            picture: song.artwork,
-            name: album.name,
-            title: song.title,
-            lyrics: song.lyrics,
+            album: album,
+            song: song,
           })}/>
         <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />

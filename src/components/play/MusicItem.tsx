@@ -15,11 +15,12 @@ interface MusicItemProps {
   song: Music;
   isPlaying: boolean;
   onLongPress: () => void;
+  onPress: () => void;
 }
 
-const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress }) => {
+const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress, onPress }) => {
   return (
-    <TouchableOpacity onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
+    <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
       <View style={styles.albumContainer}>
         <View style={styles.imageContainer}>
           <Image source={{ uri: song.artwork }} style={[styles.image, isPlaying && styles.playingImage]} />

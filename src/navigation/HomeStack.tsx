@@ -35,10 +35,8 @@ export type RootStackParamList = {
     song: Music;
   };
   LyricsScreen: {
-    picture: string;
-    name: string;
-    title: string;
-    lyrics: string;
+    album: Album;
+    song: Music;
   };
   PlaylistScreen: {
     album: Album;
