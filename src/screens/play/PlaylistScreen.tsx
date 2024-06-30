@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import TrackPlayer from 'react-native-track-player';
 
 import { RootStackParamList } from '../../navigation/HomeStack';
 import { usePlayback } from '../../contexts/PlaybackContext';
@@ -25,6 +26,21 @@ export default function PlaylistScreen({navigation}: any) {
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
 
   const [musicList, setMusicList] = useState(album.Music);
+
+  const onTrackSelect = async (song:Music) => {
+    await TrackPlayer.skip(song.id);
+    const SelectTrack = await TrackPlayer.getTrack(song.id); 
+    navigation.navigate('PlayScreen', {
+      album: album,
+      song: SelectTrack,
+    });
+  };
+
+  // const onDragEnd = async (data) => {
+  //   setMusicList(data);
+  //   큐재설정 함수 추가
+  // };
+
   const renderItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<Music>) => {
       const isPlaying = item.title === song.title;
@@ -33,6 +49,7 @@ export default function PlaylistScreen({navigation}: any) {
           song={item} 
           isPlaying={isPlaying} 
           onLongPress={drag} // 드래그 시작을 위한 onLongPress 추가
+          onPress={() => onTrackSelect(item)} 
         />
       );
     },
@@ -45,7 +62,7 @@ export default function PlaylistScreen({navigation}: any) {
       <DraggableFlatList
         style={styles.listContainer}
         data={musicList}
-        onDragEnd={({ data }) => setMusicList(data)}
+        // onDragEnd={({ data }) => onDragEnd(data)}
         keyExtractor={(item) => item.title}
         renderItem={renderItem}
       />
@@ -55,8 +72,6 @@ export default function PlaylistScreen({navigation}: any) {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
           album={album}
           song={song}

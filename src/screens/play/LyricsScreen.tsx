@@ -33,8 +33,6 @@ const LyricsScreen: React.FC = ({navigation}: any) => {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
           album={album}
           song={song}

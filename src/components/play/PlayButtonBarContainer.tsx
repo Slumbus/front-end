@@ -15,8 +15,6 @@ interface PlayButtonBarContainerProps {
   isPlaying: boolean;
   onPlayPress: () => void;
   onShufflePress: () => void;
-  onPreviousPress: () => void;
-  onNextPress: () => void;
   onRepeatPress: () => void;
   album: any;
   song: any;
@@ -27,8 +25,6 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   isPlaying,  //Boolean 으로 넘어옴 false: 재생x, ture: 재생
   onPlayPress,
   onShufflePress,
-  onPreviousPress,
-  onNextPress,
   onRepeatPress,
   album,
   song,
@@ -87,7 +83,6 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
           song: firstTrack,
         });
       }
-      
     }
   }
 

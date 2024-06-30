@@ -186,7 +186,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         <Text style={styles.titleText}>{song.title}</Text>
         <Text style={styles.text}>{album.name}</Text>
       </View>
-      <SliderComponent //고정 값 추후 수정
+      <SliderComponent
         playbackPosition={playbackPosition}
         setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
@@ -196,8 +196,6 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
           isPlaying={isPlaying}
           onPlayPress={playPress}
           onShufflePress={handlePress}
-          onPreviousPress={handlePress}
-          onNextPress={handlePress}
           onRepeatPress={handlePress}
           album={album}
           song={song}
