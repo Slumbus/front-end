@@ -169,11 +169,11 @@ export default function HomeScreen({navigation}: any) {
         </View>
       </ScrollView>
       <BottomPlayer 
-        song={ChildrenAlbumdata[0].Music[0]}
-        onPress={()=>navigation.navigate('PlayScreen', { // 고정 값 직접 전달, api 연결 시 수정
+        song={ChildrenAlbumdata[0].Music[0]} // 고정 값 직접 전달, api 연결 시 수정
+        onPress={()=>navigation.navigate('PlayScreen', {
           album: currentAlbum.albumname,
           song: currentAlbum.Music[curremtTrack]})} 
-        listPress={()=>navigation.navigate('PlaylistScreen', { // 고정 값 직접 전달, api 연결 시 수정
+        listPress={()=>navigation.navigate('PlaylistScreen', {
           album: currentAlbum,
           song: currentAlbum.Music[curremtTrack]})} />
     </View>

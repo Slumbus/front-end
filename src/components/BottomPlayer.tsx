@@ -7,6 +7,7 @@ import Slider from '@react-native-community/slider';
 import { usePlayback } from '../contexts/PlaybackContext';
 import PlayButton from './button/PlayButton';
 import TrackPlayer from 'react-native-track-player';
+import SliderComponent from './play/SliderComponent';
 
 
 interface Music {
@@ -25,6 +26,14 @@ interface BottomPlayerProps {
 
 const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress }) => {
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback(); //임시 호출
+
+  const onPlayPause = () => {
+    if (isPlaying === false) {
+      TrackPlayer.pause();
+    } else if (isPlaying === true) {
+      TrackPlayer.play();
+    }
+  };
 
   const goFoward = async () => {
     const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
@@ -73,16 +82,11 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Slider
-        style={{ marginHorizontal: -40 }}
-        value={playbackPosition}
-        onValueChange={setPlaybackPosition}
+      <SliderComponent
+        playbackPosition={playbackPosition}
+        setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
-        minimumValue={0}
-        step={1}
-        minimumTrackTintColor="#283882"
-        maximumTrackTintColor="#D9D9D9"
-        thumbTintColor="#283882"
+        bottomPlayer={true}
       />
       <View style={styles.container}>
         <View style={styles.albumContainer}>
@@ -95,7 +99,7 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
           <TouchableOpacity onPress={goBack}>
             <Icon name="play-skip-back" size={20} color={'#283882'} />
           </TouchableOpacity>
-          <PlayButton isPlaying={isPlaying} onPress={playPress} size={40} />
+          <PlayButton isPlaying={isPlaying} onPress={() => {playPress(); onPlayPause();}} size={40} />
           <TouchableOpacity onPress={goFoward}>
             <Icon name="play-skip-forward" size={20} color={'#283882'} />
           </TouchableOpacity>

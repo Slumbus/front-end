@@ -206,6 +206,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         playbackPosition={playbackPosition}
         setPlaybackPosition={setPlaybackPosition}
         maximumValue={200}
+        bottomPlayer={false}
       />
       <View style={{marginVertical: 45}}>
         <PlayButtonBarContainer // 정지, 다음, 이전 버튼
