@@ -137,15 +137,21 @@ export default function HomeScreen({navigation}: any) {
     
     try {
       await TrackPlayer.skip(songId);
-      const index = await TrackPlayer.getActiveTrackIndex();
+      const trackIndex = await TrackPlayer.getActiveTrackIndex();
       await TrackPlayer.play();
       setIsPlaying(true);
+      navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+        album: ChildrenAlbumdata,
+        song: ChildrenAlbumdata[index].Music[songId],
+        // trackData:  //추후 여기에 앨범 트랙 데이터 넘겨주어야 함.
+      });
       console.log('TrackPlayer 시작 성공');
-      setCurrentTrack(index);
+      setCurrentTrack(trackIndex);
       
     } catch (error) {
       console.error('TrackPlayer 시작 오류:', error);
     }
+
   }
 
   return (
@@ -161,11 +167,7 @@ export default function HomeScreen({navigation}: any) {
                   key={song.id} 
                   imageSource={{ uri: song.artwork}} 
                   text={song.title} 
-                  onPress={() => {navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-                    album: album,
-                    song: song,
-                    // trackData:  //추후 여기에 앨범 트랙 데이터 넘겨주어야 함.
-                  }); setSongList(album.id, song.id);}} />
+                  onPress={() => {setSongList(album.id, song.id);}} />
                 ))}
               </View>
             </View>
