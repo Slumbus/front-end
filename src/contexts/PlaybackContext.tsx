@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { usePlaybackState } from 'react-native-track-player';
+import { usePlaybackState, useTrackPlayerEvents, Event } from 'react-native-track-player';
 
 interface PlaybackContextType {
   isPlaying: boolean;
@@ -17,25 +17,45 @@ interface PlaybackProviderProps {
   children: ReactNode;
 }
 
+const events = [
+  Event.PlaybackState,
+];
+
 export const PlaybackProvider: React.FC<PlaybackProviderProps> = ({ children }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [playbackPosition, setPlaybackPosition] = useState(0);
 
   const playbackState: any = usePlaybackState();
   // const isTrackPlaying = useRef('paused'); //paused play loading
 
-  useEffect(() => {
-    console.log('Player State', playbackState);
+  // 음악이 바뀌게 될 시 화면 제어
+  useTrackPlayerEvents(events, (event) => {
 
-    //set the player state
-    if (playbackState === true || playbackState === 3) {
-      setIsPlaying(true);
-    } else if (playbackState === false || playbackState === 2) {
-      setIsPlaying(false);
-    } else {
-      // isPlaying.current = 'loading';
+    if (event.type === Event.PlaybackState) {
+      // 트랙 변경 시 실행될 코드
+      if (playbackState === true || playbackState === 3) {
+        setIsPlaying(true);
+      } else if (playbackState === false || playbackState === 2) {
+        setIsPlaying(false);
+      } else {
+        // isPlaying.current = 'loading';
+      }
     }
-  }, [playbackState]);
+  });
+
+  // useEffect(() => {
+  //   console.log('Player State', playbackState);
+
+
+  //   //set the player state
+  //   if (playbackState === true || playbackState === 3) {
+  //     setIsPlaying(true);
+  //   } else if (playbackState === false || playbackState === 2) {
+  //     setIsPlaying(false);
+  //   } else {
+  //     // isPlaying.current = 'loading';
+  //   }
+  // }, [playbackState]);
 
   const playPress = () => {
     setIsPlaying(!isPlaying);
