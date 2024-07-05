@@ -10,6 +10,7 @@ import TrackPlayer, {
   Event,
 } from 'react-native-track-player';
 import { useNavigation } from '@react-navigation/native';
+import { usePlayback } from '../../contexts/PlaybackContext';
 
 interface PlayButtonBarContainerProps {
   isPlaying: boolean;
@@ -46,6 +47,8 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   //   }
   // }, [playbackState]);
 
+  const { setIsPlaying } = usePlayback();
+
   const returnPlayBtn = () => {
     switch (isPlaying) {
       case true:
@@ -58,10 +61,12 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   };
 
   const onPlayPause = () => {
-    if (isPlaying === false) {
+    if (isPlaying === true) {
       TrackPlayer.pause();
-    } else if (isPlaying === true) {
+      setIsPlaying(false);
+    } else if (isPlaying === false) {
       TrackPlayer.play();
+      setIsPlaying(true);
     }
   };
 

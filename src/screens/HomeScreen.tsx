@@ -5,6 +5,7 @@ import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
 import BottomPlayer from '../components/BottomPlayer';
 import TrackPlayer, { RepeatMode, useTrackPlayerEvents, Event} from 'react-native-track-player';
+import { usePlayback } from '../contexts/PlaybackContext';
 
 
 const events = [
@@ -14,6 +15,8 @@ const events = [
 export default function HomeScreen({navigation}: any) {
   const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
   const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
+
+  const { setIsPlaying } = usePlayback();
 
   const ChildrenAlbumdata = [
     {
@@ -136,6 +139,7 @@ export default function HomeScreen({navigation}: any) {
       await TrackPlayer.skip(songId);
       const index = await TrackPlayer.getActiveTrackIndex();
       await TrackPlayer.play();
+      setIsPlaying(true);
       console.log('TrackPlayer 시작 성공');
       setCurrentTrack(index);
       
@@ -168,14 +172,18 @@ export default function HomeScreen({navigation}: any) {
           ))}
         </View>
       </ScrollView>
-      <BottomPlayer 
-        song={ChildrenAlbumdata[0].Music[0]} // 고정 값 직접 전달, api 연결 시 수정
-        onPress={()=>navigation.navigate('PlayScreen', {
+      { currentAlbum == null ? 
+        <View />
+      :
+        <BottomPlayer 
+          song={currentAlbum.Music[curremtTrack]} // 고정 값 직접 전달, api 연결 시 수정
+          onPress={()=>navigation.navigate('PlayScreen', {
           album: currentAlbum.albumname,
           song: currentAlbum.Music[curremtTrack]})} 
-        listPress={()=>navigation.navigate('PlaylistScreen', {
+          listPress={()=>navigation.navigate('PlaylistScreen', {
           album: currentAlbum,
           song: currentAlbum.Music[curremtTrack]})} />
+      }
     </View>
   );
 }

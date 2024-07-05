@@ -62,6 +62,9 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const [timeDuration, setTimeDuration] = useState<number | null>(null);
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
+  const [artworkUri, setArtworkUri] = useState<string | null>(null);
+  const [temTitle, setTemTitle] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const toggleNoiseModal = () => {
@@ -193,13 +196,33 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
     //     }
     //   };
     // }, [isPlaying]);
+
+    useEffect(() => {
+      const loadArtwork = async () => {
+        if (song && song.artwork) {
+          setArtworkUri(song.artwork);
+        }
+        setIsLoading(false);
+      };
+
+      const loadTitle = async () => {
+        if (song && song.title) {
+          setTemTitle(song.title);
+        }
+        setIsLoading(false);
+      }
+  
+      loadArtwork();
+      loadTitle();
+    }, [song]);
     
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Image source={{uri:song.artwork}} style={styles.image} />
-        <Text style={styles.titleText}>{song.title}</Text>
+        <Image source={artworkUri ? { uri: artworkUri } : require('../../assets/images/Slumbus_Logo.png')} 
+          style={styles.image} />
+        <Text style={styles.titleText}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
         <Text style={styles.text}>{album.name}</Text>
       </View>
       <SliderComponent
