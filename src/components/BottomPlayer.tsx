@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,13 +25,18 @@ interface BottomPlayerProps {
 }
 
 const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress }) => {
-  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback(); //임시 호출
+  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, setIsPlaying } = usePlayback(); //임시 호출
+  const [artworkUri, setArtworkUri] = useState<string | null>(null);
+  const [temTitle, setTemTitle] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const onPlayPause = () => {
-    if (isPlaying === false) {
+    if (isPlaying === true) {
       TrackPlayer.pause();
-    } else if (isPlaying === true) {
+      setIsPlaying(false);
+    } else if (isPlaying === false) {
       TrackPlayer.play();
+      setIsPlaying(true);
     }
   };
 
@@ -80,6 +85,25 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
     }
   }
 
+  useEffect(() => {
+    const loadArtwork = async () => {
+      if (song && song.artwork) {
+        setArtworkUri(song.artwork);
+      }
+      setIsLoading(false);
+    };
+
+    const loadTitle = async () => {
+      if (song && song.title) {
+        setTemTitle(song.title);
+      }
+      setIsLoading(false);
+    }
+
+    loadArtwork();
+    loadTitle();
+  }, [song]);
+
   return (
     <TouchableOpacity onPress={onPress}>
       <SliderComponent
@@ -91,9 +115,10 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
       <View style={styles.container}>
         <View style={styles.albumContainer}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: song.artwork }} style={styles.image} />
+            <Image source={artworkUri ? { uri: artworkUri } : require('../assets/images/Slumbus_Logo.png')}
+              style={styles.image} />
           </View>
-          <Text style={styles.text}>{song.title}</Text>
+          <Text style={styles.text}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
         </View>
         <View style={styles.playButtonContainer}>
           <TouchableOpacity onPress={goBack}>
