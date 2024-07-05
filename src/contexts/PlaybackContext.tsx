@@ -28,20 +28,20 @@ export const PlaybackProvider: React.FC<PlaybackProviderProps> = ({ children }) 
   const playbackState: any = usePlaybackState();
   // const isTrackPlaying = useRef('paused'); //paused play loading
 
-  // 음악이 바뀌게 될 시 화면 제어
-  useTrackPlayerEvents(events, (event) => {
+  // // 음악이 바뀌게 될 시 화면 제어
+  // useTrackPlayerEvents(events, (event) => {
 
-    if (event.type === Event.PlaybackState) {
-      // 트랙 변경 시 실행될 코드
-      if (playbackState === true || playbackState === 3) {
-        setIsPlaying(true);
-      } else if (playbackState === false || playbackState === 2) {
-        setIsPlaying(false);
-      } else {
-        // isPlaying.current = 'loading';
-      }
-    }
-  });
+  //   if (event.type === Event.PlaybackState) {
+  //     // 트랙 변경 시 실행될 코드
+  //     if (playbackState === true || playbackState === 3) {
+  //       setIsPlaying(false);
+  //     } else if (playbackState === false || playbackState === 2) {
+  //       setIsPlaying(true);
+  //     } else {
+  //       // isPlaying.current = 'loading';
+  //     }
+  //   }
+  // });
 
   // useEffect(() => {
   //   console.log('Player State', playbackState);
