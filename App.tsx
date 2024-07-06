@@ -2,6 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import AuthStack from './src/navigation/AuthStack';
 import MainNavigator from './src/navigation/MainNavigator';
@@ -13,7 +14,8 @@ export default function App() {
   setupPlayer(); //트랙 플레이어 생성
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <PaperProvider>
+      <GestureHandlerRootView style={{flex: 1}}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="AuthStack" component={AuthStack} />
@@ -21,5 +23,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
+    </PaperProvider>
   );
 }
