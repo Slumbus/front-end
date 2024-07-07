@@ -55,7 +55,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리', '중지'];
-  const timer = ['5분', '15분', '30분', '1시간'];
+  const timer = ['5분', '15분', '30분', '1시간', '초기화'];
 
   const [isNoiseModalVisible, setNoiseModalVisible] = useState(false);
   const [isTimerModalVisible, setTimerModalVisible] = useState(false);
@@ -66,7 +66,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const [temTitle, setTemTitle] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNoise, setSelectedNoise] = useState<string>('중지');
-
+  const [remainingTime, setRemainingTime] = useState<number | null>(null);
 
   const toggleNoiseModal = () => {
     setNoiseModalVisible(!isNoiseModalVisible);
@@ -80,22 +80,48 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
       clearTimeout(timerId);
     }
 
+    if (duration === '초기화') {
+      setTimeDuration(null);
+      setRemainingTime(null);
+      toggleTimerModal();
+      return;
+    }
+
     const durationInMs = parseDuration(duration);
     setTimeDuration(durationInMs);
+    setRemainingTime(durationInMs);
 
     const newTimerId = setTimeout(() => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+        setSound(null);
+      }
       stopPlayback();
       setTimeDuration(null);
+      setRemainingTime(null);
     }, durationInMs);
 
     setTimerId(newTimerId);
     toggleTimerModal();
+
+    const interval = setInterval(() => {
+      setRemainingTime((prevTime) => {
+        if (prevTime && prevTime > 1000) {
+          return prevTime - 1000;
+        } else {
+          clearInterval(interval);
+          return null;
+        }
+      });
+    }, 1000);
   };
 
   const parseDuration = (duration: string) => {
     switch (duration) {
         case '5분':
-          return 5*60*1000;
+          return 5*1000;
         case '15분':
           return 15*60*1000;
         case '30분':
@@ -106,6 +132,26 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
           return 0;
     }
   };
+
+  // 남은 시간을 분:초 형식으로 변환하는 함수
+  const formatTime = (milliseconds: number | null): string => {
+    if (!milliseconds || milliseconds <= 0) {
+      return '';
+    }
+
+    const totalSeconds = Math.round(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
+  });
 
   const handleNoiseSelect = (noise: string) => {
     if (sound) {
@@ -259,7 +305,11 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
             album: album,
             song: song,
           })}/>
-        <IconButton IconLibrary="MaterialIcons" IconName="bedtime" text="타이머" onPress={toggleTimerModal} />
+        <IconButton
+          IconLibrary="MaterialIcons"
+          IconName="bedtime"
+          text={remainingTime ? `${formatTime(remainingTime)}` : '타이머'}
+          onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
         <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
       </View>
