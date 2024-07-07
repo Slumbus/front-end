@@ -8,9 +8,10 @@ interface PlayModalProps {
   title: string;
   elements: string[];
   onElementPress?: (element: string) => void;
+  selectedElement?: string;
 }
 
-const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elements, onElementPress }) => {
+const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elements, onElementPress, selectedElement }) => {
   return (
     <Modal 
       isVisible={isVisible}
@@ -23,8 +24,11 @@ const PlayModal: React.FC<PlayModalProps> = ({ isVisible, onClose, title, elemen
         </View>
         <ScrollView>
           {elements.map((element, index) => (
-            <TouchableOpacity key={index} style={styles.elementBtn} onPress={() => onElementPress?.(element)}>
-              <Text style={styles.elementText}>{element}</Text>
+            <TouchableOpacity
+              key={index}
+              style={[styles.elementBtn, { backgroundColor: selectedElement === element ? '#ccc' : 'white' }]}
+              onPress={() => onElementPress?.(element)}>
+                <Text style={styles.elementText}>{element}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: 280,
+    maxHeight: 310,
   },
   titleContainer: {
     backgroundColor: '#283882',
