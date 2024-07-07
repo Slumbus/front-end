@@ -54,7 +54,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
 
-  const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리'];
+  const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리', '중지'];
   const timer = ['5분', '15분', '30분', '1시간'];
 
   const [isNoiseModalVisible, setNoiseModalVisible] = useState(false);
@@ -65,6 +65,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
   const [artworkUri, setArtworkUri] = useState<string | null>(null);
   const [temTitle, setTemTitle] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedNoise, setSelectedNoise] = useState<string>('중지');
 
 
   const toggleNoiseModal = () => {
@@ -112,6 +113,14 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
       sound.stop(() => {
         sound.release();
       });
+      setSound(null); // sound 상태 초기화
+    }
+
+    if (noise === '중지') {
+      setSelectedNoise('중지');
+      toggleNoiseModal();
+      console.log('Sound stop');
+      return;
     }
 
     let soundFile;
@@ -143,6 +152,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
       }
       console.log('Sound loaded successfully');
       setSound(newSound);
+      setSelectedNoise(noise);
       newSound.play((success) => {
         if (success) {
           console.log('Sound played successfully');
@@ -168,16 +178,6 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
     }
   });
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (sound) {
-  //       console.log('Releasing sound on component unmount');
-  //       sound.stop(() => {
-  //         sound.release();
-  //       });
-  //     }
-  //   };
-  // }, [sound]);
 
     // 슬라이더 음악 업데이트
     // useEffect(() => {
@@ -276,6 +276,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         title="백색 소음"
         elements={noise}
         onElementPress={handleNoiseSelect}
+        selectedElement={selectedNoise}
       />
     </View>
   );
