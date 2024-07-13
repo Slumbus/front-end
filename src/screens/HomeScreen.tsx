@@ -175,7 +175,7 @@ export default function HomeScreen({navigation}: any) {
       await TrackPlayer.play();
       setIsPlaying(true);
       navigation.navigate('PlayScreen', {
-        album: ChildrenAlbumdata,
+        album: ChildrenAlbumdata[index],
         song: ChildrenAlbumdata[index].Music[songId],
       });
       console.log('TrackPlayer 시작 성공');
