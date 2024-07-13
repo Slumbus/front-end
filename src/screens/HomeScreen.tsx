@@ -16,9 +16,10 @@ const events = [
 type MusicItem = { // 엔티티 수정 필요
   userId: number;
   kidId: number;
-  music: string;
+  musicId: number;
+  url: string;
   title: string;
-  picture: string;
+  artwork: string;
   lyric: string | null;
 };
 
@@ -154,57 +155,50 @@ export default function HomeScreen({navigation}: any) {
   }, []);
 
   const setSongList = async (index: number, songId: number) => {
-    setCurrentAlbum(childrenAlbumData[index]);
+    setCurrentAlbum(ChildrenAlbumdata[index]);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
         console.log('TrackPlayer 초기화 성공');
-        
-        await TrackPlayer.add(childrenAlbumData[index].musicList);
+        await TrackPlayer.add(ChildrenAlbumdata[index].Music);
         await TrackPlayer.setRepeatMode(RepeatMode.Off); // Off: 큐 반복 재생x, track: 한곡만 재생, Queue 전체 목록 재생
         const mode = await TrackPlayer.getRepeatMode();
         console.log(mode);
-        
       } catch (error) {
         console.error('TrackPlayer 초기화 오류:', error);
       }
     };
-  
     await addTrack();
-    
     try {
       await TrackPlayer.skip(songId);
       const trackIndex = await TrackPlayer.getActiveTrackIndex();
       await TrackPlayer.play();
       setIsPlaying(true);
-      navigation.navigate('PlayScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
-        album: childrenAlbumData,
-        song: childrenAlbumData[index].musicList[songId],
-        // trackData:  //추후 여기에 앨범 트랙 데이터 넘겨주어야 함.
+      navigation.navigate('PlayScreen', {
+        album: ChildrenAlbumdata,
+        song: ChildrenAlbumdata[index].Music[songId],
       });
       console.log('TrackPlayer 시작 성공');
       setCurrentTrack(trackIndex);
-      
     } catch (error) {
       console.error('TrackPlayer 시작 오류:', error);
     }
-
   }
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.albums}>
-          {childrenAlbumData.map((album) => (
-            <View key={album.kidId}>
-              <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
+          {ChildrenAlbumdata.map((album) => (
+            <View key={album.id}>
+              <AlbumTitleText imageSource={{ uri: album.picture}} text= {album.name} />
               <View style={styles.jackets}>
-                {album.musicList.map((song) => (
+                {album.Music.map((song) => (
                   <AlbumJacket 
-                    key={song.id} // 수정 필요
-                    imageSource={{ uri: song.picture}} 
+                    key={song.id}
+                    imageSource={{ uri: song.artwork}} 
                     text={song.title} 
-                    onPress={() => {setSongList(album.kidId, song.id);}} />
+                    onPress={() => {setSongList(album.id, song.id);}} />
                 ))}
               </View>
             </View>
@@ -215,7 +209,7 @@ export default function HomeScreen({navigation}: any) {
         <View />
       :
         <BottomPlayer 
-          song={currentAlbum.Music[curremtTrack]} // 고정 값 직접 전달, api 연결 시 수정
+          song={currentAlbum.Music[curremtTrack]}
           onPress={()=>navigation.navigate('PlayScreen', {
           album: currentAlbum.albumname,
           song: currentAlbum.Music[curremtTrack]})} 
