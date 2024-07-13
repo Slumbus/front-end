@@ -69,16 +69,8 @@ export default function PlaylistScreen({navigation}: any) {
         renderItem={renderItem}
       />
       <View style={styles.playbackBar}>
-        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} bottomPlayer={false} />
-        <PlayButtonBarContainer
-          isPlaying={isPlaying}
-          onPlayPress={playPress}
-          onShufflePress={handlePress}
-          onRepeatPress={handlePress}
-          album={album}
-          song={curremtTrack}
-          navigation={navigation}
-        />
+        <SliderComponent bottomPlayer={false} />
+        <PlayButtonBarContainer isPlaying={isPlaying} onPlayPress={playPress} />
       </View>
     </View>
   );

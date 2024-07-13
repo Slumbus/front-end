@@ -3,11 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import TrackPlayer, { RepeatMode } from 'react-native-track-player';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-interface RepeatButtonProps {
-  onPress: () => void;
-}
-
-const RepeatButton: React.FC<RepeatButtonProps> = ({ onPress }) => {
+const RepeatButton: React.FC = () => {
   const [state, setState] = useState(0);
 
   const handlePress = async () => {
@@ -15,7 +11,6 @@ const RepeatButton: React.FC<RepeatButtonProps> = ({ onPress }) => {
     console.log("상태: "+nextState);
     setState(nextState);
     console.log("바뀐상태:"+ state);
-    onPress();
   };
 
   useEffect(() => {
@@ -37,9 +32,7 @@ const RepeatButton: React.FC<RepeatButtonProps> = ({ onPress }) => {
         const mode = await TrackPlayer.getRepeatMode();
       }
     };
-
     changeRepeatMode();
-
   }, [state]);
 
   // const setRepeatMode = async () => { // Off: 큐 반복 x, track: 한곡만 재생, Queue 전체 목록 반복 재생

@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-// import { Audio } from 'expo-av';
 import Sound from 'react-native-sound';
 
 import { RootStackParamList } from '../../navigation/HomeStack';
@@ -13,10 +12,7 @@ import PlayButtonBarContainer from '../../components/play/PlayButtonBarContainer
 import { usePlayback } from '../../contexts/PlaybackContext';
 import TrackPlayer, {Capability, Event, RepeatMode, useTrackPlayerEvents} from 'react-native-track-player';
 
-// const audioFile = require('../assets/audio/Lemon.mp3');
-
 type PlayScreenRouteProp = RouteProp<RootStackParamList, 'PlayScreen'>;  // 더미데이터 값 직접 전달, api 연결 시 수정
-
 
 interface TrackPlayerControlsOptions {
   waitforBuffer: boolean;
@@ -49,7 +45,7 @@ const events = [
   Event.PlaybackActiveTrackChanged,
 ];
 
-const PlayScreen: React.FC = ({navigation, songData}: any) => {
+const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
@@ -224,7 +220,6 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
     }
   });
 
-
     // 슬라이더 음악 업데이트
     // useEffect(() => {
     //   let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
@@ -250,14 +245,12 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         }
         setIsLoading(false);
       };
-
       const loadTitle = async () => {
         if (song && song.title) {
           setTemTitle(song.title);
         }
         setIsLoading(false);
       }
-  
       loadArtwork();
       loadTitle();
     }, [song]);
@@ -271,29 +264,16 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
         <Text style={styles.titleText}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
         <Text style={styles.text}>{album.name}</Text>
       </View>
-      <SliderComponent
-        playbackPosition={playbackPosition}
-        setPlaybackPosition={setPlaybackPosition}
-        maximumValue={200}
-        bottomPlayer={false}
-      />
+      <SliderComponent bottomPlayer={false} />
       <View style={{marginVertical: 45}}>
-        <PlayButtonBarContainer // 정지, 다음, 이전 버튼
-          isPlaying={isPlaying}
-          onPlayPress={playPress}
-          onShufflePress={handlePress}
-          onRepeatPress={handlePress}
-          album={album}
-          song={song}
-          navigation={navigation}
-        />
+        <PlayButtonBarContainer isPlaying={isPlaying} onPlayPress={playPress} />
       </View>
       <View style={styles.IconButtonContainer}>
         <IconButton
           IconLibrary="MaterialCommunityIcons"
           IconName="playlist-music"
           text="재생목록"
-          onPress={() => navigation.navigate('PlaylistScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+          onPress={() => navigation.navigate('PlaylistScreen', {
             album: album,
             song: song,
           })} />
@@ -301,7 +281,7 @@ const PlayScreen: React.FC = ({navigation, songData}: any) => {
           IconLibrary="MaterialIcons"
           IconName="lyrics"
           text="가사"
-          onPress={() => navigation.navigate('LyricsScreen', { // 더미데이터 값 직접 전달, api 연결 시 수정
+          onPress={() => navigation.navigate('LyricsScreen', {
             album: album,
             song: song,
           })}/>
