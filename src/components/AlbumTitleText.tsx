@@ -3,19 +3,17 @@ import { View, Image, Text, StyleSheet } from 'react-native';
 
 interface AlbumTitleTextProps {
   imageSource: any;
-  text1: string;
-  text2: string;
+  text: string;
 }
 
-const AlbumTitleText: React.FC<AlbumTitleTextProps> = ({ imageSource, text1, text2 }) => {
+const AlbumTitleText: React.FC<AlbumTitleTextProps> = ({ imageSource, text }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image source={imageSource} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.text1}>{text1}</Text>
-        <Text style={styles.text2}>{text2}</Text>
+        <Text style={styles.text}>{text}</Text>
       </View>
     </View>
   );
@@ -42,12 +40,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: 'column',
   },
-  text1: {
-    fontSize: 14,
-    color: '#000',
-    fontFamily: 'SCDream4',
-  },
-  text2: {
+  text: {
     fontSize: 16,
     color: '#283882',
     fontFamily: 'SCDream6',
