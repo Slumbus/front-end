@@ -2,22 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
 import PlayButton from '../../components/button/PlayButton';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
 
-const SongData = [
-  {
-    id: 1,
-    picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-    title: "완전 취침",
-    owner: "사랑이"
-  },
-  {
-    id: 2,
-    picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-    title: "Goodnight",
-    owner: "사랑이"
-  }
-];
+interface Song {
+  id: number;
+  url: string,
+  title: string;
+  artwork: string;
+}
+
+interface Lullaby {
+  title: string;
+  reactionLevel: number;
+  reactionText: string;
+  date: string;
+}
+
+interface Props {
+  route: any;
+  navigation: any;
+  selectedChild: any;
+  setSelectedChild: (child: any) => void;
+}
 
 const lullabiesData = [
   {
@@ -66,17 +72,40 @@ const getReactionImage = (reactionLevel: number) => {
   }
 };
 
-export default function ChildrenInfoPlaylistScreen({ route, navigation, selectedChild, setSelectedChild }: any) {
+export default function ChildrenInfoPlaylistScreen({ route, navigation, selectedChild, setSelectedChild }: Props) {
   const { child } = route.params;
   const [showPhotos, setShowPhotos] = useState(true);
   const [progress, setProgress] = useState(0.5);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [playingSongId, setPlayingSongId] = useState<number | null>(null); // 재생 상태를 관리할 상태 추가
   const [modalVisible, setModalVisible] = useState(false);
+  const [songData, setSongData] = useState<Song[]>([]);
 
   useEffect(() => {
     setSelectedChild(child);
+    fetchSongData(child.id);
   }, [child]);
+
+  const fetchSongData = async (kidId: number) => {
+    const token = '';
+
+    try {
+      const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.data.map((song: any) => ({
+        id: song.id,
+        url: song.url,
+        title: song.title,
+        artwork: song.artwork,
+      }));
+      setSongData(data);
+    } catch (error) {
+      console.error('Error fetching song data:', error);
+    }
+  };
 
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
@@ -150,14 +179,14 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
       {/* 사진 목록 또는 다른 목록 */}
       {showPhotos ? (
         <FlatList
-          data={SongData}
+          data={songData}
           renderItem={({ item }) => (
             <View style={styles.listItemContainer}>
-              <Image source={{ uri: item.picture }} style={styles.photo} />
+              <Image source={{ uri: item.artwork }} style={styles.photo} />
               <Text style={styles.songTitle}>{item.title}</Text>
               <PlayButton
                 size={32}
-                isPlaying={playingSongId !== item.id}
+                isPlaying={playingSongId == item.id}
                 onPress={() => handlePlayButtonClick(item.id)}
               />
             </View>
@@ -171,7 +200,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
             data={Object.entries(groupedLullabies)}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => navigation.navigate('ChildrenInfoReaction', { title: item[0], data: item[1], selectedSongData: SongData.find(song => song.title === item[0]) })}
+                onPress={() => navigation.navigate('ChildrenInfoReaction', { title: item[0], data: item[1], selectedSongData: songData.find(song => song.title === item[0]) })}
                 style={styles.reactionContainer}
               >
                 <View style={styles.lullabyTitleContainer}
@@ -218,11 +247,11 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
               </View>
             </View>
             <FlatList
-                data={SongData}
+                data={songData}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleNavigate(item)}>
                     <View style={styles.modalListItemContainer}>
-                      <Image source={{ uri: item.picture }} style={styles.selectPhoto} />
+                      <Image source={{ uri: item.url }} style={styles.selectPhoto} />
                       <Text style={styles.selectTitle}>{item.title}</Text>
                     </View>
                   </TouchableOpacity>
