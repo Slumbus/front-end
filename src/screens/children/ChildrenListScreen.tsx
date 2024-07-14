@@ -14,7 +14,7 @@ const childrenData: Child[] = [
   {
     id: 1,
     name: '사랑이',
-    birthdate: '2024.03.12',
+    birthdate: '2024-03-12',
     age: 1,
     image: "https://cdn.pixabay.com/photo/2015/05/20/14/23/baby-775503_1280.jpg",
     photoList: [
@@ -27,7 +27,7 @@ const childrenData: Child[] = [
   {
     id: 2,
     name: '행복이',
-    birthdate: '2023.05.20',
+    birthdate: '2023-05-20',
     age: 2,
     image: "https://cdn.pixabay.com/photo/2016/01/20/11/11/baby-1151351_1280.jpg",
     photoList: [

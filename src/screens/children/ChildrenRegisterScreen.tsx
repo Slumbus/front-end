@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import {View, Text, StyleSheet, Image, TextInput, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import axios from 'axios';
 
 export default function ChildrenRegisterScreen() {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
   const [gender, setGender] = useState('');
+  const [name, setName] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -27,6 +29,24 @@ export default function ChildrenRegisterScreen() {
         }
       }
     });
+  };
+
+  const handleRegister = () => {
+    const requestBody = {
+      name: name,
+      birth: birthdate.toISOString().split('T')[0],
+      gender: gender === '남자' ? 0 : gender === '여자' ? 1 : 2,
+      picture: selectedImage ? selectedImage : 'Test', // 실제 업로드에서는 이미지 데이터를 처리해야 함
+    };
+
+    axios.post('http://localhost:3000/api/children', requestBody)
+      .then(response => {
+        Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
+      })
+      .catch(error => {
+        console.error(error);
+        Alert.alert('등록 실패', '아이 정보 등록에 실패했습니다.');
+      });
   };
 
   return (
