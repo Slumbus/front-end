@@ -3,8 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function MoodSelectScreen({navigation}: any) {
 
-  const genreBtnNames: string[] = ['장르1', '장르2', '장르3', '장르4', '장르5', '장르6', '장르7', '장르8', '장르9'];
-  const instBtnNames: string[] = ['악기1', '악기2', '악기3', '악기4', '악기5', '악기6', '악기7', '악기8', '악기9'];
+  const genreBtnNames: string[] = ['조용한', '새벽', '자정', '비오는', '몽환적', '잠오는', '신나는', '몽롱한', '우중충'];
+  const instBtnNames: string[] = ['하프', '피리', '바이올린', '가야금', '플룻', '기타', '오르골', '거문고', '리코더'];
 
   const [selectedGenreButtons, setSelectedGenreButtons] = useState<number[]>([]);
   const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);
@@ -19,6 +19,7 @@ export default function MoodSelectScreen({navigation}: any) {
       }
       return prevSelected;
     });
+    
   };
 
   const pressInstButton = (index: number) => {
@@ -81,7 +82,12 @@ export default function MoodSelectScreen({navigation}: any) {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.selectBtn} onPress={() => navigation.navigate('MelodySaveScreen')}>
+      <TouchableOpacity style={styles.selectBtn} onPress={() => {
+        // 버튼 동작시 백엔드로 로그로 찍히는 해당 데이터 넘겨주면 됨
+        console.log("장르: " + genreBtnNames[selectedGenreButtons[0]] + ", "+ genreBtnNames[selectedGenreButtons[1]]);
+        console.log("악기: " + instBtnNames[selectedInstButtons[0]] + ", "+ instBtnNames[selectedInstButtons[1]]);
+        
+        navigation.navigate('MelodySaveScreen')}}>
         <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
       </TouchableOpacity>
       
