@@ -22,6 +22,16 @@ export default function MyScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
+            navigation.navigate('SelectLyricWritingList' as never);
+          }}>
+          <View style={styles.buttonContent}>
+            <Text style={styles.text}>내가 만든 자장가 목록 - 작사하러 가기</Text>
+            <Text style={styles.arrow}>{'>'}</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
             navigation.navigate('EditProfile' as never);
           }}>
           <View style={styles.buttonContent}>
