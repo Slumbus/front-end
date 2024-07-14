@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
 import PlayButton from '../../components/button/PlayButton';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -66,13 +66,17 @@ const getReactionImage = (reactionLevel: number) => {
   }
 };
 
-export default function ChildrenInfoPlaylistScreen({ route, navigation }: any) {
+export default function ChildrenInfoPlaylistScreen({ route, navigation, selectedChild, setSelectedChild }: any) {
   const { child } = route.params;
   const [showPhotos, setShowPhotos] = useState(true);
   const [progress, setProgress] = useState(0.5);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [playingSongId, setPlayingSongId] = useState<number | null>(null); // 재생 상태를 관리할 상태 추가
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setSelectedChild(child);
+  }, [child]);
 
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
