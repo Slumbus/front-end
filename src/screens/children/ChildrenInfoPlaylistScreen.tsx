@@ -11,13 +11,6 @@ interface Song {
   artwork: string;
 }
 
-interface Lullaby {
-  title: string;
-  reactionLevel: number;
-  reactionText: string;
-  date: string;
-}
-
 interface Props {
   route: any;
   navigation: any;
@@ -25,47 +18,19 @@ interface Props {
   setSelectedChild: (child: any) => void;
 }
 
-const lullabiesData = [
-  {
-    title: "완전 취침",
-    reactionLevel: 1,
-    reactionText: "자장가를 틀자마자 금새 잠이 들었다",
-    date: "2024.03.13 15:00",
-  },
-  {
-    title: "완전 취침",
-    reactionLevel: 6,
-    reactionText: "자장가를 들어도 기분이 풀리지 않았다",
-    date: "2024.03.13 15:00",
-  },
-  {
-    title: "Goodnight",
-    reactionLevel: 2,
-    reactionText: "훌륭해요",
-    date: "2024.03.13 15:00",
-  },
-];
-
-const groupedLullabies: Record<string, { reactionLevel: number; reactionText: string; date: string; }[]> = lullabiesData.reduce((acc, cur) => {
-  if (!acc[cur.title]) {
-    acc[cur.title] = [];
-  }
-  acc[cur.title].push(cur);
-  return acc;
-}, {} as Record<string, { reactionLevel: number; reactionText: string; date: string; }[]>);
 
 // 이모지 선택 함수
-const getReactionImage = (reactionLevel: number) => {
+const getReactionImage = (reactionLevel: string) => {
   switch (reactionLevel) {
-    case 1:
+    case "DEEPSLEEP":
       return require('../../assets/images/ic_reaction/ic_reaction1.png');
-    case 2:
+    case "SLEEP":
       return require('../../assets/images/ic_reaction/ic_reaction2.png');
-    case 3:
+    case "GOOD":
       return require('../../assets/images/ic_reaction/ic_reaction3.png');
-    case 4:
+    case "BAD":
       return require('../../assets/images/ic_reaction/ic_reaction4.png');
-    case 5:
+    case "SAD":
       return require('../../assets/images/ic_reaction/ic_reaction5.png');
     default:
       return require('../../assets/images/ic_reaction/ic_reaction6.png');
@@ -80,15 +45,17 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   const [playingSongId, setPlayingSongId] = useState<number | null>(null); // 재생 상태를 관리할 상태 추가
   const [modalVisible, setModalVisible] = useState(false);
   const [songData, setSongData] = useState<Song[]>([]);
+  const [lullabyData, setLullabyData] = useState<any[]>([]);
+  const token = '';
 
   useEffect(() => {
     setSelectedChild(child);
     fetchSongData(child.id);
+    setSelectedChild(child);
+    fetchReactionData(child.id);
   }, [child]);
 
   const fetchSongData = async (kidId: number) => {
-    const token = '';
-
     try {
       const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
         headers: {
@@ -104,6 +71,30 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
       setSongData(data);
     } catch (error) {
       console.error('Error fetching song data:', error);
+    }
+  };
+
+  const fetchReactionData = async (kidId: number) => {
+    try {
+      const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.data.map((reactionGroup: any) => ({
+        kidId: reactionGroup.kidId,
+        musicId: reactionGroup.musicId,
+        musicTitle: reactionGroup.musicTitle,
+        reactions: reactionGroup.reactions.map((reaction: any) => ({
+          reactId: reaction.reactId,
+          emoji: reaction.emoji,
+          comment: reaction.comment,
+          created: reaction.createdAt
+        })),
+      }));
+      setLullabyData(data);
+    } catch (error) {
+      console.error('Error fetching reaction data:', error);
     }
   };
 
@@ -197,23 +188,28 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         <View style={styles.reactionListContainer}>
           <Text style={styles.reactionTitle}>자장가 반응 기록</Text>
           <FlatList
-            data={Object.entries(groupedLullabies)}
+            data={lullabyData}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => navigation.navigate('ChildrenInfoReaction', { title: item[0], data: item[1], selectedSongData: songData.find(song => song.title === item[0]) })}
+                onPress={() => navigation.navigate('ChildrenInfoReaction', { 
+                  title: item.musicTitle, 
+                  data: item.reactions, 
+                  selectedSongData: item.reactions })}
                 style={styles.reactionContainer}
               >
                 <View style={styles.lullabyTitleContainer}
                 >
                   <Icon name="play" size={18} color={'#000000'} />
-                  <Text style={styles.lullabyTitle}>{item[0]}</Text>
+                  <Text style={styles.lullabyTitle}>{item.musicTitle}</Text>
                 </View>
-                {item[1].map((lullabyData, index) => (
+                {item.reactions.map((reaction: {
+                  created: string; emoji: string; comment: string | string | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; 
+}, index: React.Key | null | undefined) => (
                   <View key={index} style={styles.reactionItemContainer}>
-                    <Image source={getReactionImage(lullabyData.reactionLevel)} style={styles.reactionImage} />
+                    <Image source={getReactionImage(reaction.emoji)} style={styles.reactionImage} />
                     <View style={styles.reactionContentContainer}>
-                      <Text style={styles.reactionContent}>{lullabyData.reactionText}</Text>
-                      <Text style={styles.reactionDate}>{lullabyData.date}</Text>
+                      <Text style={styles.reactionContent}>{reaction.comment}</Text>
+                      <Text style={styles.reactionDate}>{reaction.created}</Text>
                     </View>
                   </View>
                 ))}

@@ -42,7 +42,7 @@ export default function ChildrenListScreen({ navigation }: any) {
 
   useEffect(() => {
     const fetchChildrenData = async () => {
-      const token = ''; // 임시 토큰 값
+      const token = '';
 
       try {
         const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
