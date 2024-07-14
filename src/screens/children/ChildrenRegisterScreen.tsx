@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert} from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 
-export default function ChildrenRegisterScreen() {
+export default function ChildrenRegisterScreen({ route }: any) {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
   const [gender, setGender] = useState('');
-  const [name, setName] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [name, setName] = useState('');
 
+  useEffect(() => {
+    if (route.params?.child) {
+      const { birthdate, gender, image, name } = route.params.child;
+      if (birthdate) {
+        // 'yyyy.MM.dd' 형식에서 'yyyy-MM-dd' 형식으로 변환
+        const parsedDate = birthdate.replace(/\./g, '-');
+        if (!isNaN(Date.parse(parsedDate))) {
+          setBirthdate(new Date(parsedDate));
+        } else {
+          setBirthdate(new Date());
+        }
+      } else {
+        setBirthdate(new Date());
+      }
+      setGender(gender);
+      setSelectedImage(image);
+      setName(name);
+    }
+  }, [route.params]);
+  
   const handleDateChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
     const currentDate = selectedDate || birthdate;
     setBirthdate(currentDate);
@@ -62,7 +82,11 @@ export default function ChildrenRegisterScreen() {
       </View>
       <View style={styles.nameContainer}>
         <Text style={styles.text}>이름(태명)</Text>
-        <TextInput placeholder='이름' style={styles.textInput} />
+        <TextInput 
+          placeholder='이름' 
+          style={styles.textInput}
+          value={name}
+          onChangeText={setName} />
       </View>
       <View style={styles.dateContainer}>
         <Text style={styles.text}>생년월일</Text>

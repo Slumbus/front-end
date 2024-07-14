@@ -15,37 +15,12 @@ import { usePlayback } from '../../contexts/PlaybackContext';
 interface PlayButtonBarContainerProps {
   isPlaying: boolean;
   onPlayPress: () => void;
-  onShufflePress: () => void;
-  onRepeatPress: () => void;
-  album: any;
-  song: any;
-  navigation: any;
 }
 
 const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   isPlaying,  //Boolean 으로 넘어옴 false: 재생x, ture: 재생
   onPlayPress,
-  onShufflePress,
-  onRepeatPress,
-  album,
-  song,
-  navigation,
 }, trackData ) => {
-  // const playbackState: any = usePlaybackState();
-  // // const isTrackPlaying = useRef('paused'); //paused play loading
-
-  // useEffect(() => {
-  //   console.log('Player State', playbackState);
-
-  //   //set the player state
-  //   if (playbackState === true || playbackState === 3) {
-  //     isPlaying = true;
-  //   } else if (playbackState === false || playbackState === 2) {
-  //     isPlaying = false;
-  //   } else {
-  //     // isPlaying.current = 'loading';
-  //   }
-  // }, [playbackState]);
 
   const { setIsPlaying } = usePlayback();
 
@@ -76,17 +51,9 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
       const fowardTrack = await TrackPlayer.getTrack(currentTrackIndex + 1); 
       if (fowardTrack !== null && fowardTrack !== undefined) {
         await TrackPlayer.skipToNext();
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: fowardTrack,
-        // });
       } else { // Queue의 마지막 곡일 때 예외처리
         await TrackPlayer.skip(0);
         const firstTrack = await TrackPlayer.getTrack(0);
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: firstTrack,
-        // });
       }
     }
   }
@@ -94,29 +61,22 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
   const goBack = async () => {
     const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
     if (currentTrackIndex !== null && currentTrackIndex !== undefined) {
-      const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1); // 첫번째 곡일 때 예외처리 필요
+      const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1);
       if (backTrack !== null && backTrack !== undefined) {
         await TrackPlayer.skipToPrevious();
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: backTrack,
-        // });
       } else { // Queue의 첫번째 곡일 때 예외처리
         const queue = await TrackPlayer.getQueue();
         const queueLength = queue.length
         await TrackPlayer.skip(queueLength - 1);
         const lastTrack = await TrackPlayer.getTrack(queueLength - 1);
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: lastTrack,
-        // });
       }
     }
   }
 
   return (
     <View style={styles.container}>
-      <ShuffleButton onPress={onShufflePress} />
+      {/* <ShuffleButton onPress={onShufflePress} /> */}
+      <View style={{width: 30, height: 30}} />
       <View style={styles.playButtonContainer}>
         <TouchableOpacity onPress={() => {goBack(); }}>
           <Icon name="play-skip-back" size={30} color={'#283882'} />
@@ -126,7 +86,7 @@ const PlayButtonBarContainer: React.FC<PlayButtonBarContainerProps> = ({
           <Icon name="play-skip-forward" size={30} color={'#283882'} />
         </TouchableOpacity>
       </View>
-      <RepeatButton onPress={onRepeatPress} />
+      <RepeatButton />
     </View>
   );
 };

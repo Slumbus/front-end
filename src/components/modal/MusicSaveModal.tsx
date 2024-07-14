@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function MusicSaveModal({navigation}: any) {
+type MusicSaveModalProps = {
+  navigation: any;
+  handleSave: () => void;
+};
+
+export default function MusicSaveModal({ navigation, handleSave }: MusicSaveModalProps) {
   const [modalVisible, setModalVisible] = useState(false);
   
   return(
@@ -27,7 +32,7 @@ export default function MusicSaveModal({navigation}: any) {
               <Text style={styles.modalContentText}>가사 녹음하러 가기</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalContentBtn}>
+            <TouchableOpacity style={styles.modalContentBtn} onPress={() => { handleSave(); setModalVisible(false); }}>
               <Text style={styles.modalContentText}>이대로 저장하기</Text>
             </TouchableOpacity>
           </View>

@@ -5,9 +5,6 @@ import TrackPlayer, { Event, useProgress } from 'react-native-track-player';
 import {PlaybackActiveTrackChangedEvent} from 'react-native-track-player';
 
 interface SliderComponentProps {
-  playbackPosition: number;
-  setPlaybackPosition: (value: number) => void;
-  maximumValue: number;
   bottomPlayer: boolean;
 }
 
@@ -45,7 +42,6 @@ const SliderComponent: React.FC<SliderComponentProps> = ({bottomPlayer}) => {
           <Slider
             style={{ width: '123%', marginHorizontal: -40 }}
             value={isSeeking ? seek : position}
-            // onValueChange={setPlaybackPosition}
             maximumValue={duration}
             step={1}
             onSlidingComplete={handleChange}
@@ -60,7 +56,6 @@ const SliderComponent: React.FC<SliderComponentProps> = ({bottomPlayer}) => {
             <Slider
               style={{ width: 340 }}
               value={isSeeking ? seek : position}
-              // onValueChange={setPlaybackPosition}
               maximumValue={duration}
               step={1}
               onSlidingComplete={handleChange}
