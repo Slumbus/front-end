@@ -3,17 +3,17 @@ import {View, Text, StyleSheet, Image, FlatList, TouchableOpacity} from 'react-n
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // 이모지 선택 함수
-const getReactionImage = (reactionLevel: number) => {
+const getReactionImage = (reactionLevel: string) => {
   switch (reactionLevel) {
-    case 1:
+    case "DEEPSLEEP":
       return require('../../assets/images/ic_reaction/ic_reaction1.png');
-    case 2:
+    case "SLEEP":
       return require('../../assets/images/ic_reaction/ic_reaction2.png');
-    case 3:
+    case "GOOD":
       return require('../../assets/images/ic_reaction/ic_reaction3.png');
-    case 4:
+    case "BAD":
       return require('../../assets/images/ic_reaction/ic_reaction4.png');
-    case 5:
+    case "SAD":
       return require('../../assets/images/ic_reaction/ic_reaction5.png');
     default:
       return require('../../assets/images/ic_reaction/ic_reaction6.png');
@@ -34,11 +34,11 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
           data={data}
           renderItem={({ item }) => (
             <View style={styles.reactionItemContainer}>
-              <Image source={getReactionImage(item.reactionLevel)} style={styles.reactionImage} />
+              <Image source={getReactionImage(item.emoji)} style={styles.reactionImage} />
                     
               <View style={styles.reactionContentContainer}>
-                <Text style={styles.reactionContent}>{item.reactionText}</Text>
-                <Text style={styles.reactionDate}>{item.date}</Text>
+                <Text style={styles.reactionContent}>{item.comment}</Text>
+                <Text style={styles.reactionDate}>{item.created}</Text>
               </View>
             </View>
           )}

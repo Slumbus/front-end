@@ -2,8 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Image, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Asset, CameraOptions, ImageLibraryOptions, launchCamera, launchImageLibrary } from "react-native-image-picker";
 
-export default function AlbumPhotoSelectModal() {
+type AlbumPhotoSelectModalProps = {
+  setImageFile: (image: Asset) => void;
+};
+
+export default function AlbumPhotoSelectModal({ setImageFile }: AlbumPhotoSelectModalProps) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -43,7 +48,11 @@ export default function AlbumPhotoSelectModal() {
       } else if (response.assets && response.assets.length > 0) {
         const selectedImage: Asset = response.assets[0];
         console.log('Image selected: ', selectedImage);
-        // 여기에 이미지 선택 후의 처리 추가
+        if (selectedImage.uri) {
+          setSelectedImage(selectedImage.uri);
+        }
+        setImageFile(selectedImage);
+        setModalVisible(false);
       }
     });
   };
@@ -61,7 +70,14 @@ export default function AlbumPhotoSelectModal() {
         console.log('Camera Error: ', response.errorMessage);
       } else {
         console.log('Camera Response: ', response.assets);
-        // 여기서 이미지 데이터를 사용할 수 있습니다 (response.assets[0])
+        if (response.assets && response.assets.length > 0) {
+          const selectedImage: Asset = response.assets[0];
+          if (selectedImage.uri) {
+            setSelectedImage(selectedImage.uri);
+          }
+          setImageFile(selectedImage);
+          setModalVisible(false);
+        }
       }
     });
   };
@@ -103,10 +119,11 @@ export default function AlbumPhotoSelectModal() {
         </Modal>
 
         <TouchableOpacity style={styles.albumPhotoBtnContainer} onPress={() => setModalVisible(true)}>
-          <Image
-          source={require('../../assets/images/plus.png')}
-          style={styles.albumPhotoSelectImage}
-          />
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+          ) : (
+            <Image source={require('../../assets/images/plus.png')} style={styles.albumPhotoSelectImage} />
+          )}
         </TouchableOpacity>
       </View> 
     </View>
@@ -172,6 +189,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  selectedImage:{
+    width: 200,
+    height: 200,
+    borderRadius: 5,
   },
   albumPhotoSelectImage: {
     width: 50,

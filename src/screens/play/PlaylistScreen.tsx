@@ -37,11 +37,12 @@ export default function PlaylistScreen({navigation}: any) {
     });
   };
 
-  const onDragEnd = async (data:Music[]) => {
-    console.log(data);
-    await TrackPlayer.setQueue(data);
-    setMusicList(data);
-  };
+  // 순서 편집 함수
+  // const onDragEnd = async (data:Music[]) => {
+  //   console.log(data);
+  //   await TrackPlayer.setQueue(data);
+  //   setMusicList(data);
+  // };
 
   const renderItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<Music>) => {
@@ -60,25 +61,17 @@ export default function PlaylistScreen({navigation}: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.albumTitleText}>{album.albumname}</Text>
+      <Text style={styles.albumTitleText}>{album.name}</Text>
       <DraggableFlatList
         style={styles.listContainer}
         data={musicList}
-        onDragEnd={({ data }) => onDragEnd(data)}
+        // onDragEnd={({ data }) => onDragEnd(data)}
         keyExtractor={(item) => item.title}
         renderItem={renderItem}
       />
       <View style={styles.playbackBar}>
-        <SliderComponent playbackPosition={playbackPosition} setPlaybackPosition={setPlaybackPosition} maximumValue={200} bottomPlayer={false} />
-        <PlayButtonBarContainer
-          isPlaying={isPlaying}
-          onPlayPress={playPress}
-          onShufflePress={handlePress}
-          onRepeatPress={handlePress}
-          album={album}
-          song={curremtTrack}
-          navigation={navigation}
-        />
+        <SliderComponent bottomPlayer={false} />
+        <PlayButtonBarContainer isPlaying={isPlaying} onPlayPress={playPress} />
       </View>
     </View>
   );

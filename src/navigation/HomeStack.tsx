@@ -10,6 +10,7 @@ import PlaylistScreen from '../screens/play/PlaylistScreen';
 import MyScreen from '../screens/MyScreen';
 import EditProfileScreen from '../screens/mypage/EditProfileScreen';
 import EditPWScreen from '../screens/mypage/EditPWScreen';
+import SelectLyricWritingListScreen from '../screens/lyrics/SelectLyricWritingListScreen';
 
 interface Music {
   id: number;
@@ -101,6 +102,17 @@ export default function HomeStack({navigation, route}: any) {
         component={MyScreen}
         options={{
           title: '마이 페이지',
+          headerTitleStyle: {
+            fontFamily: 'SCDream5',
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
+        name="SelectLyricWritingList"
+        component={SelectLyricWritingListScreen}
+        options={{
+          title: '내가 만든 자장가',
           headerTitleStyle: {
             fontFamily: 'SCDream5',
           },

@@ -82,7 +82,6 @@ export default function HummingScreen({navigation}: any) {
         const filePath = await getResolvedPath(uri); // 파일 경로 변환 함수 호출
         console.log(filePath);
         setSelectedFile(filePath);
-        // setSelectedFile(res[0].uri);
         setSelectedFileName(res[0].name); //파일명
         setModalVisible(false);
 

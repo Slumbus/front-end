@@ -106,12 +106,7 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <SliderComponent
-        playbackPosition={playbackPosition}
-        setPlaybackPosition={setPlaybackPosition}
-        maximumValue={200}
-        bottomPlayer={true}
-      />
+      <SliderComponent  bottomPlayer={true} />
       <View style={styles.container}>
         <View style={styles.albumContainer}>
           <View style={styles.imageContainer}>
