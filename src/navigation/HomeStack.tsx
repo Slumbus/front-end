@@ -11,6 +11,7 @@ import MyScreen from '../screens/MyScreen';
 import EditProfileScreen from '../screens/mypage/EditProfileScreen';
 import EditPWScreen from '../screens/mypage/EditPWScreen';
 import SelectLyricWritingListScreen from '../screens/lyrics/SelectLyricWritingListScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
 
 interface Music {
   id: number;
@@ -140,6 +141,11 @@ export default function HomeStack({navigation, route}: any) {
           },
           headerTitleAlign: 'center',
         }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
