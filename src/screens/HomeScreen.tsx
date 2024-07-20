@@ -7,6 +7,7 @@ import AlbumJacket from '../components/AlbumJacket';
 import BottomPlayer from '../components/BottomPlayer';
 import TrackPlayer, { RepeatMode, useTrackPlayerEvents, Event} from 'react-native-track-player';
 import { usePlayback } from '../contexts/PlaybackContext';
+import {getUserData} from '../utils/Store';
 
 
 const events = [
@@ -34,7 +35,6 @@ export default function HomeScreen({navigation}: any) {
   const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
   const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
   const [childrenAlbumData, setChildrenAlbumData] = useState<KidAlbum[]>([]);
-  const token = ``; // 로그인 기능 구현 후 수정 필요
 
   const { setIsPlaying } = usePlayback();
 
@@ -138,6 +138,7 @@ export default function HomeScreen({navigation}: any) {
 
   const fetchAlbumData = async () => {
     try {
+      const token = await getUserData();
       const response = await axios.get('http://10.0.2.2:8080/api/song/home', { // 로컬 서버 연결
         headers: {
           Authorization: `Bearer ${token}`,
@@ -203,22 +204,26 @@ export default function HomeScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.albums}>
-          {childrenAlbumData.map((album, albumIndex) => (
-            <View key={albumIndex}>
-              <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
-              <View style={styles.jackets}>
-                {album.Music.map((song, songIndex) => (
-                  <AlbumJacket 
-                    key={songIndex}
-                    imageSource={{ uri: song.artwork}} 
-                    text={song.title} 
-                    onPress={() => {setSongList(albumIndex, songIndex);}} />
-                ))}
+        {childrenAlbumData.length === 0 ? 
+          <View /> // 아이 등록 페이지로 이동 기능 구현
+        :
+          <View style={styles.albums}>
+            {childrenAlbumData.map((album, albumIndex) => (
+              <View key={albumIndex}>
+                <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
+                <View style={styles.jackets}>
+                  {album.Music.map((song, songIndex) => (
+                    <AlbumJacket 
+                      key={songIndex}
+                      imageSource={{ uri: song.artwork}} 
+                      text={song.title} 
+                      onPress={() => {setSongList(albumIndex, songIndex);}} />
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        }
       </ScrollView>
       { currentAlbum == null ? 
         <View />
