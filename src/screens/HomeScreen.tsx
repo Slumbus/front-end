@@ -150,7 +150,6 @@ export default function HomeScreen({navigation}: any) {
         kidName: kid.kidName,
         kidPicture: kid.kidPicture,
         Music: kid.musicList.map((music: any) => ({
-          userId: 0, // pull 후 수정
           kidId: kid.kidId,
           musicId: music.musicId,
           url: music.url,
@@ -160,7 +159,6 @@ export default function HomeScreen({navigation}: any) {
         }))
       }));
       setChildrenAlbumData(data);
-      // console.log(childrenAlbumData);
     } catch (error) {
       console.error('Error fetching album data', error);
     }
