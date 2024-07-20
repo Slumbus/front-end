@@ -2,9 +2,15 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {removeUserData} from '../utils/Store';
 
 export default function MyScreen() {
   const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    await removeUserData();
+    navigation.navigate('Login' as never);
+  };
 
   return (
     <View style={styles.container}>
@@ -25,7 +31,9 @@ export default function MyScreen() {
             navigation.navigate('SelectLyricWritingList' as never);
           }}>
           <View style={styles.buttonContent}>
-            <Text style={styles.text}>내가 만든 자장가 목록 - 작사하러 가기</Text>
+            <Text style={styles.text}>
+              내가 만든 자장가 목록 - 작사하러 가기
+            </Text>
             <Text style={styles.arrow}>{'>'}</Text>
           </View>
         </TouchableOpacity>
@@ -51,6 +59,9 @@ export default function MyScreen() {
         </TouchableOpacity>
         <View style={styles.separator} />
       </View>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutText}>로그아웃</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -104,5 +115,16 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E9E9E9',
     marginVertical: 10,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 200,
+    // alignItems: 'flex-end',
+  },
+  logoutText: {
+    color: 'red',
+    fontSize: 12,
+    fontFamily: 'SCDream2',
   },
 });

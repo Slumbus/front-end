@@ -1,6 +1,8 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import axios from 'axios';
+import React, {useState, useEffect} from 'react';
 import {
+  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
@@ -8,18 +10,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {storeUserData, getUserData} from '../../utils/Store';
 
-interface User {
-  id: number;
-  email: string;
-  password: string;
-}
+// interface User {
+//   id: number;
+//   email: string;
+//   password: string;
+// }
 
-const UserData: User = {
-  id: 1,
-  email: 'test@test.com',
-  password: 'test',
-};
+// const UserData: User = {
+//   id: 1,
+//   email: 'test@test.com',
+//   password: 'test',
+// };
+
+const url = 'http://10.0.2.2:8080';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -27,15 +32,55 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleLogin = () => {
-    // if (email === UserData.email && password === UserData.password) {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await getUserData();
+      console.log(token);
+      if (token) {
+        navigation.navigate('MainNavigator' as never);
+      } else {
+        setIsLoading(false);
+      }
+    };
+    checkToken();
+  }, [navigation]);
+
+  const login = async ({email, password}) => {
+    try {
+      const res = await axios.post(`${url}/api/auth/login`, {
+        email,
+        password,
+      });
+      console.log(res.data);
+      await storeUserData(res.data.data.token);
       navigation.navigate('MainNavigator' as never);
-    // } else {
-    //   setEmailError(email !== UserData.email || email === '');
-    //   setPasswordError(password !== UserData.password || password === '');
-    // }
+    } catch (error) {
+      console.error(error);
+      setEmailError(true);
+      setPasswordError(true);
+    }
   };
+  const handleLogin = () => {
+    if (!email) {
+      setEmailError(true);
+    }
+    if (!password) {
+      setPasswordError(true);
+    }
+    if (email && password) {
+      login({email, password});
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
