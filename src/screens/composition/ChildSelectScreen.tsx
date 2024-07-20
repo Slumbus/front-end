@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, ScrollView, TouchableOpacity, View, Alert } from "react-native";
 import axios from 'axios';
 
 import {getUserData} from '../../utils/Store';
@@ -68,6 +68,16 @@ export default function ChildSelectScreen({navigation}: any) {
     return selectedChildIndex === index ? '#C6DDF7' : '#FFFFFF';
   };
 
+  const navigateToHummingScreen = () => {
+    if (selectedChildIndex !== null) {
+      const selectedKidId = childrenData[selectedChildIndex].kidId;
+      navigation.navigate('HummingScreen', { kidId: selectedKidId });
+      setSelectedChildIndex(null);
+    } else {
+      Alert.alert('', '자장가를 만들고 싶은 아이를 선택해주세요.');
+    }
+  };
+
   return(
     <View style={styles.container}>
       <View style={styles.infoContainer}>
@@ -91,7 +101,7 @@ export default function ChildSelectScreen({navigation}: any) {
               </View>
             </TouchableOpacity>))}
         </View>
-        <TouchableOpacity style={styles.selectBtn} onPress={() => navigation.navigate('HummingScreen')}>
+        <TouchableOpacity style={styles.selectBtn} onPress={navigateToHummingScreen}>
           <Text style={styles.btnText}>선택 완료</Text>
         </TouchableOpacity>
       </ScrollView>
