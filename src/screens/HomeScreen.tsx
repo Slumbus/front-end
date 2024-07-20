@@ -7,13 +7,14 @@ import AlbumJacket from '../components/AlbumJacket';
 import BottomPlayer from '../components/BottomPlayer';
 import TrackPlayer, { RepeatMode, useTrackPlayerEvents, Event} from 'react-native-track-player';
 import { usePlayback } from '../contexts/PlaybackContext';
+import {getUserData} from '../utils/Store';
 
 
 const events = [
   Event.PlaybackActiveTrackChanged,
 ];
 
-type MusicItem = { // 엔티티 수정 필요
+type Music = {
   userId: number;
   kidId: number;
   musicId: number;
@@ -27,14 +28,13 @@ type KidAlbum = {
   kidId: number;
   kidName: string;
   kidPicture: string;
-  musicList: MusicItem[];
+  Music: Music[];
 };
 
 export default function HomeScreen({navigation}: any) {
   const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
   const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
   const [childrenAlbumData, setChildrenAlbumData] = useState<KidAlbum[]>([]);
-  const token = ``; // 로그인 기능 구현 후 수정 필요
 
   const { setIsPlaying } = usePlayback();
 
@@ -138,13 +138,29 @@ export default function HomeScreen({navigation}: any) {
 
   const fetchAlbumData = async () => {
     try {
+      const token = await getUserData();
       const response = await axios.get('http://10.0.2.2:8080/api/song/home', { // 로컬 서버 연결
         headers: {
           Authorization: `Bearer ${token}`,
         }
       });
-      console.log(response.data.data);
-      setChildrenAlbumData(response.data.data);
+      // console.log(response.data.data);
+      const data: KidAlbum[] = response.data.data.map((kid: any) => ({
+        kidId: kid.kidId,
+        kidName: kid.kidName,
+        kidPicture: kid.kidPicture,
+        Music: kid.musicList.map((music: any) => ({
+          userId: 0, // pull 후 수정
+          kidId: kid.kidId,
+          musicId: music.musicId,
+          url: music.url,
+          title: music.title,
+          artwork: music.artwork,
+          lyric: music.lyric
+        }))
+      }));
+      setChildrenAlbumData(data);
+      // console.log(childrenAlbumData);
     } catch (error) {
       console.error('Error fetching album data', error);
     }
@@ -155,12 +171,12 @@ export default function HomeScreen({navigation}: any) {
   }, []);
 
   const setSongList = async (index: number, songId: number) => {
-    setCurrentAlbum(ChildrenAlbumdata[index]);
+    setCurrentAlbum(childrenAlbumData[index]);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
         console.log('TrackPlayer 초기화 성공');
-        await TrackPlayer.add(ChildrenAlbumdata[index].Music);
+        await TrackPlayer.add(childrenAlbumData[index].Music);
         await TrackPlayer.setRepeatMode(RepeatMode.Off); // Off: 큐 반복 재생x, track: 한곡만 재생, Queue 전체 목록 재생
         const mode = await TrackPlayer.getRepeatMode();
         console.log(mode);
@@ -175,8 +191,8 @@ export default function HomeScreen({navigation}: any) {
       await TrackPlayer.play();
       setIsPlaying(true);
       navigation.navigate('PlayScreen', {
-        album: ChildrenAlbumdata[index],
-        song: ChildrenAlbumdata[index].Music[songId],
+        album: childrenAlbumData[index],
+        song: childrenAlbumData[index].Music[songId],
       });
       console.log('TrackPlayer 시작 성공');
       setCurrentTrack(trackIndex);
@@ -188,22 +204,26 @@ export default function HomeScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.albums}>
-          {ChildrenAlbumdata.map((album) => (
-            <View key={album.id}>
-              <AlbumTitleText imageSource={{ uri: album.picture}} text= {album.name} />
-              <View style={styles.jackets}>
-                {album.Music.map((song) => (
-                  <AlbumJacket 
-                    key={song.id}
-                    imageSource={{ uri: song.artwork}} 
-                    text={song.title} 
-                    onPress={() => {setSongList(album.id, song.id);}} />
-                ))}
+        {childrenAlbumData.length === 0 ? 
+          <View /> // 아이 등록 페이지로 이동 기능 구현
+        :
+          <View style={styles.albums}>
+            {childrenAlbumData.map((album, albumIndex) => (
+              <View key={albumIndex}>
+                <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
+                <View style={styles.jackets}>
+                  {album.Music.map((song, songIndex) => (
+                    <AlbumJacket 
+                      key={songIndex}
+                      imageSource={{ uri: song.artwork}} 
+                      text={song.title} 
+                      onPress={() => {setSongList(albumIndex, songIndex);}} />
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        }
       </ScrollView>
       { currentAlbum == null ? 
         <View />

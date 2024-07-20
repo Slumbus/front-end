@@ -14,34 +14,35 @@ import SelectLyricWritingListScreen from '../screens/lyrics/SelectLyricWritingLi
 import LoginScreen from '../screens/auth/LoginScreen';
 
 interface Music {
-  id: number;
+  userId: number;
+  kidId: number;
+  musicId: number;
+  url: string;
   title: string;
   artwork: string;
-  url: string;
-  lyrics: string;
-}
+  lyric: string | null;
+};
 
-interface Album {
-  id: number;
-  picture: string;
-  name: string;
-  albumname: string;
+interface KidAlbum {
+  kidId: number;
+  kidName: string;
+  kidPicture: string;
   Music: Music[];
-}
+};
 
 export type RootStackParamList = {
   // 더미데이터 값 직접 전달, api 연결 시 수정
   HomeScreen: undefined;
   PlayScreen: {
-    album: Album;
+    album: KidAlbum;
     song: Music;
   };
   LyricsScreen: {
-    album: Album;
+    album: KidAlbum;
     song: Music;
   };
   PlaylistScreen: {
-    album: Album;
+    album: KidAlbum;
     song: Music;
   };
 };
