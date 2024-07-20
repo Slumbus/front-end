@@ -19,12 +19,16 @@ const LyricsScreen: React.FC = ({navigation}: any) => {
         <Image source={{uri:song.artwork}} style={styles.image} />
         <View style={styles.textContainer}>
           <Text style={styles.titleText}>{song.title}</Text>
-          <Text style={styles.nameText}>{album.name}</Text>
+          <Text style={styles.nameText}>{album.kidName}</Text>
         </View>
       </View>
       <View style={styles.lyricsContainer}>
         <ScrollView>
-          <Text style={styles.lyrics}>{song.lyrics}</Text>
+          {song.lyric ? 
+            <Text style={styles.lyrics}>{song.lyric}</Text>
+          :
+            <Text style={styles.lyrics}>등록된 가사가 없습니다.</Text>
+          }
         </ScrollView>
       </View>
       <View style={styles.playbackBar}>

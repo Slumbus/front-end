@@ -4,12 +4,14 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Music {
-  id: number;
+  userId: number;
+  kidId: number;
+  musicId: number;
+  url: string;
   title: string;
   artwork: string;
-  url: string;
-  lyrics: string;
-}
+  lyric: string | null;
+};
 
 interface MusicItemProps {
   song: Music;

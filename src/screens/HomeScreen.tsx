@@ -13,7 +13,7 @@ const events = [
   Event.PlaybackActiveTrackChanged,
 ];
 
-type MusicItem = { // 엔티티 수정 필요
+type Music = {
   userId: number;
   kidId: number;
   musicId: number;
@@ -27,7 +27,7 @@ type KidAlbum = {
   kidId: number;
   kidName: string;
   kidPicture: string;
-  musicList: MusicItem[];
+  Music: Music[];
 };
 
 export default function HomeScreen({navigation}: any) {
@@ -143,8 +143,23 @@ export default function HomeScreen({navigation}: any) {
           Authorization: `Bearer ${token}`,
         }
       });
-      console.log(response.data.data);
-      setChildrenAlbumData(response.data.data);
+      // console.log(response.data.data);
+      const data: KidAlbum[] = response.data.data.map((kid: any) => ({
+        kidId: kid.kidId,
+        kidName: kid.kidName,
+        kidPicture: kid.kidPicture,
+        Music: kid.musicList.map((music: any) => ({
+          userId: 0, // pull 후 수정
+          kidId: kid.kidId,
+          musicId: music.musicId,
+          url: music.url,
+          title: music.title,
+          artwork: music.artwork,
+          lyric: music.lyric
+        }))
+      }));
+      setChildrenAlbumData(data);
+      // console.log(childrenAlbumData);
     } catch (error) {
       console.error('Error fetching album data', error);
     }
@@ -155,12 +170,12 @@ export default function HomeScreen({navigation}: any) {
   }, []);
 
   const setSongList = async (index: number, songId: number) => {
-    setCurrentAlbum(ChildrenAlbumdata[index]);
+    setCurrentAlbum(childrenAlbumData[index]);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
         console.log('TrackPlayer 초기화 성공');
-        await TrackPlayer.add(ChildrenAlbumdata[index].Music);
+        await TrackPlayer.add(childrenAlbumData[index].Music);
         await TrackPlayer.setRepeatMode(RepeatMode.Off); // Off: 큐 반복 재생x, track: 한곡만 재생, Queue 전체 목록 재생
         const mode = await TrackPlayer.getRepeatMode();
         console.log(mode);
@@ -175,8 +190,8 @@ export default function HomeScreen({navigation}: any) {
       await TrackPlayer.play();
       setIsPlaying(true);
       navigation.navigate('PlayScreen', {
-        album: ChildrenAlbumdata[index],
-        song: ChildrenAlbumdata[index].Music[songId],
+        album: childrenAlbumData[index],
+        song: childrenAlbumData[index].Music[songId],
       });
       console.log('TrackPlayer 시작 성공');
       setCurrentTrack(trackIndex);
@@ -189,16 +204,16 @@ export default function HomeScreen({navigation}: any) {
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.albums}>
-          {ChildrenAlbumdata.map((album) => (
-            <View key={album.id}>
-              <AlbumTitleText imageSource={{ uri: album.picture}} text= {album.name} />
+          {childrenAlbumData.map((album, albumIndex) => (
+            <View key={albumIndex}>
+              <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
               <View style={styles.jackets}>
-                {album.Music.map((song) => (
+                {album.Music.map((song, songIndex) => (
                   <AlbumJacket 
-                    key={song.id}
+                    key={songIndex}
                     imageSource={{ uri: song.artwork}} 
                     text={song.title} 
-                    onPress={() => {setSongList(album.id, song.id);}} />
+                    onPress={() => {setSongList(albumIndex, songIndex);}} />
                 ))}
               </View>
             </View>

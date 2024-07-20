@@ -262,7 +262,7 @@ const PlayScreen: React.FC = ({navigation}: any) => {
         <Image source={artworkUri ? { uri: artworkUri } : require('../../assets/images/Slumbus_Logo.png')} 
           style={styles.image} />
         <Text style={styles.titleText}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
-        <Text style={styles.text}>{album.name}</Text>
+        <Text style={styles.text}>{album.kidName}</Text>
       </View>
       <SliderComponent bottomPlayer={false} />
       <View style={{marginVertical: 45}}>
