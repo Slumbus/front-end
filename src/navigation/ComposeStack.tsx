@@ -9,6 +9,20 @@ import SelectLyricWritingList from '../screens/lyrics/SelectLyricWritingListScre
 import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
 import SongCompletion from '../screens/SongCompletionScreen';
 
+export type RootStackParamList = {
+  HummingScreen: {
+    kidId: number;
+  };
+  MoodSelectScreen: {
+    kidId: number;
+    file: string | null;
+  };
+  MelodySaveScreen: {
+    kidId: number;
+    url: string | null;
+  };
+};
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeStack() {

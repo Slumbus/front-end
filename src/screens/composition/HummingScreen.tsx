@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { Alert, Image, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import { PERMISSIONS, request } from 'react-native-permissions';
 import Sound from 'react-native-sound';
@@ -9,9 +10,15 @@ import RNFetchBlob from 'rn-fetch-blob';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
+import { RootStackParamList } from '../../navigation/ComposeStack';
+
 const audioRecorderPlayer = new AudioRecorderPlayer();
+type MoodSelectScreenRouteProp = RouteProp<RootStackParamList, 'MoodSelectScreen'>;
 
 export default function HummingScreen({navigation}: any) {
+  const route = useRoute<MoodSelectScreenRouteProp>();
+  const {kidId} = route.params;
+
   const [selectedOption, setSelectedOption] = useState("file");
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,27 +52,26 @@ export default function HummingScreen({navigation}: any) {
   //파일 접근 권한 얻기
   useEffect(() => {
     const requestPermissions = async () => {
-        if (Platform.OS === 'android') {
-            try {
-                const granted = await PermissionsAndroid.requestMultiple([
-                    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE , 
-                    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-                ]);
-
-                if (
-                    granted['android.permission.RECORD_AUDIO'] !== PermissionsAndroid.RESULTS.GRANTED ||
-                    granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
-                    granted['android.permission.READ_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
-                    granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED
-                ) {
-                    console.log('Permission denied');
-                }
-            } catch (err) {
-                console.warn(err);
-            }
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE , 
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+          ]);
+        if (
+          granted['android.permission.RECORD_AUDIO'] !== PermissionsAndroid.RESULTS.GRANTED ||
+          granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
+          granted['android.permission.READ_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED ||
+          granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          console.log('Permission denied');
+          }
+        } catch (err) {
+          console.warn(err);
         }
+      }
     };
     requestPermissions();
   }, []);
@@ -84,7 +90,6 @@ export default function HummingScreen({navigation}: any) {
         setSelectedFile(filePath);
         setSelectedFileName(res[0].name); //파일명
         setModalVisible(false);
-
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -168,7 +173,6 @@ export default function HummingScreen({navigation}: any) {
   // Update position regularly
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
-  
     if (isPlaying) {
       interval = setInterval(() => {
         sound?.getCurrentTime(seconds => {
@@ -220,7 +224,18 @@ export default function HummingScreen({navigation}: any) {
     setPosition(0);
     setRecordText("녹음이 완료되었습니다.");
     console.log(`Recording stopped: ${result}`);
+    // console.log(recordedFile);
   };
+
+  const navigateToMoodSelect = () => {
+    stopSound();
+    if(recordedFile == null && selectedFile == null){
+      Alert.alert('', '허밍 파일을 불러오거나 녹음해주세요.');
+    } else {
+      const fileToPass = selectedOption === 'record' ? recordedFile : selectedFile;
+      navigation.navigate('MoodSelectScreen', { kidId, file: fileToPass });
+    }
+  };  
 
   return(
     <View style={styles.container}>
@@ -318,7 +333,7 @@ export default function HummingScreen({navigation}: any) {
           </View>
         )}
 
-      <TouchableOpacity style={styles.selectBtn} onPress={() => {stopSound(); navigation.navigate('MoodSelectScreen')}}>
+      <TouchableOpacity style={styles.selectBtn} onPress={navigateToMoodSelect}>
         <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
       </TouchableOpacity>
 

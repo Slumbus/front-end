@@ -7,42 +7,69 @@ import Slider from '@react-native-community/slider';
 import Sound from 'react-native-sound';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { RouteProp, useRoute } from '@react-navigation/native';
+// import RNFetchBlob from 'rn-fetch-blob';
+
+import { RootStackParamList } from '../../navigation/ComposeStack';
+import { getUserData } from '../../utils/Store';
+
+type MelodySaveScreenRouteProp = RouteProp<RootStackParamList, 'MelodySaveScreen'>;
 
 export default function MelodySaveScreen({navigation}: any) {
+  const route = useRoute<MelodySaveScreenRouteProp>();
+  const {kidId, url} = route.params;
+  
   const [musicTitle, setMusicTitle] = useState('');
   // const [musicFile, setMusicFile] = useState<any>(null); // 음악 파일
   const [imageFile, setImageFile] = useState<any>(null); // 이미지 파일
-  const [kidId, setKidId] = useState<number>(6); // 임의 값 설정
-  const musicFile = { // 임의 값 전달
-    uri: require('../../assets/audio/Lemon.mp3'),
-    fileName: 'sample-music.mp3',
+  // const [kidId, setKidId] = useState<number>(6); // 임의 값 설정
+  const musicFile = {
+    uri: url,
+    fileName: 'music.mp3',
     type: 'audio/mp3',
   };
-  const token = ``; // 로그인 기능 구현 후 수정 필요
   const [sound, setSound] = useState<Sound | undefined>(); // 자장가 파일
   const [position, setPosition] = useState(0); // 음악 재생 지점 
   const [duration, setDuration] = useState(0); // 음악 길이
   const [isPlaying, setIsPlaying] = useState(false); // 재생 여부
 
+  // 음악 링크 다운로드
+  // const downloadFile = async (uri: string|null, fileName: string) => { 
+  //   const { dirs } = RNFetchBlob.fs;
+  //   const path = `${dirs.DocumentDir}/${fileName}`;
+  //   if(uri !== null){
+  //     await RNFetchBlob.config({
+  //       fileCache: true,
+  //       appendExt: fileName.split('.').pop(),
+  //       path,
+  //     }).fetch('GET', uri);
+  //   }
+  //   return path;
+  // };
+
   const handleSave = async () => {
-    const formData = new FormData();
-    formData.append('musicDTO', JSON.stringify({ kidId, title: musicTitle }));
-    formData.append('musicFile', {
-      uri: musicFile.uri,
-      name: musicFile.fileName,
-      type: musicFile.type,
-    });
-    formData.append('image', {
-      uri: imageFile.uri,
-      name: imageFile.fileName,
-      type: imageFile.type,
-    });
-    // console.log(formData);
     try {
+      // const localMusicFilePath = await downloadFile(musicFile.uri, musicFile.fileName); // 로컬 음악 파일
+      const formData = new FormData();
+      formData.append('musicDTO', JSON.stringify({ kidId: kidId, title: musicTitle }));
+      // formData.append('musicFile', { // 음악 파일 전달
+      //   uri: `file://${localMusicFilePath}`,
+      //   name: musicFile.fileName,
+      //   type: musicFile.type,
+      // });
+      // formData.append('musicFile', musicFile.uri); // 음악 링크 전달
+      formData.append('image', {
+        uri: imageFile.uri,
+        name: imageFile.fileName,
+        type: imageFile.type,
+      });
+      // console.log(musicFile, imageFile);
+      const token = await getUserData();
+      // console.log(token);
       const response = await axios.post('http://10.0.2.2:8080/api/song/composition', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
       });
       console.log('Upload Response:', response.data);
@@ -123,7 +150,7 @@ export default function MelodySaveScreen({navigation}: any) {
         <Text style={styles.title}>생성된 자장가 멜로디</Text>
       </View>
       <View style={styles.musicTrackContainer}>
-        <TouchableOpacity onPress={async () => (isPlaying ? stopSound() : playSound("https://slumbus.s3.ap-southeast-2.amazonaws.com/music/077de29c-ae28-4116-92a9-ebef20bbc343.mp3"))}>
+        <TouchableOpacity onPress={async () => (isPlaying ? stopSound() : playSound(url))}>
           <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
         </TouchableOpacity>
         <Slider
@@ -148,7 +175,7 @@ export default function MelodySaveScreen({navigation}: any) {
       <View style={styles.albumContainer}>
         <View style={styles.musicTitleContainer}>
           <Image
-          source={require('../../assets/images/edit_pencil.png')}
+            source={require('../../assets/images/edit_pencil.png')}
             style={styles.pencilStyle}
           />
           <TextInput
@@ -161,10 +188,10 @@ export default function MelodySaveScreen({navigation}: any) {
         <AlbumPhotoSelectModal setImageFile={setImageFile} />
       </View>
       <View style={styles.saveBtnContainer}>
-        <TouchableOpacity style={[styles.selectBtn, {marginRight: 20}]}>
+        <TouchableOpacity style={[styles.selectBtn, {marginRight: 20}]} onPress={() => navigation.navigate('ChildSelectScreen')}>
           <Text style={styles.btnText}>다시 만들기</Text>
         </TouchableOpacity>
-          <MusicSaveModal navigation={navigation} handleSave={handleSave}/>
+        <MusicSaveModal navigation={navigation} handleSave={handleSave}/>
       </View>
     </View>
   );

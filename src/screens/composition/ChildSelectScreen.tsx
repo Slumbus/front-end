@@ -1,7 +1,9 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, ScrollView, TouchableOpacity, View, Alert } from "react-native";
 import axios from 'axios';
+
+import {getUserData} from '../../utils/Store';
 
 type KidInfo = {
   userId: number;
@@ -21,10 +23,10 @@ export default function ChildSelectScreen({navigation}: any) {
   ]);
   const [selectedChildIndex, setSelectedChildIndex] = useState<number | null>(null);
   const [childrenData, setChildrenData] = useState<KidInfo[]>([]);
-  const token = ``; // 로그인 기능 구현 후 수정 필요
 
-  const fetchAlbumData = async () => {
+  const fetchKidData = async () => {
     try {
+      const token = await getUserData();
       const response = await axios.get('http://10.0.2.2:8080/api/kid', { // 로컬 서버 연결
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,12 +40,12 @@ export default function ChildSelectScreen({navigation}: any) {
       }));
       setChildrenData(transformedData);
     } catch (error) {
-      console.error('Error fetching album data', error);
+      console.error('Error fetching kid data', error);
     }
   };
   
   useEffect(() => {
-    fetchAlbumData();
+    fetchKidData();
   }, []);
 
   const calculateAge = (birthDate: string): number => {
@@ -64,6 +66,16 @@ export default function ChildSelectScreen({navigation}: any) {
 
   const getChildBackgroundColor = (index: number) => {
     return selectedChildIndex === index ? '#C6DDF7' : '#FFFFFF';
+  };
+
+  const navigateToHummingScreen = () => {
+    if (selectedChildIndex !== null) {
+      const selectedKidId = childrenData[selectedChildIndex].kidId;
+      navigation.navigate('HummingScreen', { kidId: selectedKidId });
+      setSelectedChildIndex(null);
+    } else {
+      Alert.alert('', '자장가를 만들고 싶은 아이를 선택해주세요.');
+    }
   };
 
   return(
@@ -89,7 +101,7 @@ export default function ChildSelectScreen({navigation}: any) {
               </View>
             </TouchableOpacity>))}
         </View>
-        <TouchableOpacity style={styles.selectBtn} onPress={() => navigation.navigate('HummingScreen')}>
+        <TouchableOpacity style={styles.selectBtn} onPress={navigateToHummingScreen}>
           <Text style={styles.btnText}>선택 완료</Text>
         </TouchableOpacity>
       </ScrollView>
