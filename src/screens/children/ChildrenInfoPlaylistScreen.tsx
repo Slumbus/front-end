@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Modal, Press
 import PlayButton from '../../components/button/PlayButton';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import { getUserData } from '../../utils/Store';
 
 interface Song {
   id: number;
@@ -17,7 +18,6 @@ interface Props {
   selectedChild: any;
   setSelectedChild: (child: any) => void;
 }
-
 
 // 이모지 선택 함수
 const getReactionImage = (reactionLevel: string) => {
@@ -46,16 +46,16 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   const [modalVisible, setModalVisible] = useState(false);
   const [songData, setSongData] = useState<Song[]>([]);
   const [lullabyData, setLullabyData] = useState<any[]>([]);
-  const token = '';
-
+  
   useEffect(() => {
     setSelectedChild(child);
     fetchSongData(child.id);
-    setSelectedChild(child);
     fetchReactionData(child.id);
   }, [child]);
 
+
   const fetchSongData = async (kidId: number) => {
+    const token = await getUserData();
     try {
       const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
         headers: {
@@ -75,6 +75,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   };
 
   const fetchReactionData = async (kidId: number) => {
+    const token = await getUserData();
     try {
       const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}`, {
         headers: {
