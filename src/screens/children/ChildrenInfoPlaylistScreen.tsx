@@ -132,7 +132,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
 
   const handleNavigate = (selectedSongData: any) => {
     setModalVisible(false);
-    navigation.navigate('ChildrenInfoReactionRegister', { songData: selectedSongData });
+    navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongData.id, kidId: child.id});
   };
 
   return (
@@ -194,8 +194,9 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
               <TouchableOpacity
                 onPress={() => navigation.navigate('ChildrenInfoReaction', { 
                   title: item.musicTitle, 
-                  data: item.reactions, 
-                  selectedSongData: item.reactions })}
+                  selectedSongId: item.musicId,
+                  kidId: item.kidId,
+                  reactionData: item.reactions })}
                 style={styles.reactionContainer}
               >
                 <View style={styles.lullabyTitleContainer}
@@ -248,7 +249,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleNavigate(item)}>
                     <View style={styles.modalListItemContainer}>
-                      <Image source={{ uri: item.url }} style={styles.selectPhoto} />
+                      <Image source={{ uri: item.artwork }} style={styles.selectPhoto} />
                       <Text style={styles.selectTitle}>{item.title}</Text>
                     </View>
                   </TouchableOpacity>
