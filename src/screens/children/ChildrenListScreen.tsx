@@ -12,35 +12,35 @@ interface Child {
   photoList: any[];
 }
 
-export default function ChildrenListScreen({ navigation }: any) {
+export default function ChildrenListScreen({ navigation, route }: any) {
   const [childrenData, setChildrenData] = useState<Child[]>([]);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
-  useEffect(() => {
-    const fetchChildrenData = async () => {
-      const token = await getUserData();
-      try {
-        const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = response.data.data.map((child: any) => ({
-          id: child.kidId,
-          name: child.kidName,
-          birthdate: child.kidBirth,
-          age: calculateAge(new Date(child.kidBirth)),
-          image: child.kidPicture,
-          photoList: child.musicList.map((music: any) => music.artwork)
-        }));
-        setChildrenData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const fetchChildrenData = async () => {
+    const token = await getUserData();
+    try {
+      const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.data.map((child: any) => ({
+        id: child.kidId,
+        name: child.kidName,
+        birthdate: child.kidBirth,
+        age: calculateAge(new Date(child.kidBirth)),
+        image: child.kidPicture,
+        photoList: child.musicList.map((music: any) => music.artwork)
+      }));
+      setChildrenData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchChildrenData();
-  }, []);
+  }, [route.params?.refresh]); // When 'refresh' changes, fetch children
 
   const calculateAge = (birthdate: Date) => {
     const today = new Date();

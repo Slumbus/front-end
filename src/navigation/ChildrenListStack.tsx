@@ -9,12 +9,22 @@ import ChildrenInfoReactionRegisterScreen from '../screens/children/ChildrenInfo
 import ChildrenInfoReactionScreen from '../screens/children/ChildrenInfoReactionScreen';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Menu, Divider, IconButton } from 'react-native-paper';
+import { getUserData } from '../utils/Store';
+import axios from 'axios';
 
 const Stack = createNativeStackNavigator();
 
+interface Child {
+  id: number;
+  name: string;
+  birthdate: string;
+  image: string;
+  age: number;
+}
+
 export default function HomeStack({ navigation, route }: any) {
   const [menuVisible, setMenuVisible] = React.useState(false);
-  const [selectedChild, setSelectedChild] = React.useState(null);
+  const [selectedChild, setSelectedChild] = React.useState<Child | null>(null);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -27,9 +37,25 @@ export default function HomeStack({ navigation, route }: any) {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setMenuVisible(false);
-    Alert.alert('삭제');
+
+    try {
+      const token = await getUserData();
+      if (selectedChild) {
+        await axios.delete(`http://10.0.2.2:8080/api/kid/${selectedChild.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        Alert.alert('삭제 완료');
+        navigation.navigate('ChildrenList', { refresh: true });
+      }
+      
+    } catch (error) {
+      console.error('Error kid delete:', error);
+    }
+    
   };
 
   React.useLayoutEffect(() => {

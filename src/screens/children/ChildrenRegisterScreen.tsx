@@ -5,7 +5,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import { getUserData } from '../../utils/Store';
 
-export default function ChildrenRegisterScreen({ route }: any) {
+export default function ChildrenRegisterScreen({ navigation, route }: any) {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
   const [gender, setGender] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -66,8 +66,7 @@ export default function ChildrenRegisterScreen({ route }: any) {
       if (selectedImage) {
         formData.append('image', {
           uri: selectedImage,
-          type: 'image/jpeg', 
-          //type: 'multipart/form-data',
+          type: 'image/jpeg',
           name: 'image.jpg',
         });
       }
@@ -80,6 +79,7 @@ export default function ChildrenRegisterScreen({ route }: any) {
       });
 
       Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
+      navigation.navigate('ChildrenList', { refresh: true });
     } catch (error) {
       console.error(error);
       Alert.alert('등록 실패', '아이 정보 등록에 실패했습니다.');
