@@ -37,6 +37,12 @@ const getReactionImage = (reactionLevel: string) => {
   }
 };
 
+const getGenderImage = (gender: string) => {
+  return gender === 'MALE'
+    ? require('../../assets/images/ic_man.png')
+    : require('../../assets/images/ic_woman.png');
+};
+
 export default function ChildrenInfoPlaylistScreen({ route, navigation, selectedChild, setSelectedChild }: Props) {
   const { child } = route.params;
   const [showPhotos, setShowPhotos] = useState(true);
@@ -51,7 +57,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     setSelectedChild(child);
     fetchSongData(child.id);
     fetchReactionData(child.id);
-  }, [child]);
+  }, [child, route.params?.refresh]);
 
 
   const fetchSongData = async (kidId: number) => {
@@ -142,8 +148,9 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         <View style={styles.rowContainer}>
           <Text style={styles.name}>{child.name}</Text>
           <Image
-            source={require('../../assets/images/ic_man.png')}
+            source={getGenderImage(child.gender)}
             style={styles.genderIcMan}
+            resizeMode='contain'
           />
         </View>
         <View style={styles.rowContainer}>
@@ -306,7 +313,7 @@ const styles = StyleSheet.create({
   genderIcMan: {
     width: 24,
     height: 21,
-    marginRight: 8
+    marginLeft: 4,
   },
   photo: {
     width: 50,

@@ -9,6 +9,7 @@ interface Child {
   birthdate: string;
   age: number;
   image: any;
+  gender: any;
   photoList: any[];
 }
 
@@ -30,6 +31,7 @@ export default function ChildrenListScreen({ navigation, route }: any) {
         birthdate: child.kidBirth,
         age: calculateAge(new Date(child.kidBirth)),
         image: child.kidPicture,
+        gender: child.kidGender,
         photoList: child.musicList.map((music: any) => music.artwork)
       }));
       setChildrenData(data);

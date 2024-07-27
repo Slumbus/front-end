@@ -11,10 +11,13 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [name, setName] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false); // 수정모드 여부 확인
 
   useEffect(() => {
     if (route.params?.child) {
       const { birthdate, gender, image, name } = route.params.child;
+      setIsEditMode(true); // 수정 모드로 설정
+
       if (birthdate) {
         // 'yyyy.MM.dd' 형식에서 'yyyy-MM-dd' 형식으로 변환
         const parsedDate = birthdate.replace(/\./g, '-');
@@ -60,7 +63,7 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
       formData.append('kidDTO', {"string": JSON.stringify({
         name: name,
         birth: birthdate.toISOString().split('T')[0],
-        gender: gender === '남자' ? 0 : gender === '여자' ? 1 : 2,
+        gender: gender === 'MALE' ? 0 : gender === 'FEMALE' ? 1 : 2,
       }), type: "application/json"});
       
       if (selectedImage) {
@@ -71,14 +74,24 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
         });
       }
 
-      await axios.post('http://10.0.2.2:8080/api/kid', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`, 
-        },
-      });
+      if (isEditMode) {
+        await axios.patch(`http://10.0.2.2:8080/api/kid/${route.params.child.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        Alert.alert('수정 성공', '아이 정보가 성공적으로 수정되었습니다.');
+      } else {
+        await axios.post('http://10.0.2.2:8080/api/kid', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
+      }
 
-      Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
       navigation.navigate('ChildrenList', { refresh: true });
     } catch (error) {
       console.error(error);
@@ -131,26 +144,26 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
       <View style={styles.dateContainer}>
         <Text style={[styles.text, {marginRight: 10}]}>성별</Text>
         <TouchableOpacity
-          style={[styles.genderButton, gender === '여자' && styles.genderButtonSelected]}
-          onPress={() => setGender('여자')}
+          style={[styles.genderButton, gender === 'FEMALE' && styles.genderButtonSelected]}
+          onPress={() => setGender('FEMALE')}
         >
           <Image
             source={require('../../assets/images/ic_woman.png')}
             style={styles.genderIcWoman}
             resizeMode="contain"
           />
-          <Text style={[styles.genderButtonText, gender === '여자' && styles.genderButtonTextSelected]}>여</Text>
+          <Text style={[styles.genderButtonText, gender === 'FEMALE' && styles.genderButtonTextSelected]}>여</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.genderButton, gender === '남자' && styles.genderButtonSelected]}
-          onPress={() => setGender('남자')}
+          style={[styles.genderButton, gender === 'MALE' && styles.genderButtonSelected]}
+          onPress={() => setGender('MALE')}
         >
           <Image
             source={require('../../assets/images/ic_man.png')}
             style={styles.genderIcMan}
             resizeMode="contain"
           />
-          <Text style={[styles.genderButtonText, gender === '남자' && styles.genderButtonTextSelected]}>남</Text>
+          <Text style={[styles.genderButtonText, gender === 'MALE' && styles.genderButtonTextSelected]}>남</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.infoContainer}>
