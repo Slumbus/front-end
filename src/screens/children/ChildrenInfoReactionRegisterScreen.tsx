@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity, TextInput} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert} from 'react-native';
+import { getUserData } from '../../utils/Store';
+import axios from 'axios';
+
+interface Song {
+  id: number;
+  //kidName: String,
+  url: string,
+  title: string;
+  artwork: string;
+}
 
 const emojiImages = [
   require('../../assets/images/ic_reaction/ic_reaction1_gray.png'),
@@ -19,22 +29,76 @@ const selectedEmojiImages = [
   require('../../assets/images/ic_reaction/ic_reaction6.png'),
 ];
 
-export default function ChildrenInfoReactionRegisterScreen({ route }: any ) {
-  const { songData } = route.params;
+export default function ChildrenInfoReactionRegisterScreen({ route, navigation }: any ) {
+  const { songId, kidId } = route.params;
   const [selectedEmojiIndex, setSelectedEmojiIndex] = useState<number | null>(null);
   const [reactionText, setReactionText] = useState<string>('');
+  const [songData, setSongData] = useState<Song | null>(null);
+
+  useEffect(() => {
+    fetchSongData(songId);
+  }, [songId]);
 
   const handleEmojiPress = (index: number) => {
     setSelectedEmojiIndex(index);
   };
 
+  const fetchSongData = async (songId: number) => {
+    const token = await getUserData();
+    try {
+      const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.data;
+      setSongData(data);
+    } catch (error) {
+      console.error('Error fetching song data:', error);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (selectedEmojiIndex === null || reactionText.trim() === '') {
+      Alert.alert('Error', 'Please select an emoji and write a comment.');
+      return;
+    }
+
+    const token = await getUserData(); 
+    const reactionData = {
+      emoji: selectedEmojiIndex,
+      comment: reactionText,
+    };
+
+    try {
+      await axios.post(`http://10.0.2.2:8080/api/reaction/kid/${kidId}/music/${songId}`, reactionData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      Alert.alert('Success', '자장가 반응 등록 완료');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error registering reaction:', error);
+      Alert.alert('Error', 'Failed to register reaction');
+    }
+  };
+
+  if (!songData) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.songContainer}>
-        <Image source={{ uri: songData.picture }} style={styles.songImage} />
+        <Image source={{ uri: songData.artwork }} style={styles.songImage} />
         <View style={styles.songTextContainer}>
           <Text style={styles.songTitle}>{songData.title}</Text>
-          <Text style={styles.songOwner}>{songData.owner}</Text>
+          <Text style={styles.songOwner}>{songData.title}</Text>
         </View>
       </View>
       <Text style={styles.selectTitle}>반응 이모지 선택</Text>
@@ -59,9 +123,7 @@ export default function ChildrenInfoReactionRegisterScreen({ route }: any ) {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.doneButton}
-          onPress={() => {
-            /* 등록을 눌렀을 때 수행할 동작 */
-          }}>
+          onPress={handleRegister}>
           <Text style={styles.buttonText}>등록</Text>
         </TouchableOpacity>
       </View>

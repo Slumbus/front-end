@@ -21,7 +21,7 @@ const getReactionImage = (reactionLevel: string) => {
 };
 
 export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
-  const { title, data, selectedSongData } = route.params;
+  const { title, selectedSongId, kidId, reactionData } = route.params;
 
   return (
     <View style={styles.container}>
@@ -31,7 +31,7 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
           <Text style={styles.reactionTitle}>{title}</Text>
         </View>
         <FlatList
-          data={data}
+          data={reactionData}
           renderItem={({ item }) => (
             <View style={styles.reactionItemContainer}>
               <Image source={getReactionImage(item.emoji)} style={styles.reactionImage} />
@@ -45,7 +45,8 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenInfoReactionRegister', { songData: selectedSongData })}>
+      <TouchableOpacity style={styles.floatingButton} 
+        onPress={() => navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongId, kidId: kidId })}>
           <Image source={require('../../assets/images/ic_add_white.png')} style={styles.floatingIc} />
       </TouchableOpacity>
     </View>

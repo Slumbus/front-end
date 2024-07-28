@@ -3,8 +3,9 @@ import {View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert} from 
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
+import { getUserData } from '../../utils/Store';
 
-export default function ChildrenRegisterScreen({ route }: any) {
+export default function ChildrenRegisterScreen({ navigation, route }: any) {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
   const [gender, setGender] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -51,22 +52,38 @@ export default function ChildrenRegisterScreen({ route }: any) {
     });
   };
 
-  const handleRegister = () => {
-    const requestBody = {
-      name: name,
-      birth: birthdate.toISOString().split('T')[0],
-      gender: gender === '남자' ? 0 : gender === '여자' ? 1 : 2,
-      picture: selectedImage ? selectedImage : 'Test', // 실제 업로드에서는 이미지 데이터를 처리해야 함
-    };
+  const handleRegister = async () => {
+    const token = await getUserData(); 
+    try {
+      const formData = new FormData();
+      
+      formData.append('kidDTO', {"string": JSON.stringify({
+        name: name,
+        birth: birthdate.toISOString().split('T')[0],
+        gender: gender === '남자' ? 0 : gender === '여자' ? 1 : 2,
+      }), type: "application/json"});
+      
+      if (selectedImage) {
+        formData.append('image', {
+          uri: selectedImage,
+          type: 'image/jpeg',
+          name: 'image.jpg',
+        });
+      }
 
-    axios.post('http://localhost:3000/api/children', requestBody)
-      .then(response => {
-        Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
-      })
-      .catch(error => {
-        console.error(error);
-        Alert.alert('등록 실패', '아이 정보 등록에 실패했습니다.');
+      await axios.post('http://10.0.2.2:8080/api/kid', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, 
+        },
       });
+
+      Alert.alert('등록 성공', '아이 정보가 성공적으로 등록되었습니다.');
+      navigation.navigate('ChildrenList', { refresh: true });
+    } catch (error) {
+      console.error(error);
+      Alert.alert('등록 실패', '아이 정보 등록에 실패했습니다.');
+    }
   };
 
   return (
@@ -145,9 +162,8 @@ export default function ChildrenRegisterScreen({ route }: any) {
       </View>
       <TouchableOpacity
           style={styles.doneButton}
-          onPress={() => {
-            /* 버튼을 눌렀을 때 수행할 동작 */
-          }}>
+          onPress={handleRegister}
+          >
           <Text style={styles.buttonText}>등록</Text>
         </TouchableOpacity>
     </View>

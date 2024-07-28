@@ -1,6 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import {View, Text, StyleSheet, FlatList, Image, ListRenderItemInfo, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
+import { getUserData } from '../../utils/Store';
 
 interface Child {
   id: number;
@@ -11,61 +12,35 @@ interface Child {
   photoList: any[];
 }
 
-// const childrenData: Child[] = [
-//   {
-//     id: 1,
-//     name: '사랑이',
-//     birthdate: '2024-03-12',
-//     age: 1,
-//     image: "https://cdn.pixabay.com/photo/2015/05/20/14/23/baby-775503_1280.jpg",
-//     photoList: [
-//       "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-//       "https://cdn.pixabay.com/photo/2022/11/16/13/39/cuddly-toys-7596017_1280.jpg",
-//       "https://cdn.pixabay.com/photo/2021/07/15/07/50/newborn-6467761_1280.jpg",
-//     ],
-//   },
-//   {
-//     id: 2,
-//     name: '행복이',
-//     birthdate: '2023-05-20',
-//     age: 2,
-//     image: "https://cdn.pixabay.com/photo/2016/01/20/11/11/baby-1151351_1280.jpg",
-//     photoList: [
-//       "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-//     ],
-//   },
-// ];
-
-export default function ChildrenListScreen({ navigation }: any) {
+export default function ChildrenListScreen({ navigation, route }: any) {
   const [childrenData, setChildrenData] = useState<Child[]>([]);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
+  const fetchChildrenData = async () => {
+    const token = await getUserData();
+    try {
+      const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.data.map((child: any) => ({
+        id: child.kidId,
+        name: child.kidName,
+        birthdate: child.kidBirth,
+        age: calculateAge(new Date(child.kidBirth)),
+        image: child.kidPicture,
+        photoList: child.musicList.map((music: any) => music.artwork)
+      }));
+      setChildrenData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchChildrenData = async () => {
-      const token = '';
-
-      try {
-        const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = response.data.data.map((child: any) => ({
-          id: child.kidId,
-          name: child.kidName,
-          birthdate: child.kidBirth,
-          age: calculateAge(new Date(child.kidBirth)),
-          image: child.kidPicture,
-          photoList: child.musicList.map((music: any) => music.artwork)
-        }));
-        setChildrenData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchChildrenData();
-  }, []);
+  }, [route.params?.refresh]); // When 'refresh' changes, fetch children
 
   const calculateAge = (birthdate: Date) => {
     const today = new Date();
