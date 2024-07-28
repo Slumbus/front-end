@@ -208,7 +208,11 @@ export default function HomeScreen({navigation}: any) {
           <View style={styles.albums}>
             {childrenAlbumData.map((album, albumIndex) => (
               <View key={albumIndex}>
-                <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
+                {album.kidPicture ? (
+                  <AlbumTitleText imageSource={{ uri: album.kidPicture}} text= {album.kidName} />
+                ) : (
+                  <AlbumTitleText imageSource={require('../assets/images/Slumbus_Logo.png')} text= {album.kidName} />
+                )}
                 <View style={styles.jackets}>
                   {album.Music.map((song, songIndex) => (
                     <AlbumJacket 

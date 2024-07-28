@@ -144,7 +144,11 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   return (
     <View style={styles.container}>
       <View style={styles.centerContainer}>
-        <Image source={{ uri: child.image }} style={styles.childImage} />
+        {child.image ? (
+          <Image source={{ uri: child.image }} style={styles.childImage} />
+        ) : (
+          <Image source={require('../../assets/images/Slumbus_Logo.png')} style={styles.childImage} />
+        )}
         <View style={styles.rowContainer}>
           <Text style={styles.name}>{child.name}</Text>
           <Image

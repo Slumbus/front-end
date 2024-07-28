@@ -57,7 +57,11 @@ export default function ChildrenListScreen({ navigation, route }: any) {
   const renderItem = ({ item }: ListRenderItemInfo<Child>) => (
     <View style={styles.itemContainer}>
       <TouchableOpacity style={styles.childInfoContainer} onPress={() => navigation.navigate('ChildrenInfoPlaylist', { child: item })}>
-        <Image source={{ uri: item.image }} style={styles.childImage} />
+        {item.image ? (
+          <Image source={{ uri: item.image }} style={styles.childImage} />
+        ) : (
+          <Image source={require('../../assets/images/Slumbus_Logo.png')} style={styles.childImage} />
+        )}
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.birth}>{item.birthdate}</Text>

@@ -72,7 +72,7 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
           type: 'image/jpeg',
           name: 'image.jpg',
         });
-      }
+      } 
 
       if (isEditMode) {
         await axios.patch(`http://10.0.2.2:8080/api/kid/${route.params.child.id}`, formData, {
