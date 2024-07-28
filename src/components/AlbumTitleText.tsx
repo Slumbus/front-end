@@ -10,7 +10,7 @@ const AlbumTitleText: React.FC<AlbumTitleTextProps> = ({ imageSource, text }) =>
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.image} />
+        <Image source={imageSource.uri ? { uri: imageSource.uri } : require('../assets/images/Slumbus_Logo.png')} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.text}>{text}</Text>

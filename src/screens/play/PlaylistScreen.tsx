@@ -70,7 +70,7 @@ const PlaylistScreen: React.FC = ({navigation}: any) => {
         style={styles.listContainer}
         data={musicList}
         // onDragEnd={({ data }) => onDragEnd(data)}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item.musicId.toString()}
         renderItem={renderItem}
       />
       <View style={styles.playbackBar}>

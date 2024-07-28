@@ -5,10 +5,8 @@ import MusicSaveModal from '../../components/modal/MusicSaveModal';
 import axios from 'axios';
 import Slider from '@react-native-community/slider';
 import Sound from 'react-native-sound';
-import ReactNativeBlobUtil from 'react-native-blob-util';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RouteProp, useRoute } from '@react-navigation/native';
-// import RNFetchBlob from 'rn-fetch-blob';
 
 import { RootStackParamList } from '../../navigation/ComposeStack';
 import { getUserData } from '../../utils/Store';
@@ -20,59 +18,35 @@ export default function MelodySaveScreen({navigation}: any) {
   const {kidId, url} = route.params;
   
   const [musicTitle, setMusicTitle] = useState('');
-  // const [musicFile, setMusicFile] = useState<any>(null); // 음악 파일
   const [imageFile, setImageFile] = useState<any>(null); // 이미지 파일
-  // const [kidId, setKidId] = useState<number>(6); // 임의 값 설정
-  const musicFile = {
-    uri: url,
-    fileName: 'music.mp3',
-    type: 'audio/mp3',
-  };
+
   const [sound, setSound] = useState<Sound | undefined>(); // 자장가 파일
   const [position, setPosition] = useState(0); // 음악 재생 지점 
   const [duration, setDuration] = useState(0); // 음악 길이
   const [isPlaying, setIsPlaying] = useState(false); // 재생 여부
 
-  // 음악 링크 다운로드
-  // const downloadFile = async (uri: string|null, fileName: string) => { 
-  //   const { dirs } = RNFetchBlob.fs;
-  //   const path = `${dirs.DocumentDir}/${fileName}`;
-  //   if(uri !== null){
-  //     await RNFetchBlob.config({
-  //       fileCache: true,
-  //       appendExt: fileName.split('.').pop(),
-  //       path,
-  //     }).fetch('GET', uri);
-  //   }
-  //   return path;
-  // };
-
   const handleSave = async () => {
     try {
-      // const localMusicFilePath = await downloadFile(musicFile.uri, musicFile.fileName); // 로컬 음악 파일
       const formData = new FormData();
-      formData.append('musicDTO', JSON.stringify({ kidId: kidId, title: musicTitle }));
-      // formData.append('musicFile', { // 음악 파일 전달
-      //   uri: `file://${localMusicFilePath}`,
-      //   name: musicFile.fileName,
-      //   type: musicFile.type,
-      // });
-      // formData.append('musicFile', musicFile.uri); // 음악 링크 전달
-      formData.append('image', {
-        uri: imageFile.uri,
-        name: imageFile.fileName,
-        type: imageFile.type,
-      });
-      // console.log(musicFile, imageFile);
+      formData.append('musicDTO', JSON.stringify({ kidId: kidId, music: url, title: musicTitle }));
+      if (imageFile) {
+        formData.append('image', {
+          uri: imageFile.uri,
+          name: imageFile.fileName,
+          type: imageFile.type,
+        });
+      } else {
+        formData.append('image', null);
+      }
       const token = await getUserData();
-      // console.log(token);
       const response = await axios.post('http://10.0.2.2:8080/api/song/composition', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
-      });
+      }); 
       console.log('Upload Response:', response.data);
+      navigation.navigate('HomeStack', { screen: 'HomeScreen' });
     } catch (error) {
       console.error('Error uploading files', error);
     }

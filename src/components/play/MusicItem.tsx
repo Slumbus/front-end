@@ -25,7 +25,7 @@ const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress, onP
     <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
       <View style={styles.albumContainer}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: song.artwork }} style={[styles.image, isPlaying && styles.playingImage]} />
+          <Image source={song.artwork ? { uri: song.artwork } : require('../../assets/images/Slumbus_Logo.png')} style={[styles.image, isPlaying && styles.playingImage]} />
           {isPlaying && (
               <Animatable.View 
                 animation="tada"
