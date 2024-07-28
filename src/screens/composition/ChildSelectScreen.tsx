@@ -90,10 +90,7 @@ export default function ChildSelectScreen({navigation}: any) {
         <View style={styles.childListContainer}>
           {childrenData.map((childrenData, index) => (
             <TouchableOpacity key={index} style={[styles.childContainer, { backgroundColor: getChildBackgroundColor(index)}]} onPress={() => selectChild(index)}>
-              <Image 
-                source = {{uri: childrenData.picture}} 
-                style={styles.childImage}
-              />
+              <Image source={childrenData.picture ? { uri: childrenData.picture } : require('../../assets/images/Slumbus_Logo.png')} style={styles.childImage} />
               <View style={styles.childProfile}>
                 <Text style={styles.childName}>{childrenData.name}</Text>
                 <Text style={styles.childInfo}>{childrenData.birth}</Text>

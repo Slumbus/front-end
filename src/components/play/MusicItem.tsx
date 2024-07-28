@@ -21,12 +21,11 @@ interface MusicItemProps {
 }
 
 const MusicItem: React.FC<MusicItemProps> = ({ song, isPlaying, onLongPress, onPress }) => {
-  const defaultImage = require('../../assets/images/Slumbus_Logo.png');
   return (
     <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={[styles.container, isPlaying && styles.playingContainer]}>
       <View style={styles.albumContainer}>
         <View style={styles.imageContainer}>
-          <Image source={song.artwork ? { uri: song.artwork } : defaultImage} style={[styles.image, isPlaying && styles.playingImage]} />
+          <Image source={song.artwork ? { uri: song.artwork } : require('../../assets/images/Slumbus_Logo.png')} style={[styles.image, isPlaying && styles.playingImage]} />
           {isPlaying && (
               <Animatable.View 
                 animation="tada"
