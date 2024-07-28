@@ -229,7 +229,7 @@ export default function HomeScreen({navigation}: any) {
         <BottomPlayer 
           song={currentAlbum.Music[curremtTrack]}
           onPress={()=>navigation.navigate('PlayScreen', {
-          album: currentAlbum.albumname,
+          album: currentAlbum,
           song: currentAlbum.Music[curremtTrack]})} 
           listPress={()=>navigation.navigate('PlaylistScreen', {
           album: currentAlbum,
