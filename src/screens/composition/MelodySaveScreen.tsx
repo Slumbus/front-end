@@ -29,11 +29,15 @@ export default function MelodySaveScreen({navigation}: any) {
     try {
       const formData = new FormData();
       formData.append('musicDTO', JSON.stringify({ kidId: kidId, music: url, title: musicTitle }));
-      formData.append('image', {
-        uri: imageFile.uri,
-        name: imageFile.fileName,
-        type: imageFile.type,
-      });
+      if (imageFile) {
+        formData.append('image', {
+          uri: imageFile.uri,
+          name: imageFile.fileName,
+          type: imageFile.type,
+        });
+      } else {
+        formData.append('image', null);
+      }
       const token = await getUserData();
       const response = await axios.post('http://10.0.2.2:8080/api/song/composition', formData, {
         headers: {

@@ -7,10 +7,11 @@ interface AlbumTitleTextProps {
 }
 
 const AlbumTitleText: React.FC<AlbumTitleTextProps> = ({ imageSource, text }) => {
+  const defaultImage = require('../assets/images/Slumbus_Logo.png');
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.image} />
+        <Image source={imageSource.uri ? { uri: imageSource.uri } : defaultImage} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.text}>{text}</Text>

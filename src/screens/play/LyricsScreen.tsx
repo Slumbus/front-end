@@ -12,11 +12,12 @@ const LyricsScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
   const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress } = usePlayback();
+  const defaultImage = require('../../assets/images/Slumbus_Logo.png');
 
   return (
     <View style={styles.container}>
       <View style={styles.album}>
-        <Image source={{uri:song.artwork}} style={styles.image} />
+        <Image source={song.artwork ? { uri: song.artwork } : defaultImage} style={styles.image} />
         <View style={styles.textContainer}>
           <Text style={styles.titleText}>{song.title}</Text>
           <Text style={styles.nameText}>{album.kidName}</Text>

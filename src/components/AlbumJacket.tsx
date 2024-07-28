@@ -9,14 +9,11 @@ interface AlbumJacketProps {
 }
 
 const AlbumJacket: React.FC<AlbumJacketProps> = ({ imageSource, text, onPress }) => {
+  const defaultImage = require('../assets/images/Slumbus_Logo.png');
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageContainer}>
-        {imageSource && typeof imageSource === 'string' ? (
-          <Image source={{ uri: imageSource }} style={styles.image} />
-        ) : (
-          <Image source={imageSource || require('../assets/images/Slumbus_Logo.png')} style={styles.image} />
-        )}
+        <Image source={imageSource.uri ? { uri: imageSource.uri } : defaultImage} style={styles.image} />
         <View style={styles.playIcon}>
           <Icon name="play" size={32} color="#fff" />
         </View>
