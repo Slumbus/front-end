@@ -1,36 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
+import axios from 'axios';
 import LyricSong from '../../components/LyricSong';
+import { getUserData } from '../../utils/Store';
 
 export default function SelectLyricWritingList() {
-  const SelectLyricWritingdata = [
-    {
-      id: 1,
-      picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-      title: "완전 취침",
-      child: "사랑이",
-    },
-    {
-      id: 2,
-      picture: "https://cdn.pixabay.com/photo/2017/11/10/08/08/baby-2935722_1280.jpg",
-      title: "꿀잠",
-      child: "사랑이",
-    },
-    {
-      id: 3,
-      picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-      title: "Good night",
-      child: "사랑이",
-    },
-    {
-      id :4,
-      picture: "https://cdn.pixabay.com/photo/2017/06/18/18/39/baby-2416718_1280.jpg",
-      title: "좋은 꿈",
-      child: "사랑이",
-    },
-  ];
-  
+  const [data, setData] = useState([]);
+  const kidId = 1;
+
+  useEffect(() => {
+    async function fetchData() {
+      const token = await getUserData();
+      try {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data.data);
+      } catch (error) {
+        console.error("데이터 가져오기 오류:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.infoContainer}>
@@ -39,12 +34,12 @@ export default function SelectLyricWritingList() {
           <Text style={styles.infoText}>어떤 자장가를 작사하고 싶나요?</Text>
         </View>
       </View>
-      {SelectLyricWritingdata.map((song) => (
+      {data.map((song) => (
         <View key={song.id}>
           <LyricSong
-            imageSource={{ uri: song.picture }}
+            imageSource={{ uri: song.artwork }}
             title={song.title}
-            child={song.child}
+            child={song.kidName}
             // onPress={}
           />
         </View>
