@@ -11,12 +11,34 @@ import {
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Asset, ImageLibraryOptions} from 'react-native-image-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {getUserData} from '../../utils/Store';
+import axios from 'axios';
+
+const url = 'http://10.0.2.2:8080';
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
-  const [profileImage, setProfileImage] = useState(
-    'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg',
-  );
+  const [picture, setPicture] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await getUserData();
+        const res = await axios.get(`${url}/api/my-page`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const userData = res.data.data;
+        setPicture(userData.picture);
+      } catch (err) {
+        setError('사용자 데이터를 가져오지 못했습니다.');
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const hasAndroidPermission = async () => {
@@ -51,7 +73,7 @@ export default function EditProfileScreen() {
         const selectedImage: Asset = response.assets[0];
         if (selectedImage.uri) {
           // uri가 존재하는 경우에만 처리
-          setProfileImage(selectedImage.uri);
+          setPicture(selectedImage.uri);
         } else {
           Alert.alert('Error', '이미지 URI를 찾을 수 없습니다.');
         }
@@ -60,6 +82,40 @@ export default function EditProfileScreen() {
       }
     });
   };
+
+  const handleProfileUpdate = async () => {
+    try {
+      const token = await getUserData();
+      const formData = new FormData();
+      formData.append('image', {
+        uri: picture,
+        type: 'image/jpeg', // 이미지 타입, 적절히 변경해야 할 수도 있습니다.
+        name: 'profile.jpg', // 이미지 파일 이름
+      });
+
+      await axios.patch(`${url}/api/my-page`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      Alert.alert('Success', '프로필 사진이 업데이트되었습니다.');
+      navigation.navigate('MyScreen' as never);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', '프로필 사진을 업데이트하지 못했습니다.');
+    }
+  };
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* <Image
@@ -69,15 +125,18 @@ export default function EditProfileScreen() {
         style={styles.image}
       /> */}
       <TouchableOpacity onPress={openGallery}>
-        <Image source={{uri: profileImage}} style={styles.image} />
+        <Image
+          source={
+            picture
+              ? {uri: picture}
+              : require('../../assets/images/Slumbus_Logo.png')
+          }
+          style={styles.image}
+        />
       </TouchableOpacity>
       <Text style={styles.text}>프로필 사진</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate('MyScreen' as never);
-          }}>
+        <TouchableOpacity style={styles.button} onPress={handleProfileUpdate}>
           <Text style={styles.buttonText}>수정 완료</Text>
         </TouchableOpacity>
       </View>
