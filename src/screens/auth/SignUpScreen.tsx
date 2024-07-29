@@ -1,5 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 import React, {useState, useEffect} from 'react';
+
 import {
   Image,
   StyleSheet,
@@ -9,18 +11,31 @@ import {
   View,
 } from 'react-native';
 
+const url = 'http://10.0.2.2:8080';
+
 export default function SignUpScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
   const [emailError, setEmailError] = useState(false);
   const [verificationCodeError, setVerificationCodeError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
-  const [timer, setTimer] = useState(0);
+
+  const [emailStatusText, setEmailStatusText] = useState('');
+  const [verificationCodeStatusText, setVerificationCodeStatusText] =
+    useState('');
+  // const [passwordStatusText, setPasswordStatusText] = useState('');
+  // const [passwordConfirmStatusText, setPasswordConfirmStatusText] =
+  //   useState('');
+
   const [isMailSent, setIsMailSent] = useState(false);
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
+
+  const [timer, setTimer] = useState(0);
 
   const startTimer = () => {
     setTimer(300); // 5분 (300초) 타이머 시작
@@ -42,7 +57,85 @@ export default function SignUpScreen() {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const handleSignUp = () => {
+  const handleSendVerificationMail = async () => {
+    if (email === '') {
+      setEmailError(true);
+      setEmailStatusText('이메일을 입력해주세요');
+      return;
+    }
+    try {
+      const res = await axios.post(`${url}/api/auth/send-email?email=${email}`);
+      setEmailError(false);
+      setEmailStatusText(res.data.message);
+      startTimer();
+    } catch (error: unknown) {
+      console.error(error);
+
+      // 오류 객체를 안전하게 처리하기 위해 타입 단언 사용
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message || '인증메일 전송에 실패하셨습니다.';
+        setEmailError(true);
+        setEmailStatusText(errorMessage);
+      } else {
+        // axios 오류가 아닌 경우 기본 오류 메시지 설정
+        setEmailError(true);
+        setEmailStatusText('알 수 없는 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  const handleResendVerificationMail = async () => {
+    if (email === '') {
+      setEmailError(true);
+      setEmailStatusText('이메일을 입력해주세요');
+      return;
+    }
+    try {
+      const res = await axios.post(
+        `${url}/api/auth/resend-email?email=${email}`,
+      );
+      setEmailError(false);
+      setEmailStatusText('인증메일 재전송에 성공하셨습니다.');
+      startTimer();
+    } catch (error: unknown) {
+      console.error(error);
+
+      // 오류 객체를 안전하게 처리하기 위해 타입 단언 사용
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message || '인증메일 재전송에 실패했습니다.';
+        setEmailError(true);
+        setEmailStatusText(errorMessage);
+      } else {
+        // axios 오류가 아닌 경우 기본 오류 메시지 설정
+        setEmailError(true);
+        setEmailStatusText('알 수 없는 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (verificationCode === '') {
+      setVerificationCodeError(true);
+      setVerificationCodeStatusText('인증번호를 입력해주세요');
+      return;
+    }
+    try {
+      await axios.get(
+        `${url}/api/auth/check-code?email=${email}&code=${verificationCode}`,
+      );
+      setIsCodeVerified(true);
+      setVerificationCodeError(false);
+      setVerificationCodeStatusText('인증번호 확인에 성공했습니다.');
+    } catch (error) {
+      console.error(error);
+      setVerificationCodeError(true);
+      setVerificationCodeStatusText('인증번호가 일치하지 않습니다');
+    }
+  };
+
+  const handleSignUp = async () => {
     setEmailError(email === '');
     setVerificationCodeError(verificationCode === '');
     setPasswordError(password === '');
@@ -50,7 +143,12 @@ export default function SignUpScreen() {
       confirmPassword === '' || password !== confirmPassword,
     );
     if (email && verificationCode && password && password === confirmPassword) {
-      navigation.navigate('Login' as never);
+      try {
+        await axios.post(`${url}/api/auth/register`, {email, password});
+        navigation.navigate('Login' as never);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -67,7 +165,7 @@ export default function SignUpScreen() {
         <Text style={styles.textView}>회원가입</Text>
       </View>
       <View style={styles.inputContainer}>
-        <TextInput
+        {/* <TextInput
           style={[styles.input, emailError && styles.errorInput]}
           placeholder="이메일"
           value={email}
@@ -78,32 +176,100 @@ export default function SignUpScreen() {
         />
         {emailError && (
           <Text style={styles.errorText}>이메일을 입력해주세요</Text>
-        )}
+        )} */}
+        <TextInput
+          style={[
+            styles.input,
+            email !== '' && emailError
+              ? styles.errorInput
+              : emailStatusText.includes('성공')
+              ? styles.successInput
+              : null,
+          ]}
+          placeholder="이메일"
+          value={email}
+          onChangeText={text => {
+            setEmail(text);
+            setEmailError(false);
+            setEmailStatusText('');
+          }}
+        />
+        {emailStatusText ? (
+          <Text
+            style={[
+              styles.statusText,
+              emailError ? styles.errorStatusText : styles.successStatusText,
+            ]}>
+            {emailStatusText}
+          </Text>
+        ) : emailError ? (
+          <Text style={[styles.errorText, styles.errorInput]}>
+            이메일을 입력해주세요
+          </Text>
+        ) : null}
         <View style={styles.mailButtonConatiner}>
           {timer > 0 && (
             <Text style={styles.timerText}>{formatTime(timer)}</Text>
           )}
           <TouchableOpacity
-            style={[styles.mailButton, isMailSent && styles.mailButtonSent]}
-            onPress={startTimer}>
+            style={[styles.disabledButton, isMailSent && styles.mailButtonSent]}
+            onPress={
+              isMailSent
+                ? handleResendVerificationMail
+                : handleSendVerificationMail
+            }>
             <Text
               style={[styles.buttonText, isMailSent && styles.buttonTextSent]}>
-              인증 메일 전송
+              {isMailSent ? '재전송' : '인증 메일 전송'}
             </Text>
           </TouchableOpacity>
         </View>
         <TextInput
-          style={[styles.input, verificationCodeError && styles.errorInput]}
+          style={[
+            styles.input,
+            verificationCode !== '' && verificationCodeError
+              ? styles.errorInput
+              : verificationCodeStatusText === '인증번호 확인에 성공했습니다.'
+              ? styles.successInput
+              : null,
+          ]}
           placeholder="인증번호"
           value={verificationCode}
           onChangeText={text => {
             setVerificationCode(text);
             setVerificationCodeError(false);
+            setVerificationCodeStatusText('');
           }}
         />
-        {verificationCodeError && (
+        {verificationCodeStatusText ? (
+          <Text
+            style={[
+              styles.statusText,
+              verificationCodeError
+                ? styles.errorStatusText
+                : styles.successStatusText,
+            ]}>
+            {verificationCodeStatusText}
+          </Text>
+        ) : verificationCodeError ? (
+          <Text style={[styles.errorText, styles.errorInput]}>
+            인증번호를 입력해주세요
+          </Text>
+        ) : null}
+        <TouchableOpacity
+          style={[styles.disabledButton, isMailSent && styles.mailButtonSent]}
+          onPress={handleVerifyCode}>
+          <Text
+            style={[styles.buttonText, isMailSent && styles.buttonTextSent]}>
+            확인
+          </Text>
+        </TouchableOpacity>
+        {/* {verificationCode === '' && verificationCodeError && (
           <Text style={styles.errorText}>인증번호를 입력해주세요</Text>
         )}
+        {verificationCode !== '' && verificationCodeError && (
+          <Text style={styles.errorText}>인증번호가 올바르지 않습니다</Text>
+        )} */}
         <TextInput
           style={[styles.input, passwordError && styles.errorInput]}
           placeholder="비밀번호"
@@ -137,7 +303,18 @@ export default function SignUpScreen() {
           )}
       </View>
       <View style={styles.signUpButtonContainer}>
-        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+        <TouchableOpacity
+          style={[
+            styles.signUpButton,
+            !(
+              email &&
+              verificationCode &&
+              password &&
+              confirmPassword &&
+              isCodeVerified
+            ) && styles.disabledButton,
+          ]}
+          onPress={handleSignUp}>
           <Text style={styles.buttonText}>회원가입</Text>
         </TouchableOpacity>
       </View>
@@ -188,6 +365,21 @@ const styles = StyleSheet.create({
   errorInput: {
     borderColor: 'red',
   },
+  successInput: {
+    borderColor: 'green',
+  },
+  successStatusText: {
+    color: 'green',
+  },
+  errorStatusText: {
+    color: 'red',
+  },
+  statusText: {
+    marginLeft: 10,
+    marginBottom: 5,
+    fontSize: 12,
+    fontFamily: 'SCDream2',
+  },
   errorText: {
     color: 'red',
     marginLeft: 10,
@@ -228,7 +420,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
-  mailButton: {
+  disabledButton: {
     backgroundColor: '#CDCDCD',
     borderRadius: 50,
     paddingVertical: 8,
@@ -246,6 +438,10 @@ const styles = StyleSheet.create({
   timerText: {
     marginRight: 10,
     color: '#283882',
+    fontFamily: 'SCDream5',
+  },
+  disabledSignUpButton: {
+    backgroundColor: '#CDCDCD',
     fontFamily: 'SCDream5',
   },
 });
