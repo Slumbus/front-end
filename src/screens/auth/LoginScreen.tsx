@@ -55,6 +55,8 @@ export default function LoginScreen() {
       });
       console.log(res.data);
       await storeUserData(res.data.data.token);
+      setEmail('');
+      setPassword('');
       navigation.navigate('MainNavigator' as never);
     } catch (error) {
       console.error(error);
