@@ -1,28 +1,69 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {removeUserData} from '../utils/Store';
+import {getUserData, removeUserData} from '../utils/Store';
+import axios from 'axios';
+
+const url = 'http://10.0.2.2:8080';
 
 export default function MyScreen() {
   const navigation = useNavigation();
+  const [userData, setUserData] = useState({email: '', picture: ''});
+  const [error, setError] = useState('');
+
+  const fetchUserData = async () => {
+    try {
+      const token = await getUserData();
+      console.log(token);
+      const res = await axios.get(`${url}/api/my-page`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log(res.data);
+      setUserData(res.data.data);
+    } catch (err) {
+      setError('사용자 데이터를 가져오지 못했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, []),
+  );
 
   const handleLogout = async () => {
     await removeUserData();
-    navigation.navigate('Login' as never);
+    navigation.navigate('AuthStack' as never);
   };
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View>
         <Image
-          source={{
-            uri: 'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg',
-          }}
+          source={
+            userData.picture
+              ? {uri: userData?.picture}
+              : require('../assets/images/Slumbus_Logo.png')
+          }
           style={styles.image}
         />
       </View>
-      <Text style={styles.email}>test@test.com</Text>
+      <Text style={styles.email}>{userData.email}</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.separator} />
         <TouchableOpacity
