@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
 
 import { RootStackParamList } from '../../navigation/ComposeStack';
@@ -25,10 +25,11 @@ export default function MoodSelectScreen({navigation}: any) {
         return prevSelected.filter((i) => i !== index);
       } else if (prevSelected.length < 2) {
         return [...prevSelected, index];
+      } else if (prevSelected.length >= 2) {
+        Alert.alert('', '최대 2개까지 선택해주세요.');
       }
       return prevSelected;
     });
-    
   };
 
   const pressInstButton = (index: number) => {
@@ -37,6 +38,8 @@ export default function MoodSelectScreen({navigation}: any) {
         return prevSelected.filter((i) => i !== index);
       } else if (prevSelected.length < 2) {
         return [...prevSelected, index];
+      } else if (prevSelected.length >= 2) {
+        Alert.alert('', '최대 2개까지 선택해주세요.');
       }
       return prevSelected;
     });
@@ -66,7 +69,7 @@ export default function MoodSelectScreen({navigation}: any) {
         // console.log(response.data)
         navigation.navigate('MelodySaveScreen', {
           kidId: kidId,
-          url: response.data.data,
+          url: response.data.data.music,
         });
       } else {
         console.error('Error', response.data.message);
