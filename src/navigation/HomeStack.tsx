@@ -11,6 +11,9 @@ import MyScreen from '../screens/MyScreen';
 import EditProfileScreen from '../screens/mypage/EditProfileScreen';
 import EditPWScreen from '../screens/mypage/EditPWScreen';
 import SelectLyricWritingListScreen from '../screens/lyrics/SelectLyricWritingListScreen';
+import LyricWriting from '../screens/lyrics/LyricsWritingScreen';
+import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
+import SongCompletion from '../screens/SongCompletionScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 
 interface Music {
@@ -120,6 +123,36 @@ export default function HomeStack({navigation, route}: any) {
           },
           headerTitleAlign: 'center',
         }}
+      />
+      <Stack.Screen
+        name="LyricWriting"
+        component={LyricWriting}
+        options={{
+          title: "작사",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
+      />
+      <Stack.Screen 
+        name="LyricsRecordingScreen"
+        component={LyricsRecordingScreen}
+        options={{
+          title: "녹음",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
+      />
+      <Stack.Screen
+        name="CompositionScreen"
+        component={SongCompletion}
+        options={{
+          title: "완성",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'}}
       />
       <Stack.Screen
         name="EditProfile"

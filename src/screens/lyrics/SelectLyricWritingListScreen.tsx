@@ -4,15 +4,14 @@ import axios from 'axios';
 import LyricSong from '../../components/LyricSong';
 import { getUserData } from '../../utils/Store';
 
-export default function SelectLyricWritingList() {
+export default function SelectLyricWritingList({navigation}: any) {
   const [data, setData] = useState([]);
-  const kidId = 1;
 
   useEffect(() => {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/list`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -40,7 +39,7 @@ export default function SelectLyricWritingList() {
             imageSource={{ uri: song.artwork }}
             title={song.title}
             child={song.kidName}
-            // onPress={}
+            onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
           />
         </View>
       ))}

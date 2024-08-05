@@ -5,9 +5,10 @@ interface SongProps {
   imageSource?: any;
   title: string;
   child: string;
+  url: string;
 }
 
-const BasicSong: React.FC<SongProps> = ({ imageSource, title, child }) => {
+const BasicSong: React.FC<SongProps> = ({ imageSource, title, child, url }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
