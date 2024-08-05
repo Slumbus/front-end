@@ -1,40 +1,165 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import Sound from 'react-native-sound';
 import BasicSong from '../../components/BasicSong';
 import LyricsSaveModal from '../../components/modal/LyricsSaveModal';
+import Slider from '@react-native-community/slider';
 
-export default function LyricWriting({navigation}: any) {
+import { getUserData } from '../../utils/Store';
+import axios from 'axios';
+
+export default function LyricWriting({route, navigation}: any) {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
-  // const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [sound, setSound] = useState<Sound | null>(null);
+  const [sliderValue, setSliderValue] = useState(0);
 
-  const LyricWritingdata = [
-    {
-      id: 1,
-      picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-      title: "완전 취침",
-      child: "사랑이",
-      song: "https://freemusicarchive.org/music/Dee_Yan-Key/lullaby/lullaby/"
-    },
-  ];
+  const { songId } = route.params;
 
-  // const handleSave = () => {
-  //   setModalVisible(true);
-  // };
-  
+  useEffect(() => {
+    async function fetchData() {
+      const token = await getUserData();
+      try {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data.data);
+      } catch (error) {
+        console.error("데이터 가져오기 오류:", error);
+      }
+    }
+
+    fetchData();
+  }, [songId]);
+
+  // 음악 재생
+  useEffect(() => {
+    if (data && data.url) {
+      // URL이 정의되어 있는지 확인
+      if (typeof data.url !== 'string' || !data.url.trim()) {
+        console.error('Invalid music URL:', data.url);
+        return;
+      }
+
+      if (sound) {
+        sound.release();
+      }
+      
+      const newSound = new Sound(data.url, null, (error) => {
+        if (error) {
+          console.error('Failed to load the sound', error);
+          return;
+        }
+        setDuration(newSound.getDuration());
+        setSound(newSound);
+      });
+
+      return () => {
+        if (sound) {
+          sound.release();
+        }
+      };
+    }
+  }, [data]);
+
+  const playPause = () => {
+    if (!sound) {
+      console.error('Sound not loaded');
+      return;
+    }
+    
+    if (isPlaying) {
+      sound.pause();
+    } else {
+      sound.play((success) => {
+        if (success) {
+          console.log('Finished playing');
+        } else {
+          console.error('Playback failed due to audio decoding errors');
+        }
+      });
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        sound?.getCurrentTime((seconds) => {
+          setCurrentTime(seconds);
+          setSliderValue(seconds);
+        });
+      }, 1000);
+    } else if (!isPlaying && currentTime !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const handleSliderValueChange = (value: number) => {
+    setSliderValue(value);
+    if (sound) {
+      sound.setCurrentTime(value);
+      setCurrentTime(value);
+    }
+  };
+
+  // AI 버튼 클릭 핸들러
+  const handleAIButtonPress = async () => {
+    const token = await getUserData();
+    try {
+      const response = await axios.post(`http://10.0.2.2:8080/api/song/genLyrics`,
+        { lyrics: prompt },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setLyrics(response.data.result);
+    } catch (error) {
+      console.error('AI 요청 오류:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {LyricWritingdata.map((song) => (
-        <View key={song.id} style={styles.song}>
-          <BasicSong imageSource={{uri: song.picture}} title={song.title} child={song.child} />
+      {data && (
+        <View key={data.id} style={styles.song}>
+          <BasicSong imageSource={{uri: data.artwork}} title={data.title} child={data.kidName} url={data.url} />
         </View>
-      ))}
+      )}
       <View style={styles.songPlayContainer}>
-          <Icon name="play" size={28} color="#283882" onPress={() => console.log("재생 버튼 눌림")} />
-          <View style={styles.playBar} />
+        <Icon name={isPlaying ? "pause" : "play"} size={28} color="#283882" onPress={playPause} />
+        <View style={styles.playBarContainer}>
+          <Slider
+            style={styles.playBar}
+            minimumValue={0}
+            maximumValue={duration}
+            value={sliderValue}
+            onValueChange={handleSliderValueChange}
+            minimumTrackTintColor="#283882"
+            maximumTrackTintColor="#d3d3d3"
+            thumbTintColor="#283882"
+          />
+        </View>
+        <Text>{formatTime(currentTime)} / {formatTime(duration)}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.title}>직접 작사 또는 AI에게 가사 추천 받기</Text>
@@ -47,8 +172,8 @@ export default function LyricWriting({navigation}: any) {
             value={prompt}
             onChangeText={setPrompt}
           />
-          <TouchableOpacity style={styles.AIbutton}>
-            <Icon2 name="robot" size={16} color="#fff" onPress={() => console.log("ai 버튼 눌림")} />
+          <TouchableOpacity style={styles.AIbutton} onPress={handleAIButtonPress}>
+            <Icon2 name="robot" size={16} color="#fff" />
           </TouchableOpacity>
         </View>
         <View style={styles.inputContainer2}>
@@ -68,23 +193,6 @@ export default function LyricWriting({navigation}: any) {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* <Modal
-        animationType='fade'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}>
-        <View style={styles.modalView}>
-          <TouchableOpacity style={styles.modalButton} onPress={() => navigation.navigate('LyricsRecordingScreen')}>
-            <Text style={styles.modalButtonText}>가사 녹음하러 가기</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
-            <Text style={styles.modalButtonText}>이대로 저장하기</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal> */}
     </View>
   );
 }
@@ -120,11 +228,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
   },
-  playBar: {
+  playBarContainer: {
     flex: 1,
-    height: 3,
-    backgroundColor: '#283882',
-    marginLeft: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  playBar: {
+    height: 30,
+    width: '100%',
+    marginVertical: 10,
   },
   inputContainer: {
     marginTop: 20,
@@ -183,24 +295,11 @@ const styles = StyleSheet.create({
   modalView: {
     top: '45%',
     left: '15%',
-    backgroundColor: 'grey', // 수정 필
+    backgroundColor: 'grey',
     width: 260,
     height: 120,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  modalButton: {
-    height: 35,
-    width: 230,
-    borderRadius: 50,
-    backgroundColor: '#283882',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    textAlign: 'center',
   },
 });

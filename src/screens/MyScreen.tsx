@@ -72,7 +72,7 @@ export default function MyScreen() {
             navigation.navigate('SelectLyricWritingList' as never);
           }}>
           <View style={styles.buttonContent}>
-            <Text style={styles.text}>
+            <Text style={styles.text2}>
               내가 만든 자장가 목록 - 작사하러 가기
             </Text>
             <Text style={styles.arrow}>{'>'}</Text>
@@ -123,6 +123,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     fontFamily: 'SCDream2',
+  },
+  text2: {
+    fontSize: 15,
+    fontFamily: 'SCDream3',
   },
   image: {
     width: 150,
