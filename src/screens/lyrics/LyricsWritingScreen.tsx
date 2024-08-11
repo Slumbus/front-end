@@ -138,6 +138,30 @@ export default function LyricWriting({route, navigation}: any) {
     }
   };
 
+  // 저장 버튼 클릭 핸들러
+  const handleSaveLyrics = async () => {
+    const token = await getUserData();
+    try {
+      const response = await axios.put(`http://10.0.2.2:8080/api/song/lyric/${songId}?lyric=${encodeURIComponent(lyrics)}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log('가사 저장 성공');
+        navigation.navigate('LyricsRecordingScreen', {songId});
+      } else {
+        console.error('가사 저장 실패:', response.data.message);
+      }
+    } catch (error) {
+      console.error('가사 저장 오류:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {data && (
@@ -188,8 +212,8 @@ export default function LyricWriting({route, navigation}: any) {
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.saveButton}>
-            {/* <Text style={styles.saveText}>저장</Text> */}
-            <LyricsSaveModal navigation={navigation} />
+            <Text style={styles.saveText} onPress={handleSaveLyrics}>저장</Text>
+            {/* <LyricsSaveModal navigation={navigation} /> */}
           </TouchableOpacity>
         </View>
       </View>
