@@ -25,6 +25,22 @@ export default function SelectLyricWritingList({navigation}: any) {
     fetchData();
   }, []);
 
+  const handleDelete = async (songId: string) => {
+    try {
+      const token = await getUserData();
+      await axios.delete(`http://10.0.2.2:8080/api/song/${songId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // 삭제된 항목만 목록에서 제거
+      setData((prevData) => prevData.filter((song) => song.id !== songId));
+    } catch (error) {
+      console.error('Error deleting song', error);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.infoContainer}>
@@ -40,6 +56,8 @@ export default function SelectLyricWritingList({navigation}: any) {
             title={song.title}
             child={song.kidName}
             onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
+            onPress2={() => navigation.navigate('MusicUpdateScreen', { songId: song.id })}
+            onPress3={() => handleDelete(song.id)}
           />
         </View>
       ))}
