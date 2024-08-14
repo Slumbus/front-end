@@ -15,6 +15,7 @@ import LyricWriting from '../screens/lyrics/LyricsWritingScreen';
 import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
 import SongCompletion from '../screens/SongCompletionScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
+import MusicUpdateScreen from '../screens/lyrics/MusicUpdateScreen';
 
 interface Music {
   userId: number;
@@ -122,6 +123,17 @@ export default function HomeStack({navigation, route}: any) {
             fontFamily: 'SCDream5',
           },
           headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen 
+        name="MusicUpdateScreen" 
+        component={MusicUpdateScreen} 
+        options={{
+          title: "자장가 정보 수정",
+          headerTitleStyle: {
+            fontFamily: 'SCDream5'
+          },
+          headerTitleAlign: 'center'
         }}
       />
       <Stack.Screen
