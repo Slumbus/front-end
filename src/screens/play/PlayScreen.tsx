@@ -48,7 +48,7 @@ const events = [
 const PlayScreen: React.FC = ({navigation}: any) => {
   const route = useRoute<PlayScreenRouteProp>();
   const { album, song } = route.params;
-  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, stopPlayback } = usePlayback();
+  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, stopPlayback } = usePlayback();
 
   const noise = ['빗소리', '파도 소리', '귀뚜라미 소리', '비행기 소리', '청소기 소리', '중지'];
   const timer = ['5분', '15분', '30분', '1시간', '초기화'];
@@ -291,7 +291,17 @@ const PlayScreen: React.FC = ({navigation}: any) => {
           text={remainingTime ? `${formatTime(remainingTime)}` : '타이머'}
           onPress={toggleTimerModal} />
         <IconButton IconLibrary="MaterialCommunityIcons" IconName="waveform" text="백색 소음" onPress={toggleNoiseModal} />
-        <IconButton IconLibrary="MaterialIcons" IconName="add-reaction" text="자장가 반응 기록하기" onPress={handlePress} />
+        <IconButton
+          IconLibrary="MaterialIcons"
+          IconName="add-reaction"
+          text="자장가 반응 기록하기"
+          onPress={() => navigation.navigate('ChildrenStack', {
+            screen: 'ChildrenInfoReactionRegister',
+            params: {
+              songId: song.musicId, 
+              kidId: song.kidId
+            }
+          })} />
       </View>
       <PlayModal
         isVisible={isTimerModalVisible}

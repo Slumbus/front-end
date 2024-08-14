@@ -9,14 +9,22 @@ import PlayButton from './button/PlayButton';
 import TrackPlayer from 'react-native-track-player';
 import SliderComponent from './play/SliderComponent';
 
-
 interface Music {
-  id: number;
+  userId: number;
+  kidId: number;
+  musicId: number;
+  url: string;
   title: string;
   artwork: string;
-  url: string;
-  lyrics: string;
+  lyric: string | null;
 }
+
+interface KidAlbum {
+  kidId: number;
+  kidName: string;
+  kidPicture: string;
+  Music: Music[];
+};
 
 interface BottomPlayerProps {
   song: Music;
@@ -25,7 +33,7 @@ interface BottomPlayerProps {
 }
 
 const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress }) => {
-  const { isPlaying, playbackPosition, setPlaybackPosition, playPress, handlePress, setIsPlaying } = usePlayback(); //임시 호출
+  const { isPlaying, playPress, setIsPlaying } = usePlayback(); //임시 호출
   const [artworkUri, setArtworkUri] = useState<string | null>(null);
   const [temTitle, setTemTitle] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,17 +54,9 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
       const fowardTrack = await TrackPlayer.getTrack(currentTrackIndex + 1); 
       if (fowardTrack !== null && fowardTrack !== undefined) {
         await TrackPlayer.skipToNext();
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: fowardTrack,
-        // });
       } else { // Queue의 마지막 곡일 때 예외처리
         await TrackPlayer.skip(0);
         const firstTrack = await TrackPlayer.getTrack(0);
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: firstTrack,
-        // });
       }
       
     }
@@ -68,19 +68,11 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
       const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1); // 첫번째 곡일 때 예외처리 필요
       if (backTrack !== null && backTrack !== undefined) {
         await TrackPlayer.skipToPrevious();
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: backTrack,
-        // });
       } else { // Queue의 첫번째 곡일 때 예외처리
         const queue = await TrackPlayer.getQueue();
         const queueLength = queue.length
         await TrackPlayer.skip(queueLength - 1);
         const lastTrack = await TrackPlayer.getTrack(queueLength - 1);
-        // navigation.navigate('PlayScreen', {
-        //   album: album,
-        //   song: lastTrack,
-        // });
       }
     }
   }
@@ -110,7 +102,8 @@ const BottomPlayer: React.FC<BottomPlayerProps> = ({ song, onPress, listPress })
       <View style={styles.container}>
         <View style={styles.albumContainer}>
           <View style={styles.imageContainer}>
-            <Image source={artworkUri ? { uri: artworkUri } : require('../assets/images/Slumbus_Logo.png')}
+            <Image 
+              source={artworkUri ? { uri: artworkUri } : require('../assets/images/Slumbus_Logo.png')}
               style={styles.image} />
           </View>
           <Text style={styles.text}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
