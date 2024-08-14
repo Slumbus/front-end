@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 import axios from 'axios';
 
 import AlbumTitleText from '../components/AlbumTitleText';
 import AlbumJacket from '../components/AlbumJacket';
-import BottomPlayer from '../components/BottomPlayer';
+// import BottomPlayer from '../components/BottomPlayer';
 import TrackPlayer, { RepeatMode, useTrackPlayerEvents, Event} from 'react-native-track-player';
 import { usePlayback } from '../contexts/PlaybackContext';
 import {getUserData} from '../utils/Store';
-
+import SliderComponent from '../components/play/SliderComponent';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
+import PlayButton from '../components/button/PlayButton';
 
 const events = [
   Event.PlaybackActiveTrackChanged,
@@ -33,10 +36,12 @@ type KidAlbum = {
 
 export default function HomeScreen({navigation}: any) {
   const [currentAlbum, setCurrentAlbum] = useState<any | undefined>();
-  const [curremtTrack, setCurrentTrack] = useState<any | undefined>();
+  const [currentTrack, setCurrentTrack] = useState<Music | undefined>(undefined);
   const [childrenAlbumData, setChildrenAlbumData] = useState<KidAlbum[]>([]);
 
-  const { setIsPlaying } = usePlayback();
+  const { isPlaying, playPress, setIsPlaying } = usePlayback();
+  const [artworkUri, setArtworkUri] = useState<string | null>(null);
+  const [temTitle, setTemTitle] = useState<string | null>(null);
 
   const ChildrenAlbumdata = [
     {
@@ -163,13 +168,21 @@ export default function HomeScreen({navigation}: any) {
       console.error('Error fetching album data', error);
     }
   };
-  
+
   useEffect(() => {
     fetchAlbumData();
-  }, []);
+    if (currentAlbum && currentTrack) {
+      setArtworkUri(currentTrack.artwork);
+      setTemTitle(currentTrack.title);
+    }
+  }, [currentTrack]);
+
 
   const setSongList = async (index: number, songId: number) => {
     setCurrentAlbum(childrenAlbumData[index]);
+    setCurrentTrack(childrenAlbumData[index].Music[songId]);
+    setArtworkUri(childrenAlbumData[index].Music[songId].artwork);
+    setTemTitle(childrenAlbumData[index].Music[songId].title);
     const addTrack = async () => {
       try {
         await TrackPlayer.reset();
@@ -185,7 +198,6 @@ export default function HomeScreen({navigation}: any) {
     await addTrack();
     try {
       await TrackPlayer.skip(songId);
-      const trackIndex = await TrackPlayer.getActiveTrackIndex();
       await TrackPlayer.play();
       setIsPlaying(true);
       navigation.navigate('PlayScreen', {
@@ -193,11 +205,116 @@ export default function HomeScreen({navigation}: any) {
         song: childrenAlbumData[index].Music[songId],
       });
       console.log('TrackPlayer 시작 성공');
-      setCurrentTrack(trackIndex);
+      setCurrentTrack(childrenAlbumData[index].Music[songId]);
     } catch (error) {
       console.error('TrackPlayer 시작 오류:', error);
     }
   }
+
+  const onPlayPause = () => {
+    if (isPlaying === true) {
+      TrackPlayer.pause();
+      setIsPlaying(false);
+    } else if (isPlaying === false) {
+      TrackPlayer.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const findTrackInAlbum = (currentTrack : any): Music | undefined => {
+    if (currentAlbum && currentTrack) {
+      return currentAlbum.Music.find((track: { url: string; title: string; artwork: string; }) => 
+        track.url === currentTrack.url && 
+        track.title === currentTrack.title && 
+        track.artwork === currentTrack.artwork
+      );
+    }
+    return undefined;
+  };
+
+  const goFoward = async () => {
+    const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+    // console.log(1, currentTrackIndex);
+    if (currentTrackIndex !== null && currentTrackIndex !== undefined) {
+      const fowardTrack = await TrackPlayer.getTrack(currentTrackIndex + 1); 
+      const matchedTrack = findTrackInAlbum(fowardTrack);
+      // console.log(2, fowardTrack);
+      if (fowardTrack !== null && fowardTrack && fowardTrack.title && fowardTrack.artwork) {
+        await TrackPlayer.skipToNext();
+        setCurrentTrack(matchedTrack);
+        // console.log(3, '다음곡 넘김 성공');
+      } else { // Queue의 마지막 곡일 때 예외처리
+        await TrackPlayer.skip(0);
+        const firstTrack = await TrackPlayer.getTrack(0);
+        if (firstTrack && firstTrack.title && firstTrack.artwork) {
+          const matchedTrack = findTrackInAlbum(fowardTrack);
+          setCurrentTrack(matchedTrack);
+          // console.log(4, '첫곡으로 이동 성공');
+        }
+      }
+    }
+  }
+
+  const goBack = async () => {
+    const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentTrackIndex !== null && currentTrackIndex !== undefined) {
+      const backTrack = await TrackPlayer.getTrack(currentTrackIndex - 1); // 첫번째 곡일 때 예외처리 필요
+      if (backTrack !== null && backTrack && backTrack.title && backTrack.artwork) {
+        const matchedTrack = findTrackInAlbum(backTrack);
+        await TrackPlayer.skipToPrevious();
+        setCurrentTrack(matchedTrack);
+      } else { // Queue의 첫번째 곡일 때 예외처리
+        const queue = await TrackPlayer.getQueue();
+        const queueLength = queue.length
+        await TrackPlayer.skip(queueLength - 1);
+        const lastTrack = await TrackPlayer.getTrack(queueLength - 1);
+        if (lastTrack && lastTrack.title && lastTrack.artwork) {
+          const matchedTrack = findTrackInAlbum(backTrack);
+          setCurrentTrack(matchedTrack);
+        }
+      }
+    }
+  }
+
+  const getAlbumAndTrackFromCurrent = () => {
+    if (currentAlbum && currentTrack) {
+      const albumIndex = childrenAlbumData.findIndex(album => album.kidId === currentAlbum.kidId);
+      if (albumIndex !== -1) {
+        const trackIndex = childrenAlbumData[albumIndex].Music.findIndex(track => track.musicId === currentTrack.musicId);
+        if (trackIndex !== -1) {
+          return {
+            album: childrenAlbumData[albumIndex],
+            song: childrenAlbumData[albumIndex].Music[trackIndex],
+          };
+        }
+      }
+    }
+    return null;
+  };  
+
+  const handlePlayScreenNavigation = () => {
+    const albumAndTrack = getAlbumAndTrackFromCurrent();
+    if (albumAndTrack) {
+      navigation.navigate('PlayScreen', {
+        album: albumAndTrack.album,
+        song: albumAndTrack.song,
+      });
+    } else {
+      console.error('앨범 또는 트랙을 찾을 수 없습니다.');
+    }
+  };
+
+  const handlePlaylistScreenNavigation = () => {
+    const albumAndTrack = getAlbumAndTrackFromCurrent();
+    if (albumAndTrack) {
+      navigation.navigate('PlaylistScreen', {
+        album: albumAndTrack.album,
+        song: albumAndTrack.song,
+      });
+    } else {
+      console.error('앨범 또는 트랙을 찾을 수 없습니다.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -223,17 +340,37 @@ export default function HomeScreen({navigation}: any) {
           </View>
         }
       </ScrollView>
-      { currentAlbum == null ? 
+      { currentAlbum && currentTrack == null ? 
         <View />
       :
-        <BottomPlayer 
-          song={currentAlbum.Music[curremtTrack]}
-          onPress={()=>navigation.navigate('PlayScreen', {
-          album: currentAlbum,
-          song: currentAlbum.Music[curremtTrack]})} 
-          listPress={()=>navigation.navigate('PlaylistScreen', {
-          album: currentAlbum,
-          song: currentAlbum.Music[curremtTrack]})} />
+        <TouchableOpacity 
+          onPress={handlePlayScreenNavigation}>
+          <SliderComponent  bottomPlayer={true} />
+          <View style={styles.playcontainer}>
+            <View style={styles.albumContainer}>
+              <View style={styles.imageContainer}>
+                <Image 
+                  source={artworkUri ? { uri: artworkUri } : require('../assets/images/Slumbus_Logo.png')}
+                  style={styles.image} />
+              </View>
+              <Text style={styles.text}>{temTitle ? temTitle : "제목 로딩 중"}</Text>
+            </View>
+            <View style={styles.playButtonContainer}>
+              <TouchableOpacity onPress={goBack}>
+                <Icon name="play-skip-back" size={20} color={'#283882'} />
+              </TouchableOpacity>
+              <PlayButton isPlaying={isPlaying} onPress={() => {playPress(); onPlayPause();}} size={40} />
+              <TouchableOpacity onPress={goFoward}>
+                <Icon name="play-skip-forward" size={20} color={'#283882'} />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={{marginLeft: 8}} 
+                onPress={handlePlaylistScreenNavigation}>
+                <MCIcon name="playlist-music" size={28} color="#283882"/>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
       }
     </View>
   );
@@ -253,5 +390,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
+  },
+
+  
+  playcontainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 7,
+  },
+  albumContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+  },
+  textContainer: {
+    marginLeft: 10,
+  },
+  text: {
+    marginLeft: 10,
+    fontSize: 14,
+    color: '#000',
+    fontFamily: 'SCDream5',
+  },
+  playButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '35%',
   },
 });
