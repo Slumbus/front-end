@@ -233,8 +233,7 @@ export default function HummingScreen({navigation}: any) {
       Alert.alert('', '허밍 파일을 불러오거나 녹음해주세요.');
     } else {
       const fileToPass = selectedOption === 'record' ? recordedFile : selectedFile;
-      // navigation.navigate('MoodSelectScreen', { kidId, file: fileToPass });
-      navigation.navigate('MoodSelectScreen', { kidId, file: `https://drive.google.com/uc?export=download&id=1WzMCaTPEb58bW9D7y-a2xWdgV2f7bNdO` });
+      navigation.navigate('MoodSelectScreen', { kidId, file: fileToPass });
     }
   };  
 
