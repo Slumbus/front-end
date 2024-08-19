@@ -45,7 +45,34 @@ export default function MoodSelectScreen({navigation}: any) {
     });
   };
 
+  const koreanToEnglish = (word: string) => {
+    const translations: { [key: string]: string }= {
+      '조용한': 'quiet',
+      '새벽': 'dawn',
+      '자정': 'midnight',
+      '비오는': 'rainy',
+      '몽환적': 'dreamy',
+      '잠오는': 'sleepy',
+      '신나는': 'exciting',
+      '몽롱한': 'hazy',
+      '우중충': 'gloomy',
+      '하프': 'harp',
+      '피리': 'pipe',
+      '바이올린': 'violin',
+      '가야금': 'gayageum',
+      '플룻': 'flute',
+      '기타': 'guitar',
+      '오르골': 'music box',
+      '거문고': 'geomungo',
+      '리코더': 'recorder',
+    };
+  
+    return translations[word] || null;
+  }
+
   const uploadMusic = async () => {
+    console.log(koreanToEnglish(genreBtnNames[selectedGenreButtons[0]]));
+    
     const formData = new FormData();
     formData.append('options', JSON.stringify({
       mood: `${genreBtnNames[selectedGenreButtons[0]]}, ${genreBtnNames[selectedGenreButtons[1]]}`,
