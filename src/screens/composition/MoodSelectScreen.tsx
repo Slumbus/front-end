@@ -70,9 +70,7 @@ export default function MoodSelectScreen({navigation}: any) {
     return translations[word] || null;
   }
 
-  const uploadMusic = async () => {
-    console.log(koreanToEnglish(genreBtnNames[selectedGenreButtons[0]]));
-    
+  const uploadMusic = async () => {    
     const formData = new FormData();
     formData.append('options', JSON.stringify({
       mood: `${koreanToEnglish(genreBtnNames[selectedGenreButtons[0]])}, ${koreanToEnglish(genreBtnNames[selectedGenreButtons[1]])}`,
