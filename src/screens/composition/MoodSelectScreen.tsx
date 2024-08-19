@@ -75,8 +75,8 @@ export default function MoodSelectScreen({navigation}: any) {
     
     const formData = new FormData();
     formData.append('options', JSON.stringify({
-      mood: `${genreBtnNames[selectedGenreButtons[0]]}, ${genreBtnNames[selectedGenreButtons[1]]}`,
-      instrument: `${instBtnNames[selectedInstButtons[0]]}, ${instBtnNames[selectedInstButtons[1]]}`,
+      mood: `${koreanToEnglish(genreBtnNames[selectedGenreButtons[0]])}, ${koreanToEnglish(genreBtnNames[selectedGenreButtons[1]])}`,
+      instrument: `${koreanToEnglish(instBtnNames[selectedInstButtons[0]])}, ${koreanToEnglish(instBtnNames[selectedInstButtons[1]])}`,
     }));
     formData.append('humming', {
       uri: file,
