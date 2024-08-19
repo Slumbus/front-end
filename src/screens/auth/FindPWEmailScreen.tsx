@@ -105,7 +105,11 @@ export default function FindPWEmailScreen({navigation}: any) {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.input, emailError ? styles.errorInput : null]}
+          style={[
+            styles.input,
+            emailError ? styles.errorInput : null,
+            !emailError && isMailSent ? styles.successInput : null,
+          ]}
           placeholder="이메일"
           value={email}
           onChangeText={text => {
@@ -140,6 +144,9 @@ export default function FindPWEmailScreen({navigation}: any) {
           style={[
             styles.input,
             verificationCodeError ? styles.errorInput : null,
+            !verificationCodeError && isCodeVerified
+              ? styles.successInput
+              : null,
           ]}
           placeholder="인증번호"
           value={code}
