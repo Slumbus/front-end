@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   text2: {
     fontSize: 15,
-    fontFamily: 'SCDream3',
+    fontFamily: 'SCDream5',
   },
   image: {
     width: 150,

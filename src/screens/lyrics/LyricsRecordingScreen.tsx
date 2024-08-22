@@ -198,27 +198,38 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
 
   // 저장 버튼 클릭 핸들러
   const handleSaveMusic = async () => {
-    navigation.navigate('CompositionScreen', {songId});
-    // const token = await getUserData();
-    // try {
-    //   const response = await axios.put(`http://10.0.2.2:8080/api/song/update/${songId}`,
-    //     {},
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         'Content-Type': 'application/json',
-    //       },
-    //     }
-    //   );
-    //   if (response.status === 200) {
-    //     console.log('녹음본 합본 저장 성공');
-    //     navigation.navigate('CompositionScreen', {songId});
-    //   } else {
-    //     console.error('녹음본 합본 저장 실패:', response.data.message);
-    //   }
-    // } catch (error) {
-    //   console.error('녹음본 합본 저장 오류:', error);
-    // }
+    const token = await getUserData();
+
+    // 녹음 파일 경로
+    const recordedFilePath = 'file:////data/user/0/com.slumbus/cache/sound.mp4';
+
+    const formData = new FormData();
+    formData.append('musicUrl', data.url);
+    formData.append('recordedFile', {
+      uri: recordedFilePath,
+      type: 'audio/mp3',
+      name: 'recording.mp3',
+    });
+
+    try {
+      const response = await axios.post(`http://10.0.2.2:8080/api/song/combine/${songId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log('녹음본 합본 저장 성공');
+        navigation.navigate('CompositionScreen', {songId});
+      } else {
+        console.error('녹음본 합본 저장 실패:', response.data.message);
+      }
+    } catch (error) {
+      console.error('녹음본 합본 저장 오류:', error);
+    }
   };
 
   return (
@@ -285,12 +296,6 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
       </View>
       
       <View style={styles.ButtonsContainer}>
-        {/* <TouchableOpacity style={styles.Button1}>
-          <Text style={styles.ButtonText}>재생</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.Button2}>
-          <Text style={styles.ButtonText}>다시 녹음하기</Text>
-        </TouchableOpacity> */}
         <TouchableOpacity style={styles.Button3} onPress={handleSaveMusic}>
           <Text style={styles.ButtonText2}>저장</Text>
         </TouchableOpacity>
@@ -304,7 +309,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '100%',
     backgroundColor: '#FFFFFF',
-    marginBottom: 50,
   },
   song: {
     marginTop: 25,
