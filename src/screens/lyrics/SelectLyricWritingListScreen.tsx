@@ -52,8 +52,8 @@ export default function SelectLyricWritingList({navigation}: any) {
       
       {data.length === 0 ? 
         <View style={{alignItems: 'center', paddingVertical: 40}}>
-          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 아이가 없습니다.</Text>
-          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>아이 목록 탭에서 아이를 등록해주세요!</Text>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가가 없습니다.</Text>
+          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>작곡 탭에서 자장가를 등록해주세요!</Text>
         </View>
         :
         <View>
