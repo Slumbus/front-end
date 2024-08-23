@@ -52,6 +52,42 @@ export default function MelodySaveScreen({navigation}: any) {
     }
   };
 
+  // 사운드 초기화 및 duration 가져오기
+  useEffect(() => {
+    const initializeSound = () => {
+      if (!url) return;
+      const newSound = new Sound(url, '', (error) => {
+        if (error) {
+          console.log('음악 불러오기 실패', error);
+          return;
+        }
+        // duration을 가져올 때까지 대기
+        const checkDuration = () => {
+          const duration = newSound.getDuration();
+          if (duration > 0) {
+            setDuration(duration);
+          } else {
+            // 일정 시간 후 다시 체크
+            setTimeout(checkDuration, 100);
+          }
+        };
+        setSound(newSound);
+        setDuration(newSound.getDuration()); // duration 값 설정
+      });
+    };
+
+    initializeSound();
+
+    // 컴포넌트 unmount 시 사운드 해제
+    return () => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+      }
+    };
+  }, [url]);
+
   //음악 재생 동작
   const playSound = (filePath: string | null) => {
     if (!filePath) return;
@@ -99,6 +135,23 @@ export default function MelodySaveScreen({navigation}: any) {
       setIsPlaying(false);
     }
   };
+
+  // Update position regularly
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;  // interval을 undefined로 초기화
+    if (isPlaying && sound) {
+      interval = setInterval(() => {
+        sound?.getCurrentTime(seconds => {
+          setPosition(seconds);
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) {  // interval이 정의된 경우에만 clearInterval 호출
+        clearInterval(interval);
+      }
+    };
+  }, [isPlaying, sound]);
 
   //해당 스크린 벗어나면 음악 정지
   useEffect(() => {

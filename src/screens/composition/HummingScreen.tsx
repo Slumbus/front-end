@@ -101,6 +101,42 @@ export default function HummingScreen({navigation}: any) {
     }
   };
 
+  // 사운드 초기화 및 duration 가져오기
+  useEffect(() => {
+    const initializeSound = () => {
+      if (!selectedFile) return;
+      const newSound = new Sound(selectedFile, '', (error) => {
+        if (error) {
+          console.log('음악 불러오기 실패', error);
+          return;
+        }
+        // duration을 가져올 때까지 대기
+        const checkDuration = () => {
+          const duration = newSound.getDuration();
+          if (duration > 0) {
+            setDuration(duration);
+          } else {
+            // 일정 시간 후 다시 체크
+            setTimeout(checkDuration, 100);
+          }
+        };
+        setSound(newSound);
+        setDuration(newSound.getDuration()); // duration 값 설정
+      });
+    };
+
+    initializeSound();
+
+    // 컴포넌트 unmount 시 사운드 해제
+    return () => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+      }
+    };
+  }, [selectedFile]);
+
   //음악 재생 동작
   const playSound = (filePath: string | null) => {
     if (!filePath) return;
