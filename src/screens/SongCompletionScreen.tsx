@@ -216,7 +216,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 100,
   },
   completionButton: {
     padding: 10,

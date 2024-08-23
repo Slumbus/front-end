@@ -10,6 +10,8 @@ import Slider from '@react-native-community/slider';
 import { getUserData } from '../../utils/Store';
 import axios from 'axios';
 
+import LyricsLoadingModal from '../../components/modal/LyricsLoadingModal';
+
 export default function LyricWriting({route, navigation}: any) {
   const [prompt, setPrompt] = useState('');
   const [lyrics, setLyrics] = useState('');
@@ -19,6 +21,7 @@ export default function LyricWriting({route, navigation}: any) {
   const [duration, setDuration] = useState(0);
   const [sound, setSound] = useState<Sound | null>(null);
   const [sliderValue, setSliderValue] = useState(0);
+  const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
   const { songId } = route.params;
 
@@ -121,6 +124,7 @@ export default function LyricWriting({route, navigation}: any) {
 
   // AI 버튼 클릭 핸들러
   const handleAIButtonPress = async () => {
+    setLoadingModalVisible(true);
     const token = await getUserData();
     try {
       const response = await axios.post(`http://10.0.2.2:8080/api/song/genLyrics`,
@@ -133,6 +137,7 @@ export default function LyricWriting({route, navigation}: any) {
         }
       );
       setLyrics(response.data.result);
+      setLoadingModalVisible(false);
     } catch (error) {
       console.error('AI 요청 오류:', error);
     }
@@ -217,6 +222,10 @@ export default function LyricWriting({route, navigation}: any) {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* loading modal */}
+      <LyricsLoadingModal loadingModalVisible={loadingModalVisible}/>
+
     </View>
   );
 }
@@ -230,7 +239,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginHorizontal: 35,
-    marginTop: 25,
+    marginTop: 13,
     marginBottom: 20,
   },
   title: {

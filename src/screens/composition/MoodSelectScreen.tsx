@@ -6,6 +6,8 @@ import axios from 'axios';
 import { RootStackParamList } from '../../navigation/ComposeStack';
 import { getUserData } from '../../utils/Store';
 
+import MusicComposeLoadingModal from '../../components/modal/MusicComposeLoadingModal';
+
 type MoodSelectScreenRouteProp = RouteProp<RootStackParamList, 'MoodSelectScreen'>;
 
 export default function MoodSelectScreen({navigation}: any) {
@@ -17,7 +19,8 @@ export default function MoodSelectScreen({navigation}: any) {
 
   const [selectedGenreButtons, setSelectedGenreButtons] = useState<number[]>([]);
   const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);
-
+  
+  const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
   const pressGenreButton = (index: number) => {
     setSelectedGenreButtons((prevSelected) => {
@@ -70,7 +73,8 @@ export default function MoodSelectScreen({navigation}: any) {
     return translations[word] || null;
   }
 
-  const uploadMusic = async () => {    
+  const uploadMusic = async () => {
+    setLoadingModalVisible(true);    
     const formData = new FormData();
     formData.append('options', JSON.stringify({
       mood: `${koreanToEnglish(genreBtnNames[selectedGenreButtons[0]])}, ${koreanToEnglish(genreBtnNames[selectedGenreButtons[1]])}`,
@@ -92,6 +96,7 @@ export default function MoodSelectScreen({navigation}: any) {
       });
       if (response.data.status === 200) {
         // console.log(response.data)
+        setLoadingModalVisible(false);
         navigation.navigate('MelodySaveScreen', {
           kidId: kidId,
           url: response.data.data.music,
@@ -160,6 +165,9 @@ export default function MoodSelectScreen({navigation}: any) {
         })}> */}
         <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
       </TouchableOpacity>
+
+      {/* loading modal */}
+      <MusicComposeLoadingModal loadingModalVisible={loadingModalVisible}/>
       
     </View>
   );

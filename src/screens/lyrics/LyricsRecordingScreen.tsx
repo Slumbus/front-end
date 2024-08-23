@@ -8,6 +8,7 @@ import Slider from '@react-native-community/slider';
 import Sound from 'react-native-sound';
 import { getUserData } from '../../utils/Store';
 import axios from 'axios';
+import CombineLoadingModal from '../../components/modal/CombineLoadingModal';
 
 // 녹음 기능
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -45,6 +46,8 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
   const [duration, setDuration] = useState(0);
   const [sound, setSound] = useState<Sound | null>(null);
   const [sliderValue, setSliderValue] = useState(0);
+
+  const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -198,6 +201,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
 
   // 저장 버튼 클릭 핸들러
   const handleSaveMusic = async () => {
+    setLoadingModalVisible(true);
     const token = await getUserData();
 
     // 녹음 파일 경로
@@ -205,6 +209,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
 
     const formData = new FormData();
     formData.append('musicUrl', data.url);
+    console.log(data.url);
     formData.append('recordedFile', {
       uri: recordedFilePath,
       type: 'audio/mp3',
@@ -223,6 +228,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
       );
       if (response.status === 200) {
         console.log('녹음본 합본 저장 성공');
+        setLoadingModalVisible(false);
         navigation.navigate('CompositionScreen', {songId});
       } else {
         console.error('녹음본 합본 저장 실패:', response.data.message);
@@ -300,6 +306,9 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
           <Text style={styles.ButtonText2}>저장</Text>
         </TouchableOpacity>
       </View>
+
+      {/* loading modal */}
+      <CombineLoadingModal loadingModalVisible={loadingModalVisible}/>
     </ScrollView>
   );
 }
@@ -356,7 +365,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginTop:10,
+    marginBottom: 100
   },
   Button1: {
     padding: 10,
