@@ -46,7 +46,10 @@ export default function MelodySaveScreen({navigation}: any) {
         },
       }); 
       console.log('Upload Response:', response.data);
-      navigation.navigate('HomeStack', { screen: 'HomeScreen' });
+      // navigation.navigate('HomeStack', { screen: 'HomeScreen' });
+      
+      console.log('음악 Id: '+response.data.data.id);
+      return response.data.data.id;
     } catch (error) {
       console.error('Error uploading files', error);
     }

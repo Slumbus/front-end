@@ -29,11 +29,12 @@ export default function MusicSaveModal({ navigation, handleSave }: MusicSaveModa
               </TouchableOpacity>
             </View>
             
-            <TouchableOpacity style={styles.modalContentBtn} onPress={() => {navigation.navigate('LyricWriting'); setModalVisible(false);}}>
+            <TouchableOpacity style={styles.modalContentBtn} onPress={async () => { const songId = await handleSave(); console.log("음악 아이딩"+ songId);
+             navigation.navigate('LyricWriting', { songId: songId }); setModalVisible(false);}}>
               <Text style={styles.modalContentText}>가사 녹음하러 가기</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalContentBtn} onPress={() => { handleSave(); setModalVisible(false); }}>
+            <TouchableOpacity style={styles.modalContentBtn} onPress={() => { handleSave(); navigation.navigate('HomeStack', { screen: 'HomeScreen' }); setModalVisible(false); }}>
               <Text style={styles.modalContentText}>이대로 저장하기</Text>
             </TouchableOpacity>
           </View>
