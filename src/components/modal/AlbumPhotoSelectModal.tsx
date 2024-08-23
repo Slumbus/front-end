@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Image, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Asset, CameraOptions, ImageLibraryOptions, launchCamera, launchImageLibrary } from "react-native-image-picker";
+import Icon from 'react-native-vector-icons/Entypo';
 
 type AlbumPhotoSelectModalProps = {
   setImageFile: (image: Asset) => void;
@@ -99,7 +100,7 @@ export default function AlbumPhotoSelectModal({ setImageFile }: AlbumPhotoSelect
               <View style={styles.modalHeader}>
                 <Text style={styles.modalHeaderText}>앨범 표지 선택</Text>
                 <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(!modalVisible)}>
-                  <Text>X</Text>
+                  <Icon name="cross" size={30} color={'#000'} />
                 </TouchableOpacity>
               </View>
               
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
   },
   modalCancel: {
     position: 'absolute',
-    right: 10,
+    right: 0,
   },
   modalContent: {
     flexDirection: 'column',

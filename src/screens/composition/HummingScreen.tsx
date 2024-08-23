@@ -5,6 +5,7 @@ import DocumentPicker from 'react-native-document-picker';
 import { PERMISSIONS, request } from 'react-native-permissions';
 import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/Entypo';
 import Slider from '@react-native-community/slider';
 import RNFetchBlob from 'rn-fetch-blob';
 import ReactNativeBlobUtil from 'react-native-blob-util';
@@ -341,7 +342,7 @@ export default function HummingScreen({navigation}: any) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalHeaderText}>음성 파일 선택</Text>
               <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(false)}>
-                <Text>X</Text>
+                <Icon2 name="cross" size={30} color={'#000'} />
               </TouchableOpacity>
             </View>
             <TouchableOpacity>
@@ -506,7 +507,7 @@ const styles = StyleSheet.create({
   },
   modalCancel: {
     position: 'absolute',
-    right: 10,
+    right: 0,
   },
   modalContentText:{
     fontSize: 14,
