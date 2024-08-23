@@ -259,16 +259,11 @@ export default function HummingScreen({navigation}: any) {
       {selectedOption === 'file' && (
         <View style={styles.contentContainer}>
           <View style={styles.playbarContainer}>
-            <TouchableOpacity>
-              {/* <Image source={require("../../assets/images/plus.png") }/>
-              <Text>파일 첨부</Text> */}
-            </TouchableOpacity>
             <Text style={styles.songTitleText}>{selectedFile ? selectedFileName: '선택된 파일이 없습니다.'}</Text>
             <View style={styles.songPlayContainer}>
               <TouchableOpacity onPress={() => (isPlaying ? stopSound() : playSound(selectedFile))}>
                 <Icon name={isPlaying ? 'pause' : 'play'} size={28} color="#283882" />
               </TouchableOpacity>
-              {/* <View style={styles.playBar} /> */}
               <Slider
                 style={styles.playBar}
                 value={position}

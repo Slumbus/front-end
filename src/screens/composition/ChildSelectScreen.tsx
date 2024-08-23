@@ -86,7 +86,13 @@ export default function ChildSelectScreen({navigation}: any) {
           <Text style={styles.infoText}>어떤 아이의 자장가를 만들고 싶나요?</Text>
         </View>
       </View>
-      <ScrollView>
+      {childrenData.length === 0 ? 
+        <View style={{alignItems: 'center', paddingVertical: 40}}>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 아이가 없습니다.</Text>
+          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>아이 목록 탭에서 아이를 등록해주세요!</Text>
+        </View>
+        :
+        <ScrollView>
         <View style={styles.childListContainer}>
           {childrenData.map((childrenData, index) => (
             <TouchableOpacity key={index} style={[styles.childContainer, { backgroundColor: getChildBackgroundColor(index)}]} onPress={() => selectChild(index)}>
@@ -102,6 +108,7 @@ export default function ChildSelectScreen({navigation}: any) {
           <Text style={styles.btnText}>선택 완료</Text>
         </TouchableOpacity>
       </ScrollView>
+      }
     </View>
     );
 };

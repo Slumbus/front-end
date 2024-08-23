@@ -87,14 +87,27 @@ export default function ChildrenListScreen({ navigation, route }: any) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={childrenData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        scrollEnabled={scrollEnabled}
-        onTouchStart={() => setScrollEnabled(true)}
-        onTouchEnd={() => setScrollEnabled(true)}
-      />
+      {childrenData.length === 0 ? 
+        <View style={{alignItems: 'center', paddingVertical: 40}}>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 아이가 없습니다.</Text>
+            <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>하단의
+            <View>
+              <TouchableOpacity style={styles.smallButton} disabled={true}>
+                <Image source={require('../../assets/images/ic_add_white.png')} style={styles.smallIc} />
+              </TouchableOpacity>
+            </View>
+            버튼을 통해 아이를 등록해주세요!</Text>
+          </View>
+        :
+        <FlatList
+          data={childrenData}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          scrollEnabled={scrollEnabled}
+          onTouchStart={() => setScrollEnabled(true)}
+          onTouchEnd={() => setScrollEnabled(true)}
+        />
+      }
       <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('ChildrenRegister')}>
         <Image source={require('../../assets/images/ic_add_white.png')} style={styles.floatingIc} />
       </TouchableOpacity>
@@ -174,5 +187,19 @@ const styles = StyleSheet.create({
   floatingIc: {
     width: 34,
     height: 34
+  },
+  smallButton: {
+    width: 14,
+    height: 14,
+    borderRadius: 100,
+    backgroundColor: '#283882',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 3,
+    marginRight: 1,
+  },
+  smallIc: {
+    width: 9,
+    height: 9,
   }
 });

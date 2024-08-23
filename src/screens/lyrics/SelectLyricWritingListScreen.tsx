@@ -49,18 +49,28 @@ export default function SelectLyricWritingList({navigation}: any) {
           <Text style={styles.infoText}>어떤 자장가를 작사하고 싶나요?</Text>
         </View>
       </View>
-      {data.map((song) => (
-        <View key={song.id}>
-          <LyricSong
-            imageSource={{ uri: song.artwork }}
-            title={song.title}
-            child={song.kidName}
-            onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
-            onPress2={() => navigation.navigate('MusicUpdateScreen', { songId: song.id })}
-            onPress3={() => handleDelete(song.id)}
-          />
+      
+      {data.length === 0 ? 
+        <View style={{alignItems: 'center', paddingVertical: 40}}>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 아이가 없습니다.</Text>
+          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>아이 목록 탭에서 아이를 등록해주세요!</Text>
         </View>
-      ))}
+        :
+        <View>
+          {data.map((song) => (
+            <View key={song.id}>
+              <LyricSong
+                imageSource={{ uri: song.artwork }}
+                title={song.title}
+                child={song.kidName}
+                onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
+                onPress2={() => navigation.navigate('MusicUpdateScreen', { songId: song.id })}
+                onPress3={() => handleDelete(song.id)}
+              />
+            </View>
+          ))}
+        </View>
+      }
     </ScrollView>
   );
 }
