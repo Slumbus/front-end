@@ -181,56 +181,83 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
       {renderProgressBar()}
       {/* 사진 목록 또는 다른 목록 */}
       {showPhotos ? (
-        <FlatList
-          data={songData}
-          renderItem={({ item }) => (
-            <View style={styles.listItemContainer}>
-              <Image source={{ uri: item.artwork }} style={styles.photo} />
-              <Text style={styles.songTitle}>{item.title}</Text>
-              <PlayButton
-                size={32}
-                isPlaying={playingSongId == item.id}
-                onPress={() => handlePlayButtonClick(item.id)}
-              />
-            </View>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      ) : (
-        <View style={styles.reactionListContainer}>
-          <Text style={styles.reactionTitle}>자장가 반응 기록</Text>
+        songData.length === 0 ? (
+          <View style={{alignItems: 'center', paddingVertical: 40}}>
+            <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가가 없습니다.</Text>
+            <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>작곡 탭에서 자장가를 등록해주세요!</Text>
+          </View>
+        ) : (
           <FlatList
-            data={lullabyData}
+            data={songData}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ChildrenInfoReaction', { 
-                  title: item.musicTitle, 
-                  selectedSongId: item.musicId,
-                  kidId: item.kidId,
-                  reactionData: item.reactions })}
-                style={styles.reactionContainer}
-              >
-                <View style={styles.lullabyTitleContainer}
-                >
-                  <Icon name="play" size={18} color={'#000000'} />
-                  <Text style={styles.lullabyTitle}>{item.musicTitle}</Text>
-                </View>
-                {item.reactions.map((reaction: {
-                  created: string; emoji: string; comment: string | string | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; 
-}, index: React.Key | null | undefined) => (
-                  <View key={index} style={styles.reactionItemContainer}>
-                    <Image source={getReactionImage(reaction.emoji)} style={styles.reactionImage} />
-                    <View style={styles.reactionContentContainer}>
-                      <Text style={styles.reactionContent}>{reaction.comment}</Text>
-                      <Text style={styles.reactionDate}>{reaction.created}</Text>
-                    </View>
-                  </View>
-                ))}
-              </TouchableOpacity>
+              <View style={styles.listItemContainer}>
+                <Image source={{ uri: item.artwork }} style={styles.photo} />
+                <Text style={styles.songTitle}>{item.title}</Text>
+                <PlayButton
+                  size={32}
+                  isPlaying={playingSongId == item.id}
+                  onPress={() => handlePlayButtonClick(item.id)}
+                />
+              </View>
             )}
-            keyExtractor={(item) => item[0]}
+            keyExtractor={(item) => item.id.toString()}
           />
-        </View>
+        )
+      ) : (
+        lullabyData.length === 0 ? (
+          songData.length === 0 ? (
+            <View style={{alignItems: 'center', paddingVertical: 40}}>
+              <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가가 없습니다.</Text>
+              <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>작곡 탭에서 자장가를 등록해주세요!</Text>
+            </View>
+          ) : (
+            <View style={{alignItems: 'center', paddingVertical: 40}}>
+            <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가 반응 기록이 없습니다.</Text>
+              <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>하단의
+              <View>
+                <TouchableOpacity style={styles.smallButton} disabled={true}>
+                  <Image source={require('../../assets/images/ic_add_white.png')} style={styles.smallIc} />
+                </TouchableOpacity>
+              </View>
+              버튼을 통해 자장가 반응을 기록해주세요!</Text>
+            </View>
+          )
+        ) : (
+          <View style={styles.reactionListContainer}>
+            <Text style={styles.reactionTitle}>자장가 반응 기록</Text>
+            <FlatList
+              data={lullabyData}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ChildrenInfoReaction', { 
+                    title: item.musicTitle, 
+                    selectedSongId: item.musicId,
+                    kidId: item.kidId,
+                    reactionData: item.reactions })}
+                  style={styles.reactionContainer}
+                >
+                  <View style={styles.lullabyTitleContainer}
+                  >
+                    <Icon name="play" size={18} color={'#000000'} />
+                    <Text style={styles.lullabyTitle}>{item.musicTitle}</Text>
+                  </View>
+                  {item.reactions.map((reaction: {
+                    created: string; emoji: string; comment: string | string | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; 
+  }, index: React.Key | null | undefined) => (
+                    <View key={index} style={styles.reactionItemContainer}>
+                      <Image source={getReactionImage(reaction.emoji)} style={styles.reactionImage} />
+                      <View style={styles.reactionContentContainer}>
+                        <Text style={styles.reactionContent}>{reaction.comment}</Text>
+                        <Text style={styles.reactionDate}>{reaction.created}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item[0]}
+            />
+          </View>
+        )
       )}
       {/* 자장가 반응 추가 버튼 */}
       {showFloatingButton && (
@@ -255,18 +282,25 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                 <View style={[styles.progressBar, { flex: 1 }]} />
               </View>
             </View>
-            <FlatList
-                data={songData}
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handleNavigate(item)}>
-                    <View style={styles.modalListItemContainer}>
-                      <Image source={{ uri: item.artwork }} style={styles.selectPhoto} />
-                      <Text style={styles.selectTitle}>{item.title}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item.id.toString()}
-              />
+            {songData.length === 0 ? 
+              <View style={{alignItems: 'center', paddingVertical: 40}}>
+                <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가가 없습니다.</Text>
+                <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>작곡 탭에서 자장가를 등록해주세요!</Text>
+              </View>
+            :
+              <FlatList
+                  data={songData}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handleNavigate(item)}>
+                      <View style={styles.modalListItemContainer}>
+                        <Image source={{ uri: item.artwork }} style={styles.selectPhoto} />
+                        <Text style={styles.selectTitle}>{item.title}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.id.toString()}
+                />
+            }
           </Pressable>
         </Pressable>
       </Modal>
@@ -496,4 +530,18 @@ const styles = StyleSheet.create({
     fontFamily: 'SCDream5',
     marginLeft: 12,
   },
+  smallButton: {
+    width: 14,
+    height: 14,
+    borderRadius: 100,
+    backgroundColor: '#283882',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 3,
+    marginRight: 1,
+  },
+  smallIc: {
+    width: 9,
+    height: 9,
+  }
 });
