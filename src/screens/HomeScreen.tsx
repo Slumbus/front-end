@@ -320,7 +320,10 @@ export default function HomeScreen({navigation}: any) {
     <View style={styles.container}>
       <ScrollView>
         {childrenAlbumData.length === 0 ? 
-          <View /> // 아이 등록 페이지로 이동 기능 구현
+        <View style={{alignItems: 'center', paddingVertical: 40}}>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 아이가 없습니다.</Text>
+          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>아이 목록 탭에서 아이를 등록해주세요!</Text>
+        </View>
         :
           <View style={styles.albums}>
             {childrenAlbumData.map((album, albumIndex) => (
@@ -340,7 +343,7 @@ export default function HomeScreen({navigation}: any) {
           </View>
         }
       </ScrollView>
-      { currentAlbum && currentTrack == null ? 
+      { currentAlbum == null || currentTrack == null ? 
         <View />
       :
         <TouchableOpacity 

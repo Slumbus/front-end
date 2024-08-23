@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/Entypo';
 
 type MusicSaveModalProps = {
   navigation: any;
@@ -24,7 +25,7 @@ export default function MusicSaveModal({ navigation, handleSave }: MusicSaveModa
             <View style={styles.modalHeader}>
               <Text style={styles.modalHeaderText}>가사 생성 여부 선택</Text>
               <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(!modalVisible)}>
-                <Text>X</Text>
+                <Icon name="cross" size={30} color={'#000'} />
               </TouchableOpacity>
             </View>
             
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   },
   modalCancel: {
     position: 'absolute',
-    right: 10,
+    right: 0,
   },
   modalContentBtn: {
     width: 220,

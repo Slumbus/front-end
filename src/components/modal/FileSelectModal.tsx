@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/Entypo';
 
 export default function FileSelectModal({visible, onClose}: any) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,7 +24,7 @@ export default function FileSelectModal({visible, onClose}: any) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalHeaderText}>음성 파일 선택</Text>
               <TouchableOpacity style={styles.modalCancel} onPress={onClose}>
-                <Text>X</Text>
+                <Icon name="cross" size={30} color={'#000'} />
               </TouchableOpacity>
             </View>
             <TouchableOpacity>
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
   modalCancel: {
     position: 'absolute',
-    right: 10,
+    right: 0,
   },
   modalContentText:{
     fontSize: 14,
