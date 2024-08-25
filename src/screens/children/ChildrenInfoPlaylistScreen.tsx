@@ -59,6 +59,11 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     fetchReactionData(child.id);
   }, [child, route.params?.refresh]);
 
+  useEffect(() => {
+    if (route.params?.onGoBack) {
+      fetchReactionData(child.id);  // 데이터 갱신
+    }
+  }, [route.params?.onGoBack]);
 
   const fetchSongData = async (kidId: number) => {
     const token = await getUserData();
@@ -105,6 +110,9 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     }
   };
 
+  const keyExtractor = (item: any) => item.musicId.toString(); // 각 항목의 고유한 key로 musicId 사용
+
+
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
     setProgress(isPhotoButton ? 0.5 : 0);
@@ -138,7 +146,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
 
   const handleNavigate = (selectedSongData: any) => {
     setModalVisible(false);
-    navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongData.id, kidId: child.id});
+    navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongData.id, kidId: child.id, refresh: true });  // 등록 후 refresh 값 전달
   };
 
   return (
@@ -200,7 +208,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                 />
               </View>
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={keyExtractor}
           />
         )
       ) : (
