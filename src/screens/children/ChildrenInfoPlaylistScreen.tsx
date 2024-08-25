@@ -59,6 +59,11 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     fetchReactionData(child.id);
   }, [child, route.params?.refresh]);
 
+  useEffect(() => {
+    if (route.params?.onGoBack) {
+      fetchReactionData(child.id);  // 데이터 갱신
+    }
+  }, [route.params?.onGoBack]);
 
   const fetchSongData = async (kidId: number) => {
     const token = await getUserData();
@@ -105,6 +110,8 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     }
   };
 
+  const keyExtractor = (item: any) => item.musicId.toString();
+
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
     setProgress(isPhotoButton ? 0.5 : 0);
@@ -138,7 +145,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
 
   const handleNavigate = (selectedSongData: any) => {
     setModalVisible(false);
-    navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongData.id, kidId: child.id});
+    navigation.navigate('ChildrenInfoReactionRegister', { songId: selectedSongData.id, kidId: child.id, refresh: true });  // 등록 후 refresh 값 전달
   };
 
   return (
@@ -189,6 +196,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         ) : (
           <FlatList
             data={songData}
+            extraData={songData}
             renderItem={({ item }) => (
               <View style={styles.listItemContainer}>
                 <Image source={{ uri: item.artwork }} style={styles.photo} />
@@ -254,7 +262,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                   ))}
                 </TouchableOpacity>
               )}
-              keyExtractor={(item) => item[0]}
+              keyExtractor={keyExtractor}
             />
           </View>
         )
