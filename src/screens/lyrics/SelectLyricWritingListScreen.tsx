@@ -4,15 +4,14 @@ import axios from 'axios';
 import LyricSong from '../../components/LyricSong';
 import { getUserData } from '../../utils/Store';
 
-export default function SelectLyricWritingList() {
+export default function SelectLyricWritingList({navigation}: any) {
   const [data, setData] = useState([]);
-  const kidId = 1;
 
   useEffect(() => {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/list`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -26,6 +25,22 @@ export default function SelectLyricWritingList() {
     fetchData();
   }, []);
 
+  const handleDelete = async (songId: string) => {
+    try {
+      const token = await getUserData();
+      await axios.delete(`http://10.0.2.2:8080/api/song/${songId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // 삭제된 항목만 목록에서 제거
+      setData((prevData) => prevData.filter((song) => song.id !== songId));
+    } catch (error) {
+      console.error('Error deleting song', error);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.infoContainer}>
@@ -34,16 +49,28 @@ export default function SelectLyricWritingList() {
           <Text style={styles.infoText}>어떤 자장가를 작사하고 싶나요?</Text>
         </View>
       </View>
-      {data.map((song) => (
-        <View key={song.id}>
-          <LyricSong
-            imageSource={{ uri: song.artwork }}
-            title={song.title}
-            child={song.kidName}
-            // onPress={}
-          />
+      
+      {data.length === 0 ? 
+        <View style={{alignItems: 'center', paddingVertical: 40}}>
+          <Text style={{fontSize: 16, color: '#000', textAlign: 'center', fontFamily: 'SCDream5'}}>등록된 자장가가 없습니다.</Text>
+          <Text style={{fontSize: 14, color: '#283882', fontWeight: 'bold', fontFamily: 'SCDream4'}}>작곡 탭에서 자장가를 등록해주세요!</Text>
         </View>
-      ))}
+        :
+        <View>
+          {data.map((song) => (
+            <View key={song.id}>
+              <LyricSong
+                imageSource={{ uri: song.artwork }}
+                title={song.title}
+                child={song.kidName}
+                onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
+                onPress2={() => navigation.navigate('MusicUpdateScreen', { songId: song.id })}
+                onPress3={() => handleDelete(song.id)}
+              />
+            </View>
+          ))}
+        </View>
+      }
     </ScrollView>
   );
 }

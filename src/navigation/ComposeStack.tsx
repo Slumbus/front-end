@@ -8,6 +8,7 @@ import LyricWriting from '../screens/lyrics/LyricsWritingScreen';
 import SelectLyricWritingList from '../screens/lyrics/SelectLyricWritingListScreen';
 import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
 import SongCompletion from '../screens/SongCompletionScreen';
+import MusicUpdateScreen from '../screens/lyrics/MusicUpdateScreen';
 
 export type RootStackParamList = {
   HummingScreen: {

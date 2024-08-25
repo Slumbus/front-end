@@ -9,7 +9,7 @@ interface LyricSongProps {
   onPress?: () => void;
 }
 
-const LyricSong: React.FC<LyricSongProps> = ({ imageSource, title, child, onPress }) => {
+const LyricSong: React.FC<LyricSongProps> = ({ imageSource, title, child, onPress, onPress2, onPress3 }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -21,6 +21,12 @@ const LyricSong: React.FC<LyricSongProps> = ({ imageSource, title, child, onPres
       </View>
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <Icon name="pencil-alt" size={16} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button2} onPress={onPress2}>
+        <Icon name="pencil-alt" size={10} color="#999" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button2} onPress={onPress3}>
+        <Icon name="trash-alt" size={10} color="#f44" />
       </TouchableOpacity>
     </View>
   );
@@ -61,8 +67,18 @@ const styles = StyleSheet.create({
   button: {
     width: 30,
     height: 30,
+    marginHorizontal: 3,
     borderRadius: 15,
     backgroundColor: '#283882',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button2: {
+    width: 20,
+    height: 20,
+    marginHorizontal: 1.5,
+    borderRadius: 15,
+    backgroundColor: '#E9E9E9',
     justifyContent: 'center',
     alignItems: 'center',
   },

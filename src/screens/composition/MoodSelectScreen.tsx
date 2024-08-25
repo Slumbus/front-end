@@ -1,10 +1,12 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
 
 import { RootStackParamList } from '../../navigation/ComposeStack';
 import { getUserData } from '../../utils/Store';
+
+import MusicComposeLoadingModal from '../../components/modal/MusicComposeLoadingModal';
 
 type MoodSelectScreenRouteProp = RouteProp<RootStackParamList, 'MoodSelectScreen'>;
 
@@ -12,12 +14,13 @@ export default function MoodSelectScreen({navigation}: any) {
   const route = useRoute<MoodSelectScreenRouteProp>();
   const {kidId, file} = route.params;
 
-  const genreBtnNames: string[] = ['조용한', '새벽', '자정', '비오는', '몽환적', '잠오는', '신나는', '몽롱한', '우중충'];
-  const instBtnNames: string[] = ['하프', '피리', '바이올린', '가야금', '플룻', '기타', '오르골', '거문고', '리코더'];
+  const genreBtnNames: string[] = ['조용한', '새벽', '자정', '평화로운', '몽환적', '잠오는', '신나는', '부드러운', '은은한'];
+  const instBtnNames: string[] = ['하프', '피리', '바이올린', '첼로', '플루트', '기타', '오르골', '오보에', '마림바'];
 
   const [selectedGenreButtons, setSelectedGenreButtons] = useState<number[]>([]);
-  const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);
-
+  const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);3
+  
+  const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
   const pressGenreButton = (index: number) => {
     setSelectedGenreButtons((prevSelected) => {
@@ -25,10 +28,11 @@ export default function MoodSelectScreen({navigation}: any) {
         return prevSelected.filter((i) => i !== index);
       } else if (prevSelected.length < 2) {
         return [...prevSelected, index];
+      } else if (prevSelected.length >= 2) {
+        Alert.alert('', '최대 2개까지 선택해주세요.');
       }
       return prevSelected;
     });
-    
   };
 
   const pressInstButton = (index: number) => {
@@ -37,16 +41,44 @@ export default function MoodSelectScreen({navigation}: any) {
         return prevSelected.filter((i) => i !== index);
       } else if (prevSelected.length < 2) {
         return [...prevSelected, index];
+      } else if (prevSelected.length >= 2) {
+        Alert.alert('', '최대 2개까지 선택해주세요.');
       }
       return prevSelected;
     });
   };
 
+  const koreanToEnglish = (word: string) => {
+    const translations: { [key: string]: string }= {
+      '조용한': 'quiet',
+      '새벽': 'dawn',
+      '자정': 'midnight',
+      '평화로운': 'peaceful',
+      '몽환적': 'dreamy',
+      '잠오는': 'sleepy',
+      '신나는': 'exciting',
+      '부드러운': 'soft',
+      '은은한': 'subtle',
+      '하프': 'harp',
+      '피리': 'pipe',
+      '바이올린': 'violin',
+      '첼로': 'Cello',
+      '플루트': 'flute',
+      '기타': 'guitar',
+      '오르골': 'music box',
+      '오보에': 'Oboe',
+      '마림바': 'marimba',
+    };
+  
+    return translations[word] || null;
+  }
+
   const uploadMusic = async () => {
+    setLoadingModalVisible(true);    
     const formData = new FormData();
     formData.append('options', JSON.stringify({
-      mood: `${genreBtnNames[selectedGenreButtons[0]]}, ${genreBtnNames[selectedGenreButtons[1]]}`,
-      instrument: `${instBtnNames[selectedInstButtons[0]]}, ${instBtnNames[selectedInstButtons[1]]}`,
+      mood: `${koreanToEnglish(genreBtnNames[selectedGenreButtons[0]])}, ${koreanToEnglish(genreBtnNames[selectedGenreButtons[1]])}`,
+      instrument: `${koreanToEnglish(instBtnNames[selectedInstButtons[0]])}, ${koreanToEnglish(instBtnNames[selectedInstButtons[1]])}`,
     }));
     formData.append('humming', {
       uri: file,
@@ -64,9 +96,10 @@ export default function MoodSelectScreen({navigation}: any) {
       });
       if (response.data.status === 200) {
         // console.log(response.data)
+        setLoadingModalVisible(false);
         navigation.navigate('MelodySaveScreen', {
           kidId: kidId,
-          url: response.data.data,
+          url: response.data.data.music,
         });
       } else {
         console.error('Error', response.data.message);
@@ -132,6 +165,9 @@ export default function MoodSelectScreen({navigation}: any) {
         })}> */}
         <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
       </TouchableOpacity>
+
+      {/* loading modal */}
+      <MusicComposeLoadingModal loadingModalVisible={loadingModalVisible}/>
       
     </View>
   );

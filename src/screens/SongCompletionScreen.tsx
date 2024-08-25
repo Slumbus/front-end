@@ -1,36 +1,150 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Slider from '@react-native-community/slider';
+import Sound from 'react-native-sound';
+import { getUserData } from '../utils/Store';
+import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 
-export default function SongCompletion() {
-  const SongCompletionData = [
-    {
-      id: 1,
-      picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-      title: "완전 취침",
-      child: "사랑이",
-      song: "https://freemusicarchive.org/music/Dee_Yan-Key/lullaby/lullaby/",
-      lyrics: "잘 자라 우리 사랑이\n가사가사가사가사가사가사가사\n가사 가사 가사 가사\n가사 가사 가사 가사 가사\n가사가사가사가사\n가사 가사 가사 가사 가사 가사 가사\n잘자라 우리 사랑이"
-    },
-  ];
+export default function SongCompletion({route, navigation}: any) {
+  const { songId } = route.params;
+  const [data, setData] = useState(null);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [sound, setSound] = useState<Sound | null>(null);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      const token = await getUserData();
+      try {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data.data);
+      } catch (error) {
+        console.error("데이터 가져오기 오류:", error);
+      }
+    }
+
+    fetchData();
+  }, [songId]);
+
+  // 음악 재생
+  useEffect(() => {
+    if (data && data.url) {
+      // URL이 정의되어 있는지 확인
+      if (typeof data.url !== 'string' || !data.url.trim()) {
+        console.error('Invalid music URL:', data.url);
+        return;
+      }
+
+      if (sound) {
+        sound.release();
+      }
+      
+      const newSound = new Sound(data.url, null, (error) => {
+        if (error) {
+          console.error('Failed to load the sound', error);
+          return;
+        }
+        setDuration(newSound.getDuration());
+        setSound(newSound);
+      });
+
+      return () => {
+        if (sound) {
+          sound.release();
+        }
+      };
+    }
+  }, [data]);
+
+  const playPause = () => {
+    if (!sound) {
+      console.error('Sound not loaded');
+      return;
+    }
+    
+    if (isPlaying) {
+      sound.pause();
+    } else {
+      sound.play((success) => {
+        if (success) {
+          console.log('Finished playing');
+        } else {
+          console.error('Playback failed due to audio decoding errors');
+        }
+      });
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        sound?.getCurrentTime((seconds) => {
+          setCurrentTime(seconds);
+          setSliderValue(seconds);
+        });
+      }, 1000);
+    } else if (!isPlaying && currentTime !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const handleSliderValueChange = (value: number) => {
+    setSliderValue(value);
+    if (sound) {
+      sound.setCurrentTime(value);
+      setCurrentTime(value);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
-      {SongCompletionData.map((song) => (
-        <View key={song.id} style={styles.songContainer}>
-          <Image source={{ uri: song.picture }} style={styles.image} />
-          <Text style={styles.titleText}>{song.title}</Text>
-          <Text style={styles.childText}>{song.child}</Text>
-          <Text style={styles.lyricsText}>{song.lyrics}</Text>
+      {data && (
+        <View key={data.id} style={styles.songContainer}>
+          <Image source={{ uri: data.artwork }} style={styles.image} />
+          <Text style={styles.titleText}>{data.title}</Text>
+          <Text style={styles.childText}>{data.kidName}</Text>
+          <Text style={styles.lyricsText}>{data.lyric}</Text>
         </View>
-      ))}
+      )}
       <View style={styles.songPlayContainer}>
-        <Icon name="play" size={28} color="#283882" onPress={() => console.log("재생 버튼 눌림")} />
-        <View style={styles.playBar} />
+        <Icon name={isPlaying ? "pause" : "play"} size={28} color="#283882" onPress={playPause} />
+        <View style={styles.playBarContainer}>
+          <Slider
+            style={styles.playBar}
+            minimumValue={0}
+            maximumValue={duration}
+            value={sliderValue}
+            onValueChange={handleSliderValueChange}
+            minimumTrackTintColor="#283882"
+            maximumTrackTintColor="#d3d3d3"
+            thumbTintColor="#283882"
+          />
+        </View>
+        <Text>{formatTime(currentTime)} / {formatTime(duration)}</Text>
       </View>
       <View style={styles.ButtonContainer}>
-        <TouchableOpacity style={styles.completionButton}>
+        <TouchableOpacity 
+          style={styles.completionButton}
+          onPress={() => navigation.navigate('HomeStack', { screen: 'HomeScreen' })}>
           <Text style={styles.ButtonText}>완성</Text>
         </TouchableOpacity>
       </View>
@@ -84,18 +198,23 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
   },
-  playBar: {
+  playBarContainer: {
     flex: 1,
-    height: 3,
-    backgroundColor: '#283882',
-    marginLeft: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  playBar: {
+    height: 30,
+    width: '100%',
+    marginVertical: 10,
   },
   ButtonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 100,
   },
   completionButton: {
     padding: 10,

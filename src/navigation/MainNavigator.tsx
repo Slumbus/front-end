@@ -88,6 +88,16 @@ export default function MainNavigator({navigation}) {
                 </Text>
               </View>
             ),
+            tabBarButton: (props) => (
+              <TouchableOpacity
+                {...props}
+                onPress={() => {
+                  navigation.navigate('ChildrenStack', {
+                    screen: 'ChildrenList',
+                  });
+                }}
+              />
+            ),
           }}
         />
       </Tab.Navigator>

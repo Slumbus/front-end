@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, PermissionsAndroid, Platform, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import BasicSong from '../../components/BasicSong';
+import Slider from '@react-native-community/slider';
+import Sound from 'react-native-sound';
+import { getUserData } from '../../utils/Store';
+import axios from 'axios';
+import CombineLoadingModal from '../../components/modal/CombineLoadingModal';
 
 // 녹음 기능
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -32,10 +37,118 @@ const requestPermissions = async() => {
   }
 };
 
-export default function LyricsRecordingScreen({navigation}: any) {
+export default function LyricsRecordingScreen({route, navigation}: any) {
+  const { songId } = route.params;
+  const [data, setData] = useState(null);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [sound, setSound] = useState<Sound | null>(null);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  const [loadingModalVisible, setLoadingModalVisible] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const token = await getUserData();
+      try {
+        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data.data);
+      } catch (error) {
+        console.error("데이터 가져오기 오류:", error);
+      }
+    }
+
+    fetchData();
+  }, [songId]);
+
+  // 음악 재생
+  useEffect(() => {
+    if (data && data.url) {
+      // URL이 정의되어 있는지 확인
+      if (typeof data.url !== 'string' || !data.url.trim()) {
+        console.error('Invalid music URL:', data.url);
+        return;
+      }
+
+      if (sound) {
+        sound.release();
+      }
+      
+      const newSound = new Sound(data.url, null, (error) => {
+        if (error) {
+          console.error('Failed to load the sound', error);
+          return;
+        }
+        setDuration(newSound.getDuration());
+        setSound(newSound);
+      });
+
+      return () => {
+        if (sound) {
+          sound.release();
+        }
+      };
+    }
+  }, [data]);
+
+  const playPause = () => {
+    if (!sound) {
+      console.error('Sound not loaded');
+      return;
+    }
+    
+    if (isPlaying) {
+      sound.pause();
+    } else {
+      sound.play((success) => {
+        if (success) {
+          console.log('Finished playing');
+        } else {
+          console.error('Playback failed due to audio decoding errors');
+        }
+      });
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        sound?.getCurrentTime((seconds) => {
+          setCurrentTime(seconds);
+          setSliderValue(seconds);
+        });
+      }, 1000);
+    } else if (!isPlaying && currentTime !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const handleSliderValueChange = (value: number) => {
+    setSliderValue(value);
+    if (sound) {
+      sound.setCurrentTime(value);
+      setCurrentTime(value);
+    }
+  };
+
   // 녹음 기능
   const [isRecording, setIsRecording] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingRec, setIsPlayingRec] = useState(false);
   const [recordedURI, setRecordedURI] = useState('');
   const [recordSecs, setRecordSecs] = useState(0);
   const [recordTime, setRecordTime] = useState('00:00:00');
@@ -65,7 +178,7 @@ export default function LyricsRecordingScreen({navigation}: any) {
   };
 
   const onStartPlay = async () => {
-    setIsPlaying(true);
+    setIsPlayingRec(true);
     const result = await audioRecorderPlayer.startPlayer(recordedURI);
     audioRecorderPlayer.addPlayBackListener((e) => {
       setPlayTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
@@ -82,35 +195,75 @@ export default function LyricsRecordingScreen({navigation}: any) {
   const onStopPlay = async () => {
     const result = await audioRecorderPlayer.stopPlayer();
     audioRecorderPlayer.removePlayBackListener();
-    setIsPlaying(false);
+    setIsPlayingRec(false);
     console.log(result);
   };
-  
-  const LyricWritingdata = [
-    {
-      id: 1,
-      picture: "https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417_960_720.jpg",
-      title: "완전 취침",
-      child: "사랑이",
-      song: "https://freemusicarchive.org/music/Dee_Yan-Key/lullaby/lullaby/",
-      lyrics: "잘 자라 우리 사랑이\n가사가사가사가사가사가사가사\n가사 가사 가사 가사\n가사 가사 가사 가사 가사\n가사가사가사가사\n가사 가사 가사 가사 가사 가사 가사\n잘자라 우리 사랑이"
-    },
-  ];
+
+  // 저장 버튼 클릭 핸들러
+  const handleSaveMusic = async () => {
+    setLoadingModalVisible(true);
+    const token = await getUserData();
+
+    // 녹음 파일 경로
+    const recordedFilePath = 'file:////data/user/0/com.slumbus/cache/sound.mp4';
+
+    const formData = new FormData();
+    formData.append('musicUrl', data.url);
+    console.log(data.url);
+    formData.append('recordedFile', {
+      uri: recordedFilePath,
+      type: 'audio/mp3',
+      name: 'recording.mp3',
+    });
+
+    try {
+      const response = await axios.post(`http://10.0.2.2:8080/api/song/combine/${songId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log('녹음본 합본 저장 성공');
+        setLoadingModalVisible(false);
+        navigation.navigate('CompositionScreen', {songId});
+      } else {
+        console.error('녹음본 합본 저장 실패:', response.data.message);
+      }
+    } catch (error) {
+      console.error('녹음본 합본 저장 오류:', error);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
-      {LyricWritingdata.map((song) => (
-        <View key={song.id} style={styles.song}>
-          <BasicSong imageSource={{uri: song.picture}} title={song.title} child={song.child} />
+      {data && (
+        <View key={data.id} style={styles.song}>
+          <BasicSong imageSource={{uri: data.artwork}} title={data.title} child={data.kidName} />
         </View>
-      ))}
+      )}
       <View style={styles.songPlayContainer}>
-        <Icon name="play" size={28} color="#283882" onPress={() => console.log("재생 버튼 눌림")} />
-        <View style={styles.playBar} />
+        <Icon name={isPlaying ? "pause" : "play"} size={28} color="#283882" onPress={playPause} />
+        <View style={styles.playBarContainer}>
+          <Slider
+            style={styles.playBar}
+            minimumValue={0}
+            maximumValue={duration}
+            value={sliderValue}
+            onValueChange={handleSliderValueChange}
+            minimumTrackTintColor="#283882"
+            maximumTrackTintColor="#d3d3d3"
+            thumbTintColor="#283882"
+          />
+        </View>
+        <Text>{formatTime(currentTime)} / {formatTime(duration)}</Text>
       </View>
-      {LyricWritingdata.map((song) => (
-        <Text key={song.id} style={styles.lyricsText}>{song.lyrics}</Text>
-      ))}
+      {data && (
+        <Text style={styles.lyricsText}>{data.lyric}</Text>
+      )}
       
       {/* 녹음 기능 */}
       <View style={styles.recordingContainer}>
@@ -121,12 +274,12 @@ export default function LyricsRecordingScreen({navigation}: any) {
           <View style={styles.playContainer}>
             <TouchableOpacity
               style={styles.iconButton}
-              onPress={isPlaying ? onStopPlay : onStartPlay}
+              onPress={isPlayingRec ? onStopPlay : onStartPlay}
             >
               <Icon
-                name={isPlaying ? "stop" : "play"}
+                name={isPlayingRec ? "stop" : "play"}
                 size={30}
-                color={isPlaying ? "#000" : "#283882"}
+                color={isPlayingRec ? "#000" : "#283882"}
                 style={{top: 3}}
               />
               <Text style={styles.timerText}>{playTime} / {playDuration}</Text>
@@ -149,16 +302,13 @@ export default function LyricsRecordingScreen({navigation}: any) {
       </View>
       
       <View style={styles.ButtonsContainer}>
-        <TouchableOpacity style={styles.Button1}>
-          <Text style={styles.ButtonText}>재생</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.Button2}>
-          <Text style={styles.ButtonText}>다시 녹음하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.Button3} onPress={() => navigation.navigate('CompositionScreen')}>
+        <TouchableOpacity style={styles.Button3} onPress={handleSaveMusic}>
           <Text style={styles.ButtonText2}>저장</Text>
         </TouchableOpacity>
       </View>
+
+      {/* loading modal */}
+      <CombineLoadingModal loadingModalVisible={loadingModalVisible}/>
     </ScrollView>
   );
 }
@@ -168,7 +318,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '100%',
     backgroundColor: '#FFFFFF',
-    marginBottom: 50,
   },
   song: {
     marginTop: 25,
@@ -180,11 +329,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
   },
-  playBar: {
+  playBarContainer: {
     flex: 1,
-    height: 3,
-    backgroundColor: '#283882',
-    marginLeft: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  playBar: {
+    height: 30,
+    width: '100%',
+    marginVertical: 10,
   },
   lyricsText: {
     marginHorizontal: 35,
@@ -212,7 +365,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginTop:10,
+    marginBottom: 100
   },
   Button1: {
     padding: 10,

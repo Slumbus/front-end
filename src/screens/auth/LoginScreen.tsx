@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {storeUserData, getUserData} from '../../utils/Store';
+import {storeUserData, getUserData, removeUserData} from '../../utils/Store';
+import {jwtDecode} from 'jwt-decode';
 
 // interface User {
 //   id: number;
@@ -39,6 +40,18 @@ export default function LoginScreen() {
       const token = await getUserData();
       console.log(token);
       if (token) {
+        const decodedToken = jwtDecode(token);
+        console.log('decode' + JSON.stringify(decodedToken));
+        const currentTime = Date.now() / 1000; // 현재 시간(초 단위)
+
+        // 토큰이 만료되었는지 확인
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          await removeUserData(); // 만료된 토큰 제거
+          setIsLoading(false);
+        } else {
+          // 토큰이 유효한 경우
+          navigation.navigate('MainNavigator' as never);
+        }
         navigation.navigate('MainNavigator' as never);
       } else {
         setIsLoading(false);
@@ -57,6 +70,7 @@ export default function LoginScreen() {
       await storeUserData(res.data.data.token);
       setEmail('');
       setPassword('');
+      setEmailError(false);
       navigation.navigate('MainNavigator' as never);
     } catch (error) {
       console.error(error);

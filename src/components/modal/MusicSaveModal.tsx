@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/Entypo';
 
 type MusicSaveModalProps = {
   navigation: any;
@@ -24,15 +25,16 @@ export default function MusicSaveModal({ navigation, handleSave }: MusicSaveModa
             <View style={styles.modalHeader}>
               <Text style={styles.modalHeaderText}>가사 생성 여부 선택</Text>
               <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(!modalVisible)}>
-                <Text>X</Text>
+                <Icon name="cross" size={30} color={'#000'} />
               </TouchableOpacity>
             </View>
             
-            <TouchableOpacity style={styles.modalContentBtn} onPress={() => {navigation.navigate('LyricWriting'); setModalVisible(false);}}>
+            <TouchableOpacity style={styles.modalContentBtn} onPress={async () => { const songId = await handleSave(); console.log("음악 아이딩"+ songId);
+             navigation.navigate('LyricWriting', { songId: songId }); setModalVisible(false);}}>
               <Text style={styles.modalContentText}>가사 녹음하러 가기</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalContentBtn} onPress={() => { handleSave(); setModalVisible(false); }}>
+            <TouchableOpacity style={styles.modalContentBtn} onPress={() => { handleSave(); navigation.navigate('HomeStack', { screen: 'HomeScreen' }); setModalVisible(false); }}>
               <Text style={styles.modalContentText}>이대로 저장하기</Text>
             </TouchableOpacity>
           </View>
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
   },
   modalCancel: {
     position: 'absolute',
-    right: 10,
+    right: 0,
   },
   modalContentBtn: {
     width: 220,
