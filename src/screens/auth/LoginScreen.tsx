@@ -165,12 +165,12 @@ export default function LoginScreen() {
           <Text style={styles.text}>회원가입</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.lineContainer}>
+      {/* <View style={styles.lineContainer}>
         <View style={styles.line} />
         <Text style={styles.orText}>또는</Text>
         <View style={styles.line} />
-      </View>
-      <View style={styles.socialImageContainer}>
+      </View> */}
+      {/* <View style={styles.socialImageContainer}>
         <Image
           source={require('../../assets/images/google.png')}
           style={styles.socialImage}
@@ -183,7 +183,7 @@ export default function LoginScreen() {
           source={require('../../assets/images/naver.png')}
           style={styles.socialImage}
         />
-      </View>
+      </View> */}
     </View>
   );
 }

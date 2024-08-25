@@ -366,7 +366,7 @@ export default function HummingScreen({navigation}: any) {
         )}
 
       <TouchableOpacity style={styles.selectBtn} onPress={navigateToMoodSelect}>
-        <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
+        <Text style={styles.selectBtnText}>허밍 선택 완료</Text>
       </TouchableOpacity>
 
       <Modal
