@@ -208,7 +208,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                 />
               </View>
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={keyExtractor}
           />
         )
       ) : (

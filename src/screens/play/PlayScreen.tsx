@@ -85,65 +85,55 @@ const PlayScreen: React.FC = ({navigation}: any) => {
     if (timerId) {
       clearTimeout(timerId);
     }
-    
-    // Set up new timer
-    const startTimer = (duration: any) => {
-      const newTimerId = setTimeout(() => {
-        setRemainingTime(0);
-        setTimeDuration(null);
-        setRemainingTime(null);
-        console.log("Timer ended");
-        TrackPlayer.pause();
-        TrackPlayer.stop();
-        setIsPlaying(false);
-      }, duration);
+    let intervalId: NodeJS.Timeout | null = null;
 
-      return newTimerId;
+    const startTimer = (duration: number) => {
+      intervalId = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime && prevTime > 1000) {
+            return prevTime - 1000;
+          } else {
+            clearInterval(intervalId!);
+            TrackPlayer.pause();
+            TrackPlayer.stop();
+            setIsPlaying(false);
+            setRemainingTime(0);
+            setTimeDuration(null);
+            console.log("Timer ended");
+            return null;
+          }
+        });
+      }, 1000);
+    };
+
+    if (timeDuration) {
+      startTimer(timeDuration);
     }
-  
-    startTimer(timeDuration);
-    
-    // Clear timer on component unmount
+
+    // Clear timers on component unmount
     return () => {
-      if (timerId) {
-        clearTimeout(timerId);
+      if (intervalId) {
+        clearInterval(intervalId);
       }
     };
-  }, [timeDuration]); // Depend on timeDuration
+  }, [timeDuration]);
 
-  const handleTimerSelect = (duration: string) => {
-    console.log("시간:"+duration);
-    
-    if (timerId) {
-      clearTimeout(timerId);
-    }
+const handleTimerSelect = (duration: string) => {
+  console.log("시간:" + duration);
 
-    if (duration === '초기화') {
-      setTimeDuration(null);
-      setRemainingTime(null);
-      toggleTimerModal();
-      return;
-    }
-
-    const durationInMs = parseDuration(duration);
-    // setDurationInMs(parseDuration(duration));
-    console.log("우왕: "+ durationInMs);
-    
-    setTimeDuration(durationInMs);
-    setRemainingTime(durationInMs);
-
+  if (duration === '초기화') {
+    setTimeDuration(null);
+    setRemainingTime(null);
     toggleTimerModal();
+    return;
+  }
 
-    const interval = setInterval(() => {
-      setRemainingTime((prevTime) => {
-        if (prevTime && prevTime > 1000) {
-          return prevTime - 1000;
-        } else {
-          clearInterval(interval);
-          return null;
-        }
-      });
-    }, 1000);
+  const durationInMs = parseDuration(duration);
+  console.log("우왕: " + durationInMs);
+
+  setTimeDuration(durationInMs);
+  setRemainingTime(durationInMs);
+  toggleTimerModal();
   };
 
   const parseDuration = (duration: string) => {

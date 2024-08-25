@@ -163,7 +163,7 @@ export default function MoodSelectScreen({navigation}: any) {
           kidId: kidId,
           url: `https://slumbus.s3.ap-southeast-2.amazonaws.com/music/077de29c-ae28-4116-92a9-ebef20bbc343.mp3`,
         })}> */}
-        <Text style={styles.selectBtnText}>곡 분위기 선택하기</Text>
+        <Text style={styles.selectBtnText}>분위기 선택 완료</Text>
       </TouchableOpacity>
 
       {/* loading modal */}
