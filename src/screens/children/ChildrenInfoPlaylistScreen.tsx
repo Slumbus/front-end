@@ -110,8 +110,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     }
   };
 
-  const keyExtractor = (item: any) => item.musicId.toString(); // 각 항목의 고유한 key로 musicId 사용
-
+  const keyExtractor = (item: any) => item.musicId.toString();
 
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
@@ -197,6 +196,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         ) : (
           <FlatList
             data={songData}
+            extraData={songData}
             renderItem={({ item }) => (
               <View style={styles.listItemContainer}>
                 <Image source={{ uri: item.artwork }} style={styles.photo} />
@@ -262,7 +262,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                   ))}
                 </TouchableOpacity>
               )}
-              keyExtractor={(item) => item[0]}
+              keyExtractor={keyExtractor}
             />
           </View>
         )
