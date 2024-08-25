@@ -84,7 +84,7 @@ export default function MyScreen() {
             navigation.navigate('EditProfile' as never);
           }}>
           <View style={styles.buttonContent}>
-            <Text style={styles.text}>회원 정보 수정</Text>
+            <Text style={styles.text2}>회원 정보 수정</Text>
             <Text style={styles.arrow}>{'>'}</Text>
           </View>
         </TouchableOpacity>
@@ -94,7 +94,7 @@ export default function MyScreen() {
             navigation.navigate('EditPW' as never);
           }}>
           <View style={styles.buttonContent}>
-            <Text style={styles.text}>비밀번호 변경</Text>
+            <Text style={styles.text2}>비밀번호 변경</Text>
             <Text style={styles.arrow}>{'>'}</Text>
           </View>
         </TouchableOpacity>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   button: {
     width: '100%',
@@ -148,10 +148,11 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
+    marginLeft: 20,
   },
   arrow: {
     fontSize: 15,
-    fontFamily: 'SCDream2',
+    fontFamily: 'SCDream5',
     color: '#C8C8C8',
     marginLeft: 10,
   },
@@ -170,6 +171,6 @@ const styles = StyleSheet.create({
   logoutText: {
     color: 'red',
     fontSize: 12,
-    fontFamily: 'SCDream2',
+    fontFamily: 'SCDream5',
   },
 });

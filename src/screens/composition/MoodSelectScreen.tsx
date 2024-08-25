@@ -14,11 +14,11 @@ export default function MoodSelectScreen({navigation}: any) {
   const route = useRoute<MoodSelectScreenRouteProp>();
   const {kidId, file} = route.params;
 
-  const genreBtnNames: string[] = ['조용한', '새벽', '자정', '비오는', '몽환적', '잠오는', '신나는', '몽롱한', '우중충'];
-  const instBtnNames: string[] = ['하프', '피리', '바이올린', '가야금', '플룻', '기타', '오르골', '거문고', '리코더'];
+  const genreBtnNames: string[] = ['조용한', '새벽', '자정', '평화로운', '몽환적', '잠오는', '신나는', '부드러운', '은은한'];
+  const instBtnNames: string[] = ['하프', '피리', '바이올린', '첼로', '플루트', '기타', '오르골', '오보에', '마림바'];
 
   const [selectedGenreButtons, setSelectedGenreButtons] = useState<number[]>([]);
-  const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);
+  const [selectedInstButtons, setSelectedInstButtons] = useState<number[]>([]);3
   
   const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
@@ -53,21 +53,21 @@ export default function MoodSelectScreen({navigation}: any) {
       '조용한': 'quiet',
       '새벽': 'dawn',
       '자정': 'midnight',
-      '비오는': 'rainy',
+      '평화로운': 'peaceful',
       '몽환적': 'dreamy',
       '잠오는': 'sleepy',
       '신나는': 'exciting',
-      '몽롱한': 'hazy',
-      '우중충': 'gloomy',
+      '부드러운': 'soft',
+      '은은한': 'subtle',
       '하프': 'harp',
       '피리': 'pipe',
       '바이올린': 'violin',
-      '가야금': 'gayageum',
-      '플룻': 'flute',
+      '첼로': 'Cello',
+      '플루트': 'flute',
       '기타': 'guitar',
       '오르골': 'music box',
-      '거문고': 'geomungo',
-      '리코더': 'recorder',
+      '오보에': 'Oboe',
+      '마림바': 'marimba',
     };
   
     return translations[word] || null;
