@@ -1,4 +1,6 @@
-import React from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
 import {View, Text, StyleSheet, Image, FlatList, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -22,6 +24,31 @@ const getReactionImage = (reactionLevel: string) => {
 
 export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
   const { title, selectedSongId, kidId, reactionData } = route.params;
+  // const { title, selectedSongId, kidId, reactionData: initialReactionData } = route.params;
+  // const [reactionData, setReactionData] = useState(initialReactionData);
+  
+  // 데이터 새로고침
+  // const fetchReactionData = async () => {
+  //   try {
+  //     const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}/music/${selectedSongId}`);
+  //     setReactionData(response.data.data);
+  //   } catch (error) {
+  //     console.error('Error fetching reaction data:', error);
+  //   }
+  // };
+
+  // 화면에 다시 포커스 될 때마다 데이터 새로고침
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchReactionData();
+  //   }, [])
+  // );
+
+  // useEffect(() => {
+  //   if (route.params?.onGoBack) {
+  //     fetchReactionData();  // 데이터 갱신
+  //   }
+  // }, [route.params?.onGoBack]);
 
   return (
     <View style={styles.container}>
