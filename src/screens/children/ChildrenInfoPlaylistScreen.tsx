@@ -112,7 +112,13 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
     }
   };
 
-  const keyExtractor = (item: any) => item.musicId.toString();
+  const keyExtractor = (item: any) => {
+    if (showPhotos) {
+      return item.id.toString();
+    } else {
+      return item.musicId.toString();
+    }
+  };
 
   const handleButtonClick = (isPhotoButton: boolean) => {
     setShowPhotos(isPhotoButton);
@@ -210,7 +216,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
                 />
               </View>
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={keyExtractor}
           />
         )
       ) : (

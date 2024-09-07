@@ -168,6 +168,18 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
     console.log(result);
   };
 
+  const formatTimeToMinutesSeconds = (timeString: any) => {
+    const timeParts = timeString.split(':');
+    const minutes = timeParts[0];
+    const secondsWithMilliseconds = timeParts[1];
+
+    // 초와 밀리초를 ':'로 나눔 (예: '05.50' -> '05'와 '50')
+    const seconds = secondsWithMilliseconds.split('.')[0];
+
+    // 최종적으로 분:초 형식으로 반환
+    return `${minutes}:${seconds}`;
+  };
+
   const onStopRecord = async () => {
     const result = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
@@ -268,7 +280,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
       {/* 녹음 기능 */}
       <View style={styles.recordingContainer}>
         <View style={styles.timeContainer}>
-          <Text style={styles.timerText}>녹음 시간: {recordTime}</Text>
+          <Text style={styles.timerText}>녹음 시간: {formatTimeToMinutesSeconds(recordTime)}</Text>
         </View>
         {recordedURI ? (
           <View style={styles.playContainer}>
@@ -282,7 +294,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
                 color={isPlayingRec ? "#000" : "#283882"}
                 style={{top: 3}}
               />
-              <Text style={styles.timerText}>{playTime} / {playDuration}</Text>
+              <Text style={styles.timerText}>{formatTimeToMinutesSeconds(playTime)} / {formatTimeToMinutesSeconds(playDuration)}</Text>
             </TouchableOpacity>
           </View>
         ) : null}
