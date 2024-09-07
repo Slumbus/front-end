@@ -5,7 +5,6 @@ import axios from 'axios';
 
 interface Song {
   id: number;
-  //kidName: String,
   url: string,
   title: string;
   artwork: string;
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 261,
     position: 'absolute',
-    bottom: -100, // 바닥으로부터 마진
+    bottom: -100, 
   },
   buttonText: {
     color: 'white',

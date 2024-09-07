@@ -107,7 +107,6 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         })),
       }));
       setLullabyData(data);
-      console.log('데이터', "불러오기")
     } catch (error) {
       console.error('Error fetching reaction data:', error);
     }
@@ -241,10 +240,8 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('ChildrenInfoReaction', { 
-                    title: item.musicTitle, 
                     selectedSongId: item.musicId,
-                    kidId: item.kidId,
-                    reactionData: item.reactions })}
+                    kidId: item.kidId })}
                   style={styles.reactionContainer}
                 >
                   <View style={styles.lullabyTitleContainer}
