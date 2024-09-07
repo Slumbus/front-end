@@ -77,7 +77,8 @@ export default function ChildrenInfoReactionRegisterScreen({ route, navigation }
         },
       });
       Alert.alert('Success', '자장가 반응 등록 완료');
-      navigation.goBack();
+      
+      navigation.goBack({ onGoBack: true });
     } catch (error) {
       console.error('Error registering reaction:', error);
       Alert.alert('Error', 'Failed to register reaction');

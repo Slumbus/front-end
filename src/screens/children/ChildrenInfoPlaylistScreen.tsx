@@ -60,10 +60,12 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   }, [child, route.params?.refresh]);
 
   useEffect(() => {
-    if (route.params?.onGoBack) {
-      fetchReactionData(child.id);  // 데이터 갱신
-    }
-  }, [route.params?.onGoBack]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchReactionData(child.id);
+    });
+  
+    return unsubscribe;
+  }, [navigation, child.id]);
 
   const fetchSongData = async (kidId: number) => {
     const token = await getUserData();
@@ -105,6 +107,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
         })),
       }));
       setLullabyData(data);
+      console.log('데이터', "불러오기")
     } catch (error) {
       console.error('Error fetching reaction data:', error);
     }
