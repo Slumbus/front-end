@@ -1,8 +1,8 @@
-import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, Image, FlatList, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getUserData } from '../../utils/Store';
+import axios from 'axios';
 
 // 이모지 선택 함수
 const getReactionImage = (reactionLevel: string) => {
@@ -23,32 +23,43 @@ const getReactionImage = (reactionLevel: string) => {
 };
 
 export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
-  const { title, selectedSongId, kidId, reactionData } = route.params;
-  // const { title, selectedSongId, kidId, reactionData: initialReactionData } = route.params;
-  // const [reactionData, setReactionData] = useState(initialReactionData);
+  const { selectedSongId, kidId } = route.params;
+  const [title, setTitle] = useState<any[]>([]);
+  const [lullabyData, setLullabyData] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchReactionData(kidId, selectedSongId);
+  }, [kidId, selectedSongId, route.params?.refresh]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchReactionData(kidId, selectedSongId);
+    });
   
-  // 데이터 새로고침
-  // const fetchReactionData = async () => {
-  //   try {
-  //     const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}/music/${selectedSongId}`);
-  //     setReactionData(response.data.data);
-  //   } catch (error) {
-  //     console.error('Error fetching reaction data:', error);
-  //   }
-  // };
+    return unsubscribe;
+  }, [navigation, kidId, selectedSongId]);
 
-  // 화면에 다시 포커스 될 때마다 데이터 새로고침
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchReactionData();
-  //   }, [])
-  // );
+  const fetchReactionData = async (kidId: number, selectedSongId: number) => {
+    const token = await getUserData();
+    try {
+      const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}/music/${selectedSongId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  // useEffect(() => {
-  //   if (route.params?.onGoBack) {
-  //     fetchReactionData();  // 데이터 갱신
-  //   }
-  // }, [route.params?.onGoBack]);
+      const data = {
+        musicId: response.data.data.musicId,
+        musicTitle: response.data.data.musicTitle,
+        reactions: response.data.data.reactions
+      };
+      
+      setTitle(data.musicTitle);
+      setLullabyData(data.reactions);
+    } catch (error) {
+      console.error('Error fetching reaction data:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -58,7 +69,7 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
           <Text style={styles.reactionTitle}>{title}</Text>
         </View>
         <FlatList
-          data={reactionData}
+          data={lullabyData}
           renderItem={({ item }) => (
             <View style={styles.reactionItemContainer}>
               <Image source={getReactionImage(item.emoji)} style={styles.reactionImage} />
@@ -69,7 +80,7 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
               </View>
             </View>
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.reactId.toString()} 
         />
       </View>
       <TouchableOpacity style={styles.floatingButton} 

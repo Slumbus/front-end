@@ -5,7 +5,6 @@ import axios from 'axios';
 
 interface Song {
   id: number;
-  //kidName: String,
   url: string,
   title: string;
   artwork: string;
@@ -77,7 +76,8 @@ export default function ChildrenInfoReactionRegisterScreen({ route, navigation }
         },
       });
       Alert.alert('Success', '자장가 반응 등록 완료');
-      navigation.goBack();
+      
+      navigation.goBack({ onGoBack: true });
     } catch (error) {
       console.error('Error registering reaction:', error);
       Alert.alert('Error', 'Failed to register reaction');
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 261,
     position: 'absolute',
-    bottom: -100, // 바닥으로부터 마진
+    bottom: -100, 
   },
   buttonText: {
     color: 'white',

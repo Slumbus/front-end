@@ -60,10 +60,12 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   }, [child, route.params?.refresh]);
 
   useEffect(() => {
-    if (route.params?.onGoBack) {
-      fetchReactionData(child.id);  // 데이터 갱신
-    }
-  }, [route.params?.onGoBack]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchReactionData(child.id);
+    });
+  
+    return unsubscribe;
+  }, [navigation, child.id]);
 
   const fetchSongData = async (kidId: number) => {
     const token = await getUserData();
@@ -244,10 +246,8 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('ChildrenInfoReaction', { 
-                    title: item.musicTitle, 
                     selectedSongId: item.musicId,
-                    kidId: item.kidId,
-                    reactionData: item.reactions })}
+                    kidId: item.kidId })}
                   style={styles.reactionContainer}
                 >
                   <View style={styles.lullabyTitleContainer}
