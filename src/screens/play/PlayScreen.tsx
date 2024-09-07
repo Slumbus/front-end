@@ -317,13 +317,10 @@ const handleTimerSelect = (duration: string) => {
           IconLibrary="MaterialIcons"
           IconName="add-reaction"
           text="자장가 반응 기록하기"
-          onPress={() => navigation.navigate('ChildrenStack', {
-            screen: 'ChildrenInfoReactionRegister',
-            params: {
-              songId: song.musicId, 
-              kidId: song.kidId
-            }
-          })} />
+          onPress={() => navigation.navigate('ChildrenInfoReactionRegister',{
+            songId: song.musicId, 
+            kidId: song.kidId}
+          )} />
       </View>
       <PlayModal
         isVisible={isTimerModalVisible}
