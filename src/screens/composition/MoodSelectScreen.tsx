@@ -120,7 +120,7 @@ export default function MoodSelectScreen({navigation}: any) {
 
       <View style={[styles.genreContainer, {marginBottom: 30,}]}>
         <View style={styles.optionsContainer}>
-          <Text style={styles.headerText}>장르</Text>
+          <Text style={styles.headerText}>분위기</Text>
           <Text style={styles.noticeText}>{"("}최대 2개 선택 가능{")"}</Text>
         </View>
 
