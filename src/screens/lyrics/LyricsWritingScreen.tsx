@@ -73,6 +73,17 @@ export default function LyricWriting({route, navigation}: any) {
     }
   }, [data]);
 
+  //해당 스크린 벗어나면 음악 정지
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+      }
+    };
+  }, [sound]);
+
   const playPause = () => {
     if (!sound) {
       console.error('Sound not loaded');
