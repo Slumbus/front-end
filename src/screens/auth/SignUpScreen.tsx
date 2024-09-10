@@ -10,8 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function SignUpScreen() {
   const navigation = useNavigation();
@@ -64,7 +63,9 @@ export default function SignUpScreen() {
       return;
     }
     try {
-      const res = await axios.post(`${url}/api/auth/send-email?email=${email}`);
+      const res = await axios.post(
+        `${API_URL}/api/auth/send-email?email=${email}`,
+      );
       setEmailError(false);
       setEmailStatusText(res.data.message);
       startTimer();
@@ -93,7 +94,7 @@ export default function SignUpScreen() {
     }
     try {
       const res = await axios.post(
-        `${url}/api/auth/resend-email?email=${email}`,
+        `${API_URL}/api/auth/resend-email?email=${email}`,
       );
       setEmailError(false);
       setEmailStatusText('인증메일 재전송에 성공하셨습니다.');
@@ -123,7 +124,7 @@ export default function SignUpScreen() {
     }
     try {
       await axios.get(
-        `${url}/api/auth/check-code?email=${email}&code=${verificationCode}`,
+        `${API_URL}/api/auth/check-code?email=${email}&code=${verificationCode}`,
       );
       setIsCodeVerified(true);
       setVerificationCodeError(false);
@@ -144,7 +145,7 @@ export default function SignUpScreen() {
     );
     if (email && verificationCode && password && password === confirmPassword) {
       try {
-        await axios.post(`${url}/api/auth/register`, {email, password});
+        await axios.post(`${API_URL}/api/auth/register`, {email, password});
         navigation.navigate('Login' as never);
       } catch (error) {
         console.error(error);

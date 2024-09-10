@@ -11,6 +11,7 @@ import { getUserData } from '../../utils/Store';
 import axios from 'axios';
 
 import LyricsLoadingModal from '../../components/modal/LyricsLoadingModal';
+import {API_URL} from '@env';
 
 export default function LyricWriting({route, navigation}: any) {
   const [prompt, setPrompt] = useState('');
@@ -29,7 +30,7 @@ export default function LyricWriting({route, navigation}: any) {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+        const response = await axios.get(`${API_URL}/api/song/detail/${songId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -138,7 +139,7 @@ export default function LyricWriting({route, navigation}: any) {
     setLoadingModalVisible(true);
     const token = await getUserData();
     try {
-      const response = await axios.post(`http://10.0.2.2:8080/api/song/genLyrics`,
+      const response = await axios.post(`${API_URL}/api/song/genLyrics`,
         { lyrics: prompt },
         {
           headers: {
@@ -158,7 +159,7 @@ export default function LyricWriting({route, navigation}: any) {
   const handleSaveLyrics = async () => {
     const token = await getUserData();
     try {
-      const response = await axios.put(`http://10.0.2.2:8080/api/song/lyric/${songId}?lyric=${encodeURIComponent(lyrics)}`,
+      const response = await axios.put(`${API_URL}/api/song/lyric/${songId}?lyric=${encodeURIComponent(lyrics)}`,
         {},
         {
           headers: {

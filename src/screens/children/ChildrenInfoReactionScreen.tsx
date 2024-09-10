@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Image, FlatList, TouchableOpacity} from 'react-n
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getUserData } from '../../utils/Store';
 import axios from 'axios';
+import {API_URL} from '@env';
 
 // 이모지 선택 함수
 const getReactionImage = (reactionLevel: string) => {
@@ -42,7 +43,7 @@ export default function ChildrenInfoReactionScreen({ route, navigation }: any) {
   const fetchReactionData = async (kidId: number, selectedSongId: number) => {
     const token = await getUserData();
     try {
-      const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}/music/${selectedSongId}`, {
+      const response = await axios.get(`${API_URL}/api/reaction/kid/${kidId}/music/${selectedSongId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

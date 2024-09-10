@@ -7,6 +7,7 @@ import { RootStackParamList } from '../../navigation/ComposeStack';
 import { getUserData } from '../../utils/Store';
 
 import MusicComposeLoadingModal from '../../components/modal/MusicComposeLoadingModal';
+import {API_URL} from '@env';
 
 type MoodSelectScreenRouteProp = RouteProp<RootStackParamList, 'MoodSelectScreen'>;
 
@@ -88,7 +89,7 @@ export default function MoodSelectScreen({navigation}: any) {
     console.log(file, formData);
     try {
       const token = await getUserData();
-      const response = await axios.post('http://10.0.2.2:8080/api/song/compose', formData, {
+      const response = await axios.post(`${API_URL}/api/song/compose`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

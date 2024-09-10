@@ -7,6 +7,7 @@ import Sound from 'react-native-sound';
 import { getUserData } from '../utils/Store';
 import axios from 'axios';
 import { CommonActions } from '@react-navigation/native';
+import {API_URL} from '@env';
 
 export default function SongCompletion({route, navigation}: any) {
   const { songId } = route.params;
@@ -22,7 +23,7 @@ export default function SongCompletion({route, navigation}: any) {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+        const response = await axios.get(`${API_URL}/api/song/detail/${songId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

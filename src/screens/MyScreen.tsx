@@ -4,8 +4,7 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getUserData, removeUserData} from '../utils/Store';
 import axios from 'axios';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function MyScreen() {
   const navigation = useNavigation();
@@ -16,7 +15,7 @@ export default function MyScreen() {
     try {
       const token = await getUserData();
       console.log(token);
-      const res = await axios.get(`${url}/api/my-page`, {
+      const res = await axios.get(`${API_URL}/api/my-page`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,7 +39,11 @@ export default function MyScreen() {
 
   const handleLogout = async () => {
     await removeUserData();
-    navigation.navigate('AuthStack' as never);
+    // navigation.navigate('AuthStack' as never);
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'AuthStack' as never}],
+    });
   };
 
   if (error) {

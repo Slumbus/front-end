@@ -11,6 +11,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Menu, Divider, IconButton } from 'react-native-paper';
 import { getUserData } from '../utils/Store';
 import axios from 'axios';
+import {API_URL} from '@env';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,7 +44,7 @@ export default function HomeStack({ navigation, route }: any) {
     try {
       const token = await getUserData();
       if (selectedChild) {
-        await axios.delete(`http://10.0.2.2:8080/api/kid/${selectedChild.id}`, {
+        await axios.delete(`${API_URL}/api/kid/${selectedChild.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

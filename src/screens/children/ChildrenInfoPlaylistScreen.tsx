@@ -4,6 +4,7 @@ import PlayButton from '../../components/button/PlayButton';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 interface Song {
   id: number;
@@ -70,7 +71,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   const fetchSongData = async (kidId: number) => {
     const token = await getUserData();
     try {
-      const response = await axios.get(`http://10.0.2.2:8080/api/song/list/${kidId}`, {
+      const response = await axios.get(`${API_URL}/api/song/list/${kidId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -90,7 +91,7 @@ export default function ChildrenInfoPlaylistScreen({ route, navigation, selected
   const fetchReactionData = async (kidId: number) => {
     const token = await getUserData();
     try {
-      const response = await axios.get(`http://10.0.2.2:8080/api/reaction/kid/${kidId}`, {
+      const response = await axios.get(`${API_URL}/api/reaction/kid/${kidId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

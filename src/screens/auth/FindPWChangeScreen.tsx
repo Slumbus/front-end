@@ -9,8 +9,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function FindPWChangeScreen({route}: any) {
   const navigation = useNavigation();
@@ -36,7 +35,7 @@ export default function FindPWChangeScreen({route}: any) {
     console.log(email, password);
 
     try {
-      const res = await axios.patch(`${url}/api/auth/password`, {
+      const res = await axios.patch(`${API_URL}/api/auth/password`, {
         email,
         password,
       });
