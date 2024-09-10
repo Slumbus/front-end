@@ -13,8 +13,7 @@ import {Asset, ImageLibraryOptions} from 'react-native-image-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {getUserData} from '../../utils/Store';
 import axios from 'axios';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
@@ -25,7 +24,7 @@ export default function EditProfileScreen() {
     const fetchUserData = async () => {
       try {
         const token = await getUserData();
-        const res = await axios.get(`${url}/api/my-page`, {
+        const res = await axios.get(`${API_URL}/api/my-page`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -93,7 +92,7 @@ export default function EditProfileScreen() {
         name: 'profile.jpg', // 이미지 파일 이름
       });
 
-      await axios.patch(`${url}/api/my-page`, formData, {
+      await axios.patch(`${API_URL}/api/my-page`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

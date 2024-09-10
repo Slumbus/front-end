@@ -4,8 +4,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {getUserData} from '../../utils/Store';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function EditPWScreen() {
   const navigation = useNavigation();
@@ -56,7 +55,7 @@ export default function EditPWScreen() {
     try {
       const token = await getUserData();
       const res = await axios.patch(
-        `${url}/api/my-page/password`,
+        `${API_URL}/api/my-page/password`,
         {},
         {
           headers: {

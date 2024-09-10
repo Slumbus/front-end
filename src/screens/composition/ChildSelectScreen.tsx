@@ -4,6 +4,7 @@ import { Image, StyleSheet, Text, ScrollView, TouchableOpacity, View, Alert } fr
 import axios from 'axios';
 
 import {getUserData} from '../../utils/Store';
+import {API_URL} from '@env';
 
 type KidInfo = {
   userId: number;
@@ -27,7 +28,7 @@ export default function ChildSelectScreen({navigation}: any) {
   const fetchKidData = async () => {
     try {
       const token = await getUserData();
-      const response = await axios.get('http://10.0.2.2:8080/api/kid', { // 로컬 서버 연결
+      const response = await axios.get(`${API_URL}/api/kid`, { // 로컬 서버 연결
         headers: {
           Authorization: `Bearer ${token}`,
         }

@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 import AlbumPhotoSelectModal from '../../components/modal/AlbumPhotoSelectModal';
 import axios from 'axios';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 export default function MusicUpdateScreen({route, navigation}: any) {
   const { songId } = route.params;
@@ -16,7 +17,7 @@ export default function MusicUpdateScreen({route, navigation}: any) {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+        const response = await axios.get(`${API_URL}/api/song/detail/${songId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -45,7 +46,7 @@ export default function MusicUpdateScreen({route, navigation}: any) {
         formData.append('image', null);
       }
       const token = await getUserData();
-      const response = await axios.put(`http://10.0.2.2:8080/api/song/${songId}`, formData, {
+      const response = await axios.put(`${API_URL}/api/song/${songId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

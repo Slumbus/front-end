@@ -10,6 +10,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 
 import { RootStackParamList } from '../../navigation/ComposeStack';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 type MelodySaveScreenRouteProp = RouteProp<RootStackParamList, 'MelodySaveScreen'>;
 
@@ -39,7 +40,7 @@ export default function MelodySaveScreen({navigation}: any) {
         formData.append('image', null);
       }
       const token = await getUserData();
-      const response = await axios.post('http://10.0.2.2:8080/api/song/composition', formData, {
+      const response = await axios.post(`${API_URL}/api/song/composition`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

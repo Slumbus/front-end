@@ -12,6 +12,7 @@ import SliderComponent from '../components/play/SliderComponent';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PlayButton from '../components/button/PlayButton';
+import {API_URL} from '@env';
 
 const events = [
   Event.PlaybackActiveTrackChanged,
@@ -144,7 +145,7 @@ export default function HomeScreen({navigation}: any) {
   const fetchAlbumData = async () => {
     try {
       const token = await getUserData();
-      const response = await axios.get('http://10.0.2.2:8080/api/song/home', { // 로컬 서버 연결
+      const response = await axios.get(`${API_URL}/api/song/home`, { // 로컬 서버 연결
         headers: {
           Authorization: `Bearer ${token}`,
         }

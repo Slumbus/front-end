@@ -2,6 +2,7 @@ import React, { useState, useEffect }  from 'react';
 import {View, Text, StyleSheet, FlatList, Image, ListRenderItemInfo, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 interface Child {
   id: number;
@@ -20,7 +21,7 @@ export default function ChildrenListScreen({ navigation, route }: any) {
   const fetchChildrenData = async () => {
     const token = await getUserData();
     try {
-      const response = await axios.get('http://10.0.2.2:8080/api/song/home', {
+      const response = await axios.get(`${API_URL}/api/song/home`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
