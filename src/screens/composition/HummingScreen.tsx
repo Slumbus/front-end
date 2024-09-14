@@ -308,6 +308,7 @@ export default function HummingScreen({navigation}: any) {
                 maximumValue={duration}
                 minimumTrackTintColor="#283882"
                 maximumTrackTintColor="#D9D9D9"
+                thumbTintColor="#283882"
                 onSlidingComplete={(value) => {
                   if (sound) {
                     sound.setCurrentTime(value);
@@ -348,6 +349,7 @@ export default function HummingScreen({navigation}: any) {
                     maximumValue={duration}
                     minimumTrackTintColor="#283882"
                     maximumTrackTintColor="#D9D9D9"
+                    thumbTintColor="#283882"
                     onSlidingComplete={(value) => {
                       if (sound) {
                         sound.setCurrentTime(value);

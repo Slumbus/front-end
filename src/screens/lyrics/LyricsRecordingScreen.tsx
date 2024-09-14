@@ -47,6 +47,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
   const [duration, setDuration] = useState(0);
   const [sound, setSound] = useState<Sound | null>(null);
   const [sliderValue, setSliderValue] = useState(0);
+  const [recordText, setRecordText] = useState("하단 버튼을 통해 녹음해 주세요.");
 
   const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
@@ -170,6 +171,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
   const onStartRecord = async () => {
     await requestPermissions();
     setIsRecording(true);
+    setRecordText("녹음이 진행 중입니다.");
     const result = await audioRecorderPlayer.startRecorder();
     audioRecorderPlayer.addRecordBackListener((e) => {
       console.log('Recording: ', e.currentPosition);
@@ -192,18 +194,31 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
     return `${minutes}:${seconds}`;
   };
 
+  const formatTimeToSeconds = (timeString: string): number => {
+    const timeParts = timeString.split(':');
+    const minutes = parseInt(timeParts[0], 10);
+    const secondsWithMilliseconds = timeParts[1];
+    const seconds = parseFloat(secondsWithMilliseconds);
+  
+    // 총 시간을 초로 변환
+    return minutes * 60 + seconds;
+  };
+  
+
   const onStopRecord = async () => {
     const result = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
     setRecordedURI(result);
     setIsRecording(false);
     setRecordSecs(0);
+    setRecordText("녹음이 완료되었습니다.");
     console.log(result);
   };
 
   const onStartPlay = async () => {
     setIsPlayingRec(true);
     const result = await audioRecorderPlayer.startPlayer(recordedURI);
+    audioRecorderPlayer.seekToPlayer(formatTimeToSeconds(playTime) * 1000);
     audioRecorderPlayer.addPlayBackListener((e) => {
       setPlayTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
       setPlayDuration(audioRecorderPlayer.mmssss(Math.floor(e.duration)));
@@ -221,6 +236,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
     audioRecorderPlayer.removePlayBackListener();
     setIsPlayingRec(false);
     console.log(result);
+    if(result == 'Already stopped player') setPlayTime('00:00:00');
   };
 
   // 저장 버튼 클릭 핸들러
@@ -290,7 +306,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
       )}
       
       {/* 녹음 기능 */}
-      <View style={styles.recordingContainer}>
+      {/* <View style={styles.recordingContainer}>
         <View style={styles.timeContainer}>
           <Text style={styles.timerText}>녹음 시간: {formatTimeToMinutesSeconds(recordTime)}</Text>
         </View>
@@ -323,6 +339,44 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
             color={isRecording ? "darkred" : "red"}
           />
         </TouchableOpacity>
+      </View> */}
+
+      <View style={styles.contentContainer}>
+        <View style={styles.playbarContainer}>
+          <Text style={styles.songTitleText}>{recordText}</Text>
+          <View style={styles.songPlayContainer2}>
+            <TouchableOpacity onPress={isRecording ? onStopRecord : onStartRecord}>
+              <Icon name={isRecording ? 'pause-circle' : 'mic-circle'} size={35} color="#F24E1E" />
+            </TouchableOpacity>
+            <Text style={[styles.songTimeText, {marginLeft: 10}]}>{formatTimeToMinutesSeconds(recordTime)}</Text>
+          </View>
+        </View>
+        {recordedURI && (
+          <View>
+            <View style={styles.songPlayContainer2}>
+              <TouchableOpacity onPress={isPlayingRec ? onStopPlay : onStartPlay}>
+                <Icon name={isPlayingRec ? 'pause' : 'play'} size={28} color="#283882" />
+              </TouchableOpacity>
+              <Slider
+                style={styles.playBar2}
+                value={formatTimeToSeconds(playTime)}
+                minimumValue={0}
+                maximumValue={formatTimeToSeconds(recordTime)}
+                minimumTrackTintColor="#283882"
+                maximumTrackTintColor="#D9D9D9"
+                thumbTintColor="#283882"
+                onSlidingComplete={(value) => {
+                  audioRecorderPlayer.seekToPlayer(value * 1000);
+                  setPlayTime(audioRecorderPlayer.mmssss(Math.floor(value)));
+                }}
+              />
+            </View>
+            <View style={styles.songTimeContainer}>
+              <Text style={[styles.songTimeText, {marginLeft: 50, marginRight: 200,}]}>{formatTimeToMinutesSeconds(playTime)}</Text>
+              <Text style={styles.songTimeText}>{formatTimeToMinutesSeconds(recordTime)}</Text>
+            </View>
+          </View>
+        )}
       </View>
       
       <View style={styles.ButtonsContainer}>
@@ -390,7 +444,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 20,
     marginTop:10,
-    marginBottom: 100
+    marginBottom: 30
   },
   Button1: {
     padding: 10,
@@ -453,5 +507,42 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: '#000',
     marginHorizontal: 10,
+  },
+
+  contentContainer:{
+    paddingHorizontal: 35,
+    marginTop: 15,
+    height: 250,
+    flexDirection: 'column',
+  },
+  playbarContainer:{
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  songTitleText:{
+    marginTop: 30,
+    fontSize: 14,
+    fontFamily: 'SCDream5',
+    color: '#000000',
+  },
+  songPlayContainer2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 5,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  playBar2: {
+    flex: 1,
+  },
+  songTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  songTimeText: {
+    fontSize: 12,
+    fontFamily: 'SCDream4',
+    color: '#000000',
   },
 });
