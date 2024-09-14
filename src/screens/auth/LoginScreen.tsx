@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {storeUserData, getUserData, removeUserData} from '../../utils/Store';
 import {jwtDecode} from 'jwt-decode';
+import {API_URL} from '@env';
 
 // interface User {
 //   id: number;
@@ -24,8 +25,6 @@ import {jwtDecode} from 'jwt-decode';
 //   email: 'test@test.com',
 //   password: 'test',
 // };
-
-const url = 'http://10.0.2.2:8080';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -62,7 +61,7 @@ export default function LoginScreen() {
 
   const login = async ({email, password}) => {
     try {
-      const res = await axios.post(`${url}/api/auth/login`, {
+      const res = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password,
       });

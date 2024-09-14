@@ -9,6 +9,7 @@ import Sound from 'react-native-sound';
 import { getUserData } from '../../utils/Store';
 import axios from 'axios';
 import CombineLoadingModal from '../../components/modal/CombineLoadingModal';
+import {API_URL} from '@env';
 
 // 녹음 기능
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -54,7 +55,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/detail/${songId}`, {
+        const response = await axios.get(`${API_URL}/api/song/detail/${songId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -97,6 +98,17 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
       };
     }
   }, [data]);
+
+  //해당 스크린 벗어나면 음악 정지
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.stop(() => {
+          sound.release();
+        });
+      }
+    };
+  }, [sound]);
 
   const playPause = () => {
     if (!sound) {
@@ -245,7 +257,7 @@ export default function LyricsRecordingScreen({route, navigation}: any) {
     });
 
     try {
-      const response = await axios.post(`http://10.0.2.2:8080/api/song/combine/${songId}`,
+      const response = await axios.post(`${API_URL}/api/song/combine/${songId}`,
         formData,
         {
           headers: {

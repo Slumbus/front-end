@@ -4,6 +4,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 export default function ChildrenRegisterScreen({ navigation, route }: any) {
   const [birthdate, setBirthdate] = useState(new Date()); // 기본값을 현재 날짜로 설정
@@ -75,7 +76,7 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
       } 
 
       if (isEditMode) {
-        await axios.patch(`http://10.0.2.2:8080/api/kid/${route.params.child.id}`, formData, {
+        await axios.patch(`${API_URL}/api/kid/${route.params.child.id}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`,
@@ -83,7 +84,7 @@ export default function ChildrenRegisterScreen({ navigation, route }: any) {
         });
         Alert.alert('수정 성공', '아이 정보가 성공적으로 수정되었습니다.');
       } else {
-        await axios.post('http://10.0.2.2:8080/api/kid', formData, {
+        await axios.post(`${API_URL}/api/kid`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`,

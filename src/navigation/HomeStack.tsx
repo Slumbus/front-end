@@ -16,6 +16,8 @@ import LyricsRecordingScreen from '../screens/lyrics/LyricsRecordingScreen';
 import SongCompletion from '../screens/SongCompletionScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import MusicUpdateScreen from '../screens/lyrics/MusicUpdateScreen';
+import ChildrenInfoReactionRegisterScreen from '../screens/play/ChildrenInfoReactionRegisterScreen';
+import SongCompletion2 from '../screens/SongCompletionScreen2';
 
 interface Music {
   userId: number;
@@ -104,6 +106,17 @@ export default function HomeStack({navigation, route}: any) {
         }}
       />
       <Stack.Screen
+        name="ChildrenInfoReactionRegister"
+        component={ChildrenInfoReactionRegisterScreen}
+        options={{
+          title: '자장가 반응 작성',
+          headerTitleStyle: {
+            fontFamily: 'SCDream5',
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
         name="MyScreen"
         component={MyScreen}
         options={{
@@ -158,7 +171,7 @@ export default function HomeStack({navigation, route}: any) {
       />
       <Stack.Screen
         name="CompositionScreen"
-        component={SongCompletion}
+        component={SongCompletion2}
         options={{
           title: "완성",
           headerTitleStyle: {

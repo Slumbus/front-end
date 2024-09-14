@@ -9,7 +9,7 @@ import axios from 'axios';
 import { CommonActions } from '@react-navigation/native';
 import {API_URL} from '@env';
 
-export default function SongCompletion({route, navigation}: any) {
+export default function SongCompletion2({route, navigation}: any) {
   const { songId } = route.params;
   const [data, setData] = useState(null);
 
@@ -154,10 +154,13 @@ export default function SongCompletion({route, navigation}: any) {
         <Text>{formatTime(currentTime)} / {formatTime(duration)}</Text>
       </View>
       <View style={styles.ButtonContainer}>
-        <TouchableOpacity 
-          style={styles.completionButton}
-          onPress={() => navigation.navigate('HomeStack', { screen: 'HomeScreen' })}>
-          <Text style={styles.ButtonText}>완성</Text>
+        <TouchableOpacity style={styles.completionButton}>
+          <Text style={styles.ButtonText} onPress={() => navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'HomeScreen' }],
+            })
+          )}>완성</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

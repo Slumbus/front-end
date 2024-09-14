@@ -8,8 +8,7 @@ import {
   View,
 } from 'react-native';
 import axios from 'axios';
-
-const url = 'http://10.0.2.2:8080';
+import {API_URL} from '@env';
 
 export default function FindPWEmailScreen({navigation}: any) {
   const [timer, setTimer] = useState(0);
@@ -36,7 +35,7 @@ export default function FindPWEmailScreen({navigation}: any) {
     }
     try {
       const res = await axios.post(
-        `${url}/api/auth/resend-email?email=${email}`,
+        `${API_URL}/api/auth/resend-email?email=${email}`,
       );
       setEmailError(false);
       setEmailStatusText('인증메일이 전송되었습니다.');
@@ -57,7 +56,7 @@ export default function FindPWEmailScreen({navigation}: any) {
 
   const handleVerifyCode = async () => {
     try {
-      const res = await axios.get(`${url}/api/auth/check-code-password`, {
+      const res = await axios.get(`${API_URL}/api/auth/check-code-password`, {
         params: {email, code},
       });
       setIsCodeVerified(true);

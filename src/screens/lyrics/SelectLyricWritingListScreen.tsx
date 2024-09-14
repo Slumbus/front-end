@@ -3,6 +3,7 @@ import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-nati
 import axios from 'axios';
 import LyricSong from '../../components/LyricSong';
 import { getUserData } from '../../utils/Store';
+import {API_URL} from '@env';
 
 export default function SelectLyricWritingList({navigation}: any) {
   const [data, setData] = useState([]);
@@ -11,7 +12,7 @@ export default function SelectLyricWritingList({navigation}: any) {
     async function fetchData() {
       const token = await getUserData();
       try {
-        const response = await axios.get(`http://10.0.2.2:8080/api/song/list`, {
+        const response = await axios.get(`${API_URL}/api/song/list`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -28,7 +29,7 @@ export default function SelectLyricWritingList({navigation}: any) {
   const handleDelete = async (songId: string) => {
     try {
       const token = await getUserData();
-      await axios.delete(`http://10.0.2.2:8080/api/song/${songId}`, {
+      await axios.delete(`${API_URL}/api/song/${songId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
