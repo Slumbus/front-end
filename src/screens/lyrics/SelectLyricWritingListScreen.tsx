@@ -64,7 +64,7 @@ export default function SelectLyricWritingList({navigation}: any) {
                 imageSource={{ uri: song.artwork }}
                 title={song.title}
                 child={song.kidName}
-                onPress={() => navigation.navigate('LyricWriting', { songId: song.id })}
+                onPress={song.lyric ? null : () => navigation.navigate('LyricWriting', { songId: song.id })}
                 onPress2={() => navigation.navigate('MusicUpdateScreen', { songId: song.id })}
                 onPress3={() => handleDelete(song.id)}
               />
