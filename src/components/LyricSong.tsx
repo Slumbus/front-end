@@ -19,9 +19,11 @@ const LyricSong: React.FC<LyricSongProps> = ({ imageSource, title, child, onPres
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.child}>{child}</Text>
       </View>
+      {onPress && (
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <Icon name="pencil-alt" size={16} color="#fff" />
       </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.button2} onPress={onPress2}>
         <Icon name="pencil-alt" size={10} color="#999" />
       </TouchableOpacity>
