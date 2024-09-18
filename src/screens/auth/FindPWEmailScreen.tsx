@@ -139,22 +139,34 @@ export default function FindPWEmailScreen({navigation}: any) {
             </Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={[
-            styles.input,
-            verificationCodeError ? styles.errorInput : null,
-            !verificationCodeError && isCodeVerified
-              ? styles.successInput
-              : null,
-          ]}
-          placeholder="인증번호"
-          value={code}
-          onChangeText={text => {
-            setCode(text);
-            setVerificationCodeError(false);
-            setVerificationCodeStatusText('');
-          }}
-        />
+        <View style={styles.horizontalContainer}>
+          <TextInput
+            style={[
+              styles.verificationInput,
+              verificationCodeError ? styles.errorInput : null,
+              !verificationCodeError && isCodeVerified
+                ? styles.successInput
+                : null,
+            ]}
+            placeholder="인증번호"
+            value={code}
+            onChangeText={text => {
+              setCode(text);
+              setVerificationCodeError(false);
+              setVerificationCodeStatusText('');
+            }}
+          />
+          <TouchableOpacity
+            style={[
+              styles.verifyButton,
+              !code && styles.disabledButton, // 텍스트 미입력 시 비활성화
+            ]}
+            onPress={handleVerifyCode}
+            disabled={!code} // 입력되지 않으면 버튼 비활성화
+          >
+            <Text style={styles.buttonText}>확인</Text>
+          </TouchableOpacity>
+        </View>
         {verificationCodeStatusText ? (
           <Text
             style={[
@@ -166,9 +178,6 @@ export default function FindPWEmailScreen({navigation}: any) {
             {verificationCodeStatusText}
           </Text>
         ) : null}
-        <TouchableOpacity style={styles.nextButton} onPress={handleVerifyCode}>
-          <Text style={styles.buttonText}>인증 확인</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.nextButtonContainer}>
         <TouchableOpacity
@@ -223,6 +232,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     margin: 5,
     fontFamily: 'SCDream2',
+    // flex: 1, // 가로 공간 차지
+  },
+  horizontalContainer: {
+    flexDirection: 'row', // 가로로 배치
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  verificationInput: {
+    flex: 1, // 인증번호 input에만 flex를 적용
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#E9E9E9',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    margin: 5,
+    fontFamily: 'SCDream2',
+  },
+  verifyButton: {
+    backgroundColor: '#283882',
+    borderRadius: 50,
+    paddingVertical: 8,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    fontFamily: 'SCDream5',
+    marginLeft: 10, // 입력창과 버튼 간격
   },
   errorInput: {
     borderColor: 'red',
